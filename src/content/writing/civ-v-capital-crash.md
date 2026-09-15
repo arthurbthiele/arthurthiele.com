@@ -13,14 +13,14 @@ draft: false
 - As this happens, the game crashes. This is repeatable and basically unavoidable - reloading from an autosave repeats the crash.
 - You are now forced to give up on a save that may have been going for a hundred turns. :(
 
-If you just want the fix, the script and instructions on how to download and run it is (here, link to section). Full code for what it does is (here).
+If you just want the fix, the script and step-by-step instructions are [here](https://github.com/arthurbthiele/civ5-capital-crash-fix#just-fix-it). The full code is [here](https://github.com/arthurbthiele/civ5-capital-crash-fix/blob/main/fix-civ5-capital-crash.sh) — it's short, and worth a read before you run it.
 
 ## What was already known
 
 There's a couple of places this is discussed on the internet. I've looked it up a few times in search of a fix. This is what I could find - there may be more I missed elsewhere:
-- Details that the bug exists, some of them correctly pinning it to a civilization recapturing their capital (links)
-- A common suggestion is to roll back a few turns and try to intervene to change the outcome of the war. (link) While this is a fun challenge, it can be very difficult/impossible in some situations (e.g. unmet AIs fighting on the other side of the world).
-- An enterprising person made a Lua mod called Rebuild Original Capital (here, link), which avoids the crash by disbanding and re-founding the city just before it's recaptured, restoring its population and buildings. I only found this after I'd resolved the problem myself, but it's a pretty good solution. There are some downsides - recovering the capital via liberation or a peace deal still triggers the bug, and it can break some other game triggers and potentially conflict with other mods. But if I'd found this before resolving the bug I probably would have used this mod rather than dig into the problem more deeply to understand it and create the simpler, more general fix. 
+- Details that the bug exists, some of them correctly pinning it to a civilization recapturing their capital ([Steam](https://steamcommunity.com/app/8930/discussions/1/3048357185560564326/), [CivFanatics](https://forums.civfanatics.com/threads/civ-v-mac-crashes-same-turn.671049/), [Civ5 wiki](https://civilization.fandom.com/wiki/Bugs_(Civ5)))
+- A common suggestion is to [roll back a few turns](https://steamcommunity.com/app/8930/discussions/1/3412055301107710969/) and try to intervene to change the outcome of the war. While this is a fun challenge, it can be very difficult/impossible in some situations (e.g. unmet AIs fighting on the other side of the world).
+- An enterprising person made a Lua mod called [Rebuild Original Capital](https://forums.civfanatics.com/threads/mod-rebuild-original-capital-crash-bug-workaround-for-mac.690850/), which avoids the crash by disbanding and re-founding the city just before it's recaptured, restoring its population and buildings. I only found this after I'd resolved the problem myself, but it's a pretty good solution. There are some downsides - recovering the capital via liberation or a peace deal still triggers the bug, and it can break some other game triggers and potentially conflict with other mods. But if I'd found this before resolving the bug I probably would have used this mod rather than dig into the problem more deeply to understand it and create the simpler, more general fix. 
 
 I couldn't find anyone explaining *why* the crash happens. Me and my Claude looked into it, and thanks to some investigation, mostly done by my Claude, we found the problem, which pretty immediately implies the fix. Because we're directly fixing the bug that's the root cause, there are no negative side effects (that I'm aware of), and the game should play exactly as it did prior to the move to 64-bit. 
 
@@ -39,7 +39,7 @@ VM Region Info: 0x7f9359251f3f is not in any region.
 `KERN_INVALID_ADDRESS` is the error code for accessing an address where nothing is mapped at all. This is what actually causes the crash. In this case, the address that the process is trying to access is wildly outside where anything is stored. That's a pretty big red flag.
 
 
-The crashing thread is in `libCvGameCoreDLL_Expansion2_DLL.dylib`, which is the game's rules engine. Further investigation is pretty much impossible unless we have access to the code of the game's rules engine. Fortunately, Firaxis released the full rules engine code (links) to help modders during development. Thanks Firaxis!
+The crashing thread is in `libCvGameCoreDLL_Expansion2_DLL.dylib`, which is the game's rules engine. Further investigation is pretty much impossible unless we have access to the code of the game's rules engine. Fortunately, Firaxis released the [full rules engine code](https://github.com/dmnd/CvGameCoreSource) to help modders during development. Thanks Firaxis!
 
 Disassembling at the faulting address gives a function four instructions long:
 
