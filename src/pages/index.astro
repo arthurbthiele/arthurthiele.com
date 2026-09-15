@@ -1,0 +1,40 @@
+---
+import { existsSync } from "node:fs";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const PORTRAIT_FILE = "portrait.jpg";
+
+const hasPortrait = existsSync(`public/${PORTRAIT_FILE}`);
+
+const posts = (await getCollection("writing", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedOn.valueOf() - a.data.publishedOn.valueOf()
+);
+---
+
+<BaseLayout title="Arthur Thiele" description="Writing by Arthur Thiele.">
+  <div class="intro">
+    {hasPortrait && (
+      <img class="intro__portrait" src={`/${PORTRAIT_FILE}`} alt="Arthur Thiele" width="112" height="112" />
+    )}
+    <div>
+      <h1>Arthur Thiele</h1>
+      <p class="lede">
+        <!-- TODO(arthur): replace with your own introduction -->
+        Software engineer in Australia. I write occasionally about things I have taken apart.
+      </p>
+    </div>
+  </div>
+
+  <ul class="index">
+    {posts.map((post) => (
+      <li>
+        <time datetime={post.data.publishedOn.toISOString()}>
+          {post.data.publishedOn.toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
+        </time>
+        <a href={`/writing/${post.id}`}>{post.data.title}</a>
+        <p>{post.data.description}</p>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

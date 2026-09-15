@@ -1,0 +1,25 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  publishedOn: Date;
+}
+
+const { title, description, publishedOn } = Astro.props;
+
+const formattedDate = publishedOn.toLocaleDateString("en-AU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+});
+---
+
+<BaseLayout title={`${title} — Arthur Thiele`} description={description}>
+  <article>
+    <h1>{title}</h1>
+    <p class="dateline"><time datetime={publishedOn.toISOString()}>{formattedDate}</time></p>
+    <slot />
+  </article>
+</BaseLayout>
