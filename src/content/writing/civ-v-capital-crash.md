@@ -147,7 +147,7 @@ binary. There, the address arithmetic happens in 32 bits and simply wraps. So ad
 value is the same as subtracting one. As a result, Windows lands on the byte immediately before `m_abHasMet`, reads
 something meaningless, picks slightly wrong notification text, and carries on. Not a big deal.
 
-Aspyr's Mac port was rebuilt as 64-bit for Catalina, which removed 32-bit support. And on 64-bit there's nothing to wrap around. On Windows, `base + 4294967295` becomes `base - 1`. On 64-bit Mac, it's just telling the computer to look four gigabytes away from the rest of the game's memory addresses.
+Aspyr's Mac port was rebuilt as 64-bit for Catalina, which removed 32-bit support. And on 64-bit there's nothing to wrap around. On Windows, `base + 4294967295` wraps around the 32-bit boundary (counting up to the max and starting from zero again) and becomes `base - 1`. On 64-bit Mac, it's just telling the computer to look four gigabytes away from the rest of the game's memory addresses.
 
 ## The fix
 
