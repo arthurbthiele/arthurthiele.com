@@ -6,7 +6,7 @@ const ONE_MILLION = 1_000_000;
 const ONE_BILLION = 1_000_000_000;
 
 /**
- * "about the 2,300,000th tallest of 9.7 million": the rank counts from whichever end is nearer, so the top half reads
+ * "about the 2.4 millionth tallest of 9.7 million": the rank counts from whichever end is nearer, so the top half reads
  * as "tallest" and the bottom half as "shortest".
  */
 export function describeRank({ fractionBelow, fractionAbove }: PercentilePosition, populationSize: number, rankWords: RankWords) {
@@ -16,7 +16,13 @@ export function describeRank({ fractionBelow, fractionAbove }: PercentilePositio
   const word = isUpperHalf ? rankWords.higher : rankWords.lower;
   const ofPopulation = `of ${describePopulationSize(populationSize)}`;
   if (roundedRank === 1) return `about the ${word} ${ofPopulation}`;
-  return `about the ${roundedRank.toLocaleString("en-AU")}${ordinalSuffix(roundedRank)} ${word} ${ofPopulation}`;
+  return `about the ${describeOrdinal(roundedRank)} ${word} ${ofPopulation}`;
+}
+
+function describeOrdinal(rank: number) {
+  if (rank >= ONE_BILLION) return `${Number((rank / ONE_BILLION).toPrecision(RANK_SIGNIFICANT_DIGITS))} billionth`;
+  if (rank >= ONE_MILLION) return `${Number((rank / ONE_MILLION).toPrecision(RANK_SIGNIFICANT_DIGITS))} millionth`;
+  return `${rank.toLocaleString("en-AU")}${ordinalSuffix(rank)}`;
 }
 
 function describePopulationSize(populationSize: number) {

@@ -84,13 +84,22 @@ describe("describeRank", () => {
 
   it("counts from the top in the upper half", () => {
     expect(describeRank({ fractionBelow: 0.76, fractionAbove: 0.24 }, 9_712_900, heightWords)).toBe(
-      "about the 2,300,000th tallest of 9.7 million"
+      "about the 2.3 millionth tallest of 9.7 million"
     );
   });
 
   it("counts from the bottom in the lower half", () => {
     expect(describeRank({ fractionBelow: 0.0012, fractionAbove: 0.9988 }, 700_358, heightWords)).toBe(
       "about the 840th shortest of 700,000"
+    );
+  });
+
+  it("names billions and keeps digits below a million", () => {
+    expect(describeRank({ fractionBelow: 0.85, fractionAbove: 0.15 }, 7_780_315_940, heightWords)).toBe(
+      "about the 1.2 billionth tallest of 7.8 billion"
+    );
+    expect(describeRank({ fractionBelow: 0.88, fractionAbove: 0.12 }, 700_358, heightWords)).toBe(
+      "about the 84,000th tallest of 700,000"
     );
   });
 
