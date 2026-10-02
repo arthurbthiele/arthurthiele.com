@@ -1,9 +1,13 @@
 import type { DatasetSource, Distribution, LoadedDataset, ParameterSelection } from "./percentileTypes";
 
+const EVERYONE = "everyone";
 const SEX_OPTIONS = [
   { id: "male", label: "Men" },
-  { id: "female", label: "Women" }
+  { id: "female", label: "Women" },
+  { id: EVERYONE, label: "Everyone" }
 ];
+// These sources publish no headcount by sex and age, so "everyone" pools men and women equally.
+const EVERYONE_MALE_SHARE = 0.5;
 
 interface SexAndAgeDatasetParams<Variant> {
   source: DatasetSource;
@@ -32,12 +36,21 @@ export function createSexAndAgeDataset<Variant>({
   }
   const allAgeBands = [...new Set([...ageBandsBySex.values()].flat())];
 
-  const getKey = (selection: ParameterSelection) => {
-    const sex = selection.sex ?? "male";
+  const getKeyForSex = (sex: string, requestedAgeBand: string) => {
     const ageBandsForSex = ageBandsBySex.get(sex) ?? [];
-    const requestedAgeBand = selection.age ?? defaultAgeBand;
     const ageBand = ageBandsForSex.includes(requestedAgeBand) ? requestedAgeBand : (ageBandsForSex.at(-1) ?? requestedAgeBand);
     return { sex, ageBand, key: `${sex}|${ageBand}` };
+  };
+  const getKey = (selection: ParameterSelection) => {
+    const sex = selection.sex ?? "male";
+    const requestedAgeBand = selection.age ?? defaultAgeBand;
+    if (sex === EVERYONE) return { ...getKeyForSex("male", requestedAgeBand), sex };
+    return getKeyForSex(sex, requestedAgeBand);
+  };
+  const getVariantDistribution = (key: string) => {
+    const variant = variants[key];
+    if (variant == null) throw new Error(`No "${key}" variant in ${source.name}`);
+    return toDistribution(variant);
   };
 
   return {
@@ -47,10 +60,16 @@ export function createSexAndAgeDataset<Variant>({
       { id: "age", label: "Age", options: allAgeBands.map((ageBand) => ({ id: ageBand, label: ageBand })), defaultOptionId: defaultAgeBand }
     ],
     getDistribution: (selection) => {
-      const { key } = getKey(selection);
-      const variant = variants[key];
-      if (variant == null) throw new Error(`No "${key}" variant in ${source.name}`);
-      return toDistribution(variant);
+      const { sex, key } = getKey(selection);
+      if (sex !== EVERYONE) return getVariantDistribution(key);
+      const requestedAgeBand = selection.age ?? defaultAgeBand;
+      return {
+        kind: "mixture",
+        components: [
+          { weight: EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("male", requestedAgeBand).key) },
+          { weight: 1 - EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("female", requestedAgeBand).key) }
+        ]
+      };
     },
     describePopulation: (selection) => {
       const { sex, ageBand } = getKey(selection);

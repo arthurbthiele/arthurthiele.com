@@ -203,7 +203,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
   .converter__chart {
     position: relative;
-    height: 6rem;
+    height: 6.75rem;
     margin-top: 0.3rem;
   }
 
@@ -245,17 +245,33 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     stroke-linecap: round;
   }
 
-  .converter__chart :global(.distribution-chart__zero line) {
-    stroke: var(--ink-faint);
+
+
+  .converter__chart :global(.distribution-chart__tick line) {
+    stroke: var(--rule);
     stroke-width: 1;
+  }
+
+  .converter__chart :global(.distribution-chart__tick--zero line) {
+    stroke: var(--ink-faint);
     stroke-dasharray: 2 3;
   }
 
-  .converter__chart :global(.distribution-chart__zero text) {
+  .converter__chart :global(.distribution-chart__tick text),
+  .converter__chart :global(.distribution-chart__median text) {
     fill: var(--ink-faint);
     font-family: var(--font-ui);
     font-size: 0.72rem;
-    dominant-baseline: hanging;
+  }
+
+  .converter__chart :global(.distribution-chart__median line) {
+    stroke: var(--ink-faint);
+    stroke-width: 1;
+    stroke-dasharray: 1 3;
+  }
+
+  .converter__chart :global(.distribution-chart__median text) {
+    font-style: italic;
   }
 
   .converter__chart :global(.distribution-chart__crosshair) {
@@ -264,11 +280,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     pointer-events: none;
   }
 
-  .converter__chart :global(.distribution-chart__axis-label) {
-    fill: var(--ink-faint);
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-  }
 
   .converter__chart :global(.distribution-chart__tooltip) {
     position: absolute;

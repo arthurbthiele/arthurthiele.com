@@ -19,7 +19,18 @@ export interface EmpiricalDistribution {
 
 export type CumulativePoint = [value: number, fractionAtOrBelow: number];
 
-export type Distribution = NormalDistribution | LogNormalDistribution | EmpiricalDistribution;
+/** Several groups pooled into one crowd, e.g. men and women, each weighted by its share of the population. */
+export interface MixtureDistribution {
+  kind: "mixture";
+  components: MixtureComponent[];
+}
+
+export interface MixtureComponent {
+  weight: number;
+  distribution: Distribution;
+}
+
+export type Distribution = NormalDistribution | LogNormalDistribution | EmpiricalDistribution | MixtureDistribution;
 
 export interface PercentilePosition {
   fractionBelow: number;

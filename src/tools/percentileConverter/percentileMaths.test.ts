@@ -4,7 +4,7 @@ import { findTypedNumber } from "./findTypedNumber";
 import { getPercentilePosition } from "./getPercentilePosition";
 import { getValueAtPosition } from "./getValueAtPosition";
 import { inverseStandardNormal } from "./inverseStandardNormal";
-import type { EmpiricalDistribution, LogNormalDistribution, NormalDistribution } from "./percentileTypes";
+import type { EmpiricalDistribution, LogNormalDistribution, MixtureDistribution, NormalDistribution } from "./percentileTypes";
 import { standardNormalTails } from "./standardNormalTails";
 
 const ERFC_RELATIVE_TOLERANCE = 2e-7;
@@ -173,5 +173,26 @@ describe("findTypedNumber", () => {
 
   it.each(["", "k", "abc", "1.2.3", "5kk", "-"])("rejects %s", (text) => {
     expect(findTypedNumber(text)).toBeUndefined();
+  });
+});
+
+describe("mixture distributions", () => {
+  // Australian adults pooled with ABS weights; Python reference: F(170) = 0.578610, median 167.8037, P90 181.0626.
+  const menWeight = 9_712_900 / (9_712_900 + 9_990_200);
+  const australianAdults: MixtureDistribution = {
+    kind: "mixture",
+    components: [
+      { weight: menWeight, distribution: { kind: "normal", mean: 174.8, standardDeviation: 7.45 } },
+      { weight: 1 - menWeight, distribution: { kind: "normal", mean: 161.5, standardDeviation: 6.97 } }
+    ]
+  };
+
+  it("pools percentiles by group size", () => {
+    expect(getPercentilePosition(australianAdults, 170).position.fractionBelow).toBeCloseTo(0.57861, 5);
+  });
+
+  it("inverts by bisection", () => {
+    expect(getValueAtPosition(australianAdults, { fractionBelow: 0.5, fractionAbove: 0.5 }).value).toBeCloseTo(167.8037, 3);
+    expect(getValueAtPosition(australianAdults, { fractionBelow: 0.9, fractionAbove: 0.1 }).value).toBeCloseTo(181.0626, 3);
   });
 });

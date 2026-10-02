@@ -3,6 +3,8 @@ import { createSexAndAgeDataset } from "./createSexAndAgeDataset";
 import type {
   CumulativePoint,
   DatasetDefinition,
+  DatasetSource,
+  Distribution,
   DatasetParameter,
   LoadedDataset,
   ParameterSelection,
@@ -14,10 +16,16 @@ const SEX_OPTIONS = [
   { id: "female", label: "Women" }
 ];
 
+const EVERYONE = "everyone";
+const SEX_OPTIONS_WITH_EVERYONE = [...SEX_OPTIONS, { id: EVERYONE, label: "Everyone" }];
 const PLURAL_NOUN_BY_SEX: Record<string, string> = { male: "men", female: "women" };
+const EQUAL_SPLIT_MALE_SHARE = 0.5;
+// About 105 boys are born per 100 girls, and a life table follows a cohort from birth.
+const MALE_SHARE_AT_BIRTH = 105 / 205;
 
 const HEIGHT_SPREAD_CAVEAT =
   "No source publishes the spread of heights for these populations, only averages. The spread is borrowed from measured US data (NHANES 2015–2018), whose averages are within half a centimetre of Australia's, and heights are modelled as a normal distribution.";
+const POOLED_BY_HEADCOUNT_NOTE = "“Everyone” pools men and women in proportion to the ABS headcount of each.";
 
 const DEFAULT_COHORT_COUNTRY_ID = "AUS";
 const HISTORY_COUNTRIES = [
@@ -38,34 +46,68 @@ const DEFAULT_COHORT_BIRTH_YEAR = 1900;
 async function loadAustralianHeight(): Promise<LoadedDataset> {
   const { default: file } = await import("./data/australianHeight.json");
   const variants: Record<string, { mean: number; standardDeviation: number; population: number }> = file.variants;
-  const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
-  return {
+  return createAustralianAdultsDataset({
     source: file.source,
-    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: "male" }],
-    getDistribution: (selection) => {
-      const variant = variants[getSex(selection)];
-      if (variant == null) throw new Error(`No height data for sex "${getSex(selection)}"`);
+    populationBySex: { male: variants.male?.population ?? 0, female: variants.female?.population ?? 0 },
+    getSexDistribution: (sex) => {
+      const variant = variants[sex];
+      if (variant == null) throw new Error(`No height data for sex "${sex}"`);
       return { kind: "normal", mean: variant.mean, standardDeviation: variant.standardDeviation };
-    },
-    describePopulation: (selection) => `Australian ${PLURAL_NOUN_BY_SEX[getSex(selection)]} (adults, 2022)`,
-    findPopulationSize: (selection) => variants[getSex(selection)]?.population
-  };
+    }
+  });
 }
 
 async function loadAustralianWeight(): Promise<LoadedDataset> {
   const { default: file } = await import("./data/australianWeight.json");
   const variants: Record<string, { logMean: number; logStandardDeviation: number; population: number }> = file.variants;
+  return createAustralianAdultsDataset({
+    source: file.source,
+    populationBySex: { male: variants.male?.population ?? 0, female: variants.female?.population ?? 0 },
+    getSexDistribution: (sex) => {
+      const variant = variants[sex];
+      if (variant == null) throw new Error(`No weight data for sex "${sex}"`);
+      return { kind: "logNormal", logMean: variant.logMean, logStandardDeviation: variant.logStandardDeviation };
+    }
+  });
+}
+
+interface AustralianAdultsDatasetParams {
+  source: DatasetSource;
+  populationBySex: { male: number; female: number };
+  getSexDistribution: (sex: string) => Distribution;
+}
+
+/** Men, women, or everyone pooled in proportion to the ABS headcount of each. */
+function createAustralianAdultsDataset({ source, populationBySex, getSexDistribution }: AustralianAdultsDatasetParams): LoadedDataset {
+  const totalPopulation = populationBySex.male + populationBySex.female;
   const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
   return {
-    source: file.source,
-    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: "male" }],
+    source,
+    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" }],
     getDistribution: (selection) => {
-      const variant = variants[getSex(selection)];
-      if (variant == null) throw new Error(`No weight data for sex "${getSex(selection)}"`);
-      return { kind: "logNormal", logMean: variant.logMean, logStandardDeviation: variant.logStandardDeviation };
+      const sex = getSex(selection);
+      if (sex !== EVERYONE) return getSexDistribution(sex);
+      return poolSexes(getSexDistribution("male"), getSexDistribution("female"), populationBySex.male / totalPopulation);
     },
-    describePopulation: (selection) => `Australian ${PLURAL_NOUN_BY_SEX[getSex(selection)]} (adults, 2022)`,
-    findPopulationSize: (selection) => variants[getSex(selection)]?.population
+    describePopulation: (selection) => {
+      const sex = getSex(selection);
+      return sex === EVERYONE ? "Australian adults (2022)" : `Australian ${PLURAL_NOUN_BY_SEX[sex]} (adults, 2022)`;
+    },
+    findPopulationSize: (selection) => {
+      const sex = getSex(selection);
+      if (sex === EVERYONE) return totalPopulation;
+      return sex === "male" ? populationBySex.male : populationBySex.female;
+    }
+  };
+}
+
+function poolSexes(maleDistribution: Distribution, femaleDistribution: Distribution, maleShare: number): Distribution {
+  return {
+    kind: "mixture",
+    components: [
+      { weight: maleShare, distribution: maleDistribution },
+      { weight: 1 - maleShare, distribution: femaleDistribution }
+    ]
   };
 }
 
@@ -84,7 +126,7 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
       options: Object.entries(countries).map(([countryId, { label }]) => ({ id: countryId, label })),
       defaultOptionId: DEFAULT_COHORT_COUNTRY_ID
     },
-    { id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: "male" },
+    { id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" },
     {
       id: "birthYear",
       label: "Born in",
@@ -102,29 +144,48 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
     parameters,
     getDistribution: (selection) => {
       const { countryId, sex, birthYear } = getSelection(selection);
-      const mean = countries[countryId]?.meanBySex[sex]?.[birthYear - file.firstBirthYear];
-      const standardDeviation = standardDeviationBySex[sex];
-      if (mean == null || standardDeviation == null) throw new Error(`No height for ${countryId} ${sex} ${birthYear}`);
-      return { kind: "normal", mean, standardDeviation };
+      const getSexDistribution = (cohortSex: string): Distribution => {
+        const mean = countries[countryId]?.meanBySex[cohortSex]?.[birthYear - file.firstBirthYear];
+        const standardDeviation = standardDeviationBySex[cohortSex];
+        if (mean == null || standardDeviation == null) throw new Error(`No height for ${countryId} ${cohortSex} ${birthYear}`);
+        return { kind: "normal", mean, standardDeviation };
+      };
+      if (sex !== EVERYONE) return getSexDistribution(sex);
+      return poolSexes(getSexDistribution("male"), getSexDistribution("female"), EQUAL_SPLIT_MALE_SHARE);
     },
     describePopulation: (selection) => {
       const { countryId, sex, birthYear } = getSelection(selection);
-      return `${PLURAL_NOUN_BY_SEX[sex]} born in ${countries[countryId]?.label ?? countryId} in ${birthYear} (height at 18)`;
+      const people = sex === EVERYONE ? "people" : PLURAL_NOUN_BY_SEX[sex];
+      return `${people} born in ${countries[countryId]?.label ?? countryId} in ${birthYear} (height at 18)`;
     },
     findPopulationSize: () => undefined
   };
 }
 
-async function loadAustralianLifespan() {
+async function loadAustralianLifespan(): Promise<LoadedDataset> {
   const { default: file } = await import("./data/australianLifespan.json");
-  return createEmpiricalDataset({
-    file,
-    parameterId: "sex",
-    parameterLabel: "Sex",
-    defaultVariantId: "male",
-    orderedVariantOptions: SEX_OPTIONS,
-    describePopulation: (variantId) => `Australian ${PLURAL_NOUN_BY_SEX[variantId]} (age at death, at 2022–24 death rates)`
-  });
+  const variants: Record<string, { cdf: number[][] }> = file.variants;
+  const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
+  const getSexDistribution = (sex: string): Distribution => {
+    const variant = variants[sex];
+    if (variant == null) throw new Error(`No lifespan data for sex "${sex}"`);
+    return { kind: "empirical", cumulativePoints: variant.cdf.map(([value = 0, fraction = 0]): CumulativePoint => [value, fraction]) };
+  };
+  return {
+    source: file.source,
+    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" }],
+    getDistribution: (selection) => {
+      const sex = getSex(selection);
+      if (sex !== EVERYONE) return getSexDistribution(sex);
+      return poolSexes(getSexDistribution("male"), getSexDistribution("female"), MALE_SHARE_AT_BIRTH);
+    },
+    describePopulation: (selection) => {
+      const sex = getSex(selection);
+      const people = sex === EVERYONE ? "Australians" : `Australian ${PLURAL_NOUN_BY_SEX[sex]}`;
+      return `${people} (age at death, at 2022–24 death rates)`;
+    },
+    findPopulationSize: () => undefined
+  };
 }
 
 async function loadAustralianTaxableIncome() {
@@ -186,7 +247,7 @@ async function loadGripStrength() {
     variants: file.variants as Record<string, { mean: number; standardDeviation: number }>,
     defaultAgeBand: "30–34",
     toDistribution: ({ mean, standardDeviation }) => ({ kind: "normal", mean, standardDeviation }),
-    describePopulation: (sex, ageBand) => `Canadian ${PLURAL_NOUN_BY_SEX[sex]} aged ${ageBand}`
+    describePopulation: (sex, ageBand) => `${sex === EVERYONE ? "Canadians" : `Canadian ${PLURAL_NOUN_BY_SEX[sex]}`} aged ${ageBand}`
   });
 }
 
@@ -212,7 +273,8 @@ async function loadSuperannuation() {
       kind: "empirical",
       cumulativePoints: cdf.map(([value = 0, fraction = 0]): [number, number] => [value, fraction])
     }),
-    describePopulation: (sex, ageBand) => `Australian ${PLURAL_NOUN_BY_SEX[sex]} with super, aged ${ageBand.toLowerCase()} (2023)`
+    describePopulation: (sex, ageBand) =>
+      `${sex === EVERYONE ? "Australians" : `Australian ${PLURAL_NOUN_BY_SEX[sex]}`} with super, aged ${ageBand.toLowerCase()} (2023)`
   });
 }
 
@@ -310,7 +372,7 @@ export const DATASETS: DatasetDefinition[] = [
     unit: { suffix: " cm", decimals: 1 },
     defaultValue: 180,
     rankWords: { higher: "tallest", lower: "shortest" },
-    caveat: HEIGHT_SPREAD_CAVEAT,
+    caveat: `${HEIGHT_SPREAD_CAVEAT} ${POOLED_BY_HEADCOUNT_NOTE}`,
     load: loadAustralianHeight
   },
   {
@@ -318,7 +380,7 @@ export const DATASETS: DatasetDefinition[] = [
     label: "Height by birth year (any country, 1896–1996)",
     unit: { suffix: " cm", decimals: 1 },
     defaultValue: 175,
-    caveat: `Average heights are NCD-RisC estimates, pooled from measured surveys, of height at 18 for each birth year. ${HEIGHT_SPREAD_CAVEAT} We assume that spread has stayed the same across countries and over the century.`,
+    caveat: `Average heights are NCD-RisC estimates, pooled from measured surveys, of height at 18 for each birth year. ${HEIGHT_SPREAD_CAVEAT} We assume that spread has stayed the same across countries and over the century. “Everyone” pools men and women equally.`,
     load: loadHeightByBirthYear
   },
   {
@@ -328,7 +390,7 @@ export const DATASETS: DatasetDefinition[] = [
     defaultValue: 80,
     rankWords: { higher: "heaviest", lower: "lightest" },
     caveat:
-      "Averages are the ABS's measured 2022 figures. The shape of the distribution, which is skewed towards heavier weights, is borrowed from measured US data (NHANES 2015–2018) and modelled as lognormal.",
+      `Averages are the ABS's measured 2022 figures. The shape of the distribution, which is skewed towards heavier weights, is borrowed from measured US data (NHANES 2015–2018) and modelled as lognormal. ${POOLED_BY_HEADCOUNT_NOTE}`,
     load: loadAustralianWeight
   },
   {
@@ -337,7 +399,7 @@ export const DATASETS: DatasetDefinition[] = [
     unit: { suffix: " years", decimals: 1 },
     defaultValue: 85,
     caveat:
-      "From the ABS life table: the ages at which a group born today would die if 2022–24 death rates held for their whole lives. Death rates keep falling, so real lifespans will probably be longer. The table stops at 100.",
+      "From the ABS life table: the ages at which a group born today would die if 2022–24 death rates held for their whole lives. Death rates keep falling, so real lifespans will probably be longer. The table stops at 100. “Everyone” pools men and women in the ratio they're born, about 105 boys to 100 girls.",
     load: loadAustralianLifespan
   },
   {
@@ -402,7 +464,7 @@ export const DATASETS: DatasetDefinition[] = [
     defaultValue: 100_000,
     chartAxis: "signedLogarithmic",
     caveat:
-      "Total super across all of a person's accounts, at June 2023, from ASFA's analysis of the ATO's 2% sample of tax records. ASFA publishes the 10th, 25th, 50th, 75th and 90th percentiles; between them we interpolate, and above the 90th we extend each group with a fitted curve, which runs slightly generous against the ATO's own counts of $2M+ balances. The oldest band is 70–74 for men and 70 and over for women.",
+      "Total super across all of a person's accounts, at June 2023, from ASFA's analysis of the ATO's 2% sample of tax records. ASFA publishes the 10th, 25th, 50th, 75th and 90th percentiles; between them we interpolate, and above the 90th we extend each group with a fitted curve, which runs slightly generous against the ATO's own counts of $2M+ balances. The oldest band is 70–74 for men and 70 and over for women. “Everyone” pools men and women equally.",
     load: loadSuperannuation
   },
   {
@@ -411,7 +473,7 @@ export const DATASETS: DatasetDefinition[] = [
     unit: { suffix: " kg", decimals: 1 },
     defaultValue: 90,
     caveat:
-      "Measured in Canada's national health survey (2016–17): the best of two squeezes with each hand on a dynamometer, added together. One hand alone is roughly half. Modelled as a normal curve fitted to Statistics Canada's published percentiles, within 2.4 kg of every one of them.",
+      "Measured in Canada's national health survey (2016–17): the best of two squeezes with each hand on a dynamometer, added together. One hand alone is roughly half. Modelled as a normal curve fitted to Statistics Canada's published percentiles, within 2.4 kg of every one of them. “Everyone” pools men and women equally.",
     load: loadGripStrength
   },
   {

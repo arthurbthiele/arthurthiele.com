@@ -3,6 +3,7 @@ import type {
   DataEdge,
   Distribution,
   LogNormalDistribution,
+  MixtureDistribution,
   NormalDistribution,
   PercentilePosition
 } from "./percentileTypes";
@@ -18,6 +19,7 @@ interface PercentileLookup {
 export function getPercentilePosition(distribution: Distribution, value: number): PercentileLookup {
   if (distribution.kind === "normal") return getNormalPercentilePosition(distribution, value);
   if (distribution.kind === "logNormal") return getLogNormalPercentilePosition(distribution, value);
+  if (distribution.kind === "mixture") return getMixturePercentilePosition(distribution, value);
   return getEmpiricalPercentilePosition(distribution.cumulativePoints, value);
 }
 
@@ -34,6 +36,25 @@ function getLogNormalPercentilePosition(distribution: LogNormalDistribution, val
   const shiftedValue = value - (distribution.shift ?? 0);
   if (shiftedValue <= 0) return { position: positionFromFractionBelow(0), clampedAt: "belowData" };
   return clampExtremeTails(standardNormalTails((Math.log(shiftedValue) - distribution.logMean) / distribution.logStandardDeviation));
+}
+
+/**
+ * The pooled crowd's share below a value is each group's share below it, weighted by the group's size:
+ * F(x) = Σ wᵢ·Fᵢ(x). Both tails are summed separately to keep precision far out in either. It is only past the data
+ * if every group is.
+ */
+function getMixturePercentilePosition(distribution: MixtureDistribution, value: number): PercentileLookup {
+  const lookups = distribution.components.map(({ weight, distribution: component }) => ({
+    weight,
+    lookup: getPercentilePosition(component, value)
+  }));
+  const position = {
+    fractionBelow: lookups.reduce((total, { weight, lookup }) => total + weight * lookup.position.fractionBelow, 0),
+    fractionAbove: lookups.reduce((total, { weight, lookup }) => total + weight * lookup.position.fractionAbove, 0)
+  };
+  const firstEdge = lookups[0]?.lookup.clampedAt;
+  const isPastAllData = firstEdge != null && lookups.every(({ lookup }) => lookup.clampedAt === firstEdge);
+  return isPastAllData ? { position, clampedAt: firstEdge } : { position };
 }
 
 function clampExtremeTails(position: PercentilePosition): PercentileLookup {
