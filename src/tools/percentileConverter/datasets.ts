@@ -12,6 +12,7 @@ const HEIGHT_SPREAD_CAVEAT =
   "No source publishes the spread of heights for these populations, only averages. The spread is borrowed from measured US data (NHANES 2015–2018), whose averages are within half a centimetre of Australia's, and heights are modelled as a normal distribution.";
 
 const DEFAULT_COHORT_COUNTRY_ID = "AUS";
+const COUNTRY_NAMES_TAKING_THE = new Set(["United States", "United Kingdom", "Netherlands", "Czech Republic", "Philippines", "United Arab Emirates", "Gambia", "Bahamas"]);
 const DEFAULT_COHORT_BIRTH_YEAR = 1900;
 
 async function loadAustralianHeight(): Promise<LoadedDataset> {
@@ -129,7 +130,7 @@ async function loadWorldIncome() {
     describePopulation: (variantId, variantLabel, variant) =>
       variantId === "world"
         ? "everyone in the world (latest surveys)"
-        : `people in ${variantLabel} (${variant?.year ?? "latest survey"})`
+        : `people in ${withArticle(variantLabel)} (${variant?.year ?? "latest survey"})`
   });
 }
 
@@ -154,7 +155,7 @@ async function loadWorldWealth() {
     describePopulation: (variantId, variantLabel, variant) =>
       variantId === "world"
         ? `adults worldwide (${variant?.year ?? "latest"})`
-        : `adults in ${variantLabel} (${variant?.year ?? "latest"})`
+        : `adults in ${withArticle(variantLabel)} (${variant?.year ?? "latest"})`
   });
 }
 
@@ -181,6 +182,10 @@ async function loadAustralianAge() {
     describePopulation: (variantId) =>
       variantId === "persons" ? "Australian residents" : `Australian ${PLURAL_NOUN_BY_SEX[variantId]}`
   });
+}
+
+function withArticle(countryName: string) {
+  return COUNTRY_NAMES_TAKING_THE.has(countryName) ? `the ${countryName}` : countryName;
 }
 
 export const DATASETS: DatasetDefinition[] = [
@@ -233,8 +238,8 @@ export const DATASETS: DatasetDefinition[] = [
   },
   {
     id: "worldIncome",
-    label: "Income (worldwide)",
-    unit: { prefix: "$", suffix: " / year", decimals: 0 },
+    label: "Income (worldwide, price-adjusted)",
+    unit: { prefix: "US$", suffix: " / year", decimals: 0 },
     defaultValue: 30_000,
     chartAxis: "logarithmic",
     rankWords: { higher: "highest-income", lower: "lowest-income" },
@@ -250,18 +255,18 @@ export const DATASETS: DatasetDefinition[] = [
     chartAxis: "signedLogarithmic",
     rankWords: { higher: "wealthiest", lower: "least wealthy" },
     caveat:
-      "Net personal wealth (assets minus debts) per adult, with couples' shared wealth split equally between them, in 2025 dollars. These are the World Inequality Database's modelled estimates for Australia. They sit close to the ABS's household survey in the middle, but put more wealth at the top (WID corrects for surveys under-counting the very rich) and more adults below zero.",
+      "Net personal wealth (housing, land, savings, shares and other assets, minus debts) per adult, with couples' shared wealth split equally between them, in 2025 dollars. These are the World Inequality Database's modelled estimates for Australia. They sit close to the ABS's household survey in the middle, but put more wealth at the top (WID corrects for surveys under-counting the very rich) and more adults below zero.",
     load: loadAustralianWealth
   },
   {
     id: "wealthWorldwide",
     label: "Net wealth (worldwide)",
-    unit: { prefix: "$", decimals: 0 },
+    unit: { prefix: "US$", decimals: 0 },
     defaultValue: 100_000,
     chartAxis: "signedLogarithmic",
     rankWords: { higher: "wealthiest", lower: "least wealthy" },
     caveat:
-      "Net personal wealth per adult, with couples' shared wealth split equally, in US dollars adjusted for local prices (purchasing-power parity, 2025 prices). Countries are those where the World Inequality Database builds wealth from country-specific research or European household surveys, plus Australia, Brazil, Canada, Indonesia, Japan, Mexico, New Zealand and South Africa, whose figures lean more on modelling. \"World\" is our own pool of 216 countries weighted by adult population; it agrees with WID's own world figures to within about 6% at the median.",
+      "Net personal wealth (housing, land, savings, shares and other assets, minus debts) per adult, with couples' shared wealth split equally, converted to US dollars at 2025 market exchange rates. Countries are those where the World Inequality Database builds wealth from country-specific research or European household surveys, plus Australia, Brazil, Canada, Indonesia, Japan, Mexico, New Zealand and South Africa, whose figures lean more on modelling. \"World\" is our own pool of 216 countries weighted by adult population.",
     load: loadWorldWealth
   },
   {

@@ -2,6 +2,7 @@ import { DATASETS } from "./datasets";
 import { describePosition } from "./describePosition";
 import { describeRank } from "./describeRank";
 import { formatBoundedValue } from "./formatBoundedValue";
+import { findTypedNumber } from "./findTypedNumber";
 import { formatValue } from "./formatValue";
 import { getPercentilePosition } from "./getPercentilePosition";
 import { getValueAtPosition } from "./getValueAtPosition";
@@ -157,9 +158,9 @@ export function mountPercentileConverter(root: HTMLElement) {
 
   elements.valueInput.value = String(state.inputValue);
   elements.valueInput.addEventListener("input", () => {
-    const parsedValue = Number(elements.valueInput.value);
-    if (elements.valueInput.value.trim() === "" || !Number.isFinite(parsedValue)) return;
-    state.inputValue = parsedValue;
+    const typedValue = findTypedNumber(elements.valueInput.value);
+    if (typedValue == null || !Number.isFinite(typedValue)) return;
+    state.inputValue = typedValue;
     void render();
   });
 

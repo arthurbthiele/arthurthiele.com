@@ -20,7 +20,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <label class="converter__value">
         <span class="visually-hidden">Value</span>
         <span data-role="unit-prefix"></span>
-        <input data-role="value" type="number" inputmode="decimal" step="any" />
+        <input data-role="value" type="text" autocomplete="off" spellcheck="false" title="Shortcuts work: 80k, 1.5m" />
         <span data-role="unit-suffix"></span>
       </label>
       <div class="converter__chart" data-role="from-chart"></div>
@@ -112,7 +112,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   }
 
   .converter :global(select),
-  .converter input[type="number"],
+  .converter input[type="text"],
   .converter button {
     font: inherit;
     color: var(--ink);

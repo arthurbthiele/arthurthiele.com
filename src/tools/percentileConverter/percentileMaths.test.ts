@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { describeRank } from "./describeRank";
+import { findTypedNumber } from "./findTypedNumber";
 import { getPercentilePosition } from "./getPercentilePosition";
 import { getValueAtPosition } from "./getValueAtPosition";
 import { inverseStandardNormal } from "./inverseStandardNormal";
@@ -147,3 +148,23 @@ describe("empirical distributions", () => {
 function relativeError(actual: number, expected: number) {
   return Math.abs(actual - expected) / expected;
 }
+
+describe("findTypedNumber", () => {
+  it.each([
+    ["180", 180],
+    ["80k", 80_000],
+    ["1.5M", 1_500_000],
+    ["2b", 2_000_000_000],
+    ["-20,000", -20_000],
+    ["\u221220k", -20_000],
+    ["A$300k", 300_000],
+    ["US$ 1.2m", 1_200_000],
+    [".5k", 500]
+  ])("reads %s", (text, expected) => {
+    expect(findTypedNumber(text)).toBe(expected);
+  });
+
+  it.each(["", "k", "abc", "1.2.3", "5kk", "-"])("rejects %s", (text) => {
+    expect(findTypedNumber(text)).toBeUndefined();
+  });
+});

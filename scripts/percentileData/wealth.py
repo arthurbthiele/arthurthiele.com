@@ -27,10 +27,10 @@ studies or WID's Distributional Financial Accounts for Europe (built on the ECB'
 countries cite only WID's 2025 extended-coverage note, which leans on modelling; the rest cite only WID's generic
 imputation note. We publish the researched countries plus a few notable extended ones, flagged as rougher.
 
-The world distribution is our own pool of every country with data, each converted to US dollars at purchasing-power
-parity (2025 prices) and weighted by its adult population: the mixture CDF F(x) = Σ wᵢ Fᵢ(x), inverted at chosen
-fractions. Pooling ourselves keeps the world in exactly the same units as the per-country distributions. WID's own world
-series agrees to within about 5% at the median; it also imputes the countries without data, which we leave out.
+Everything is converted to US dollars at 2025 market exchange rates, not purchasing-power parity: wealth is largely
+assets priced in global markets, and the tool shows it as plain US dollars. The world distribution is our own pool of
+every country with data, weighted by adult population: the mixture CDF F(x) = Σ wᵢ Fᵢ(x), inverted at chosen fractions.
+(WID's own world series uses PPP, so it isn't comparable; at PPP our pool matched it within about 6% at the median.)
 """
 
 import bisect
@@ -60,6 +60,7 @@ PPP_RATE_VARIABLE = "xlcuspi999"
 MARKET_RATE_VARIABLE = "xlcusxi999"
 PRICE_INDEX_VARIABLE = "inyixxi999"
 SERIES_VARIABLES = (ADULT_POPULATION_VARIABLE, PPP_RATE_VARIABLE, MARKET_RATE_VARIABLE, PRICE_INDEX_VARIABLE)
+CONVERSION_RATE_VARIABLE = MARKET_RATE_VARIABLE
 WORLD_CODE = "WO"
 PERCENTILE_PATTERN = re.compile(r"^p([0-9.]+)p([0-9.]+)$")
 SOURCE_DOCUMENT_PATTERN = re.compile(r"document/([a-z0-9-]+)")
@@ -89,7 +90,7 @@ def main():
     country_variants = {code: build_country_variant(countries[code]) for code in published_codes}
     write_json("wealthWorldwide.json", {
         "source": SOURCE,
-        "unit": f"US dollars at purchasing-power parity, {PRICE_REFERENCE_YEAR} prices",
+        "unit": f"US dollars at {PRICE_REFERENCE_YEAR} market exchange rates and prices",
         "extendedCoverageCountries": [code for code in published_codes if countries[code]["sourceTier"] == "extended"],
         "variants": {"world": world_variant, **country_variants}
     })
@@ -123,12 +124,12 @@ def latest_threshold_year(country):
 
 def build_country_variant(country):
     year = latest_threshold_year(country)
-    ppp_rate = country[PPP_RATE_VARIABLE][PRICE_REFERENCE_YEAR]
+    exchange_rate = country[CONVERSION_RATE_VARIABLE][PRICE_REFERENCE_YEAR]
     return {
         "label": display_name(country),
         "year": int(year),
         "population": round(country[ADULT_POPULATION_VARIABLE][year]),
-        "cdf": to_cdf(threshold_points(country, year, ppp_rate))
+        "cdf": to_cdf(threshold_points(country, year, exchange_rate))
     }
 
 
@@ -172,10 +173,10 @@ def round_significant(value):
 def build_world_variant(countries):
     components = []
     for country in countries.values():
-        ppp_rate = country[PPP_RATE_VARIABLE].get(PRICE_REFERENCE_YEAR)
-        if not has_wealth_data(country) or not ppp_rate:
+        exchange_rate = country[CONVERSION_RATE_VARIABLE].get(PRICE_REFERENCE_YEAR)
+        if not has_wealth_data(country) or not exchange_rate:
             continue
-        points = threshold_points(country, POOL_YEAR, ppp_rate)
+        points = threshold_points(country, POOL_YEAR, exchange_rate)
         components.append(([wealth for _, wealth in points], [fraction for fraction, _ in points], country[ADULT_POPULATION_VARIABLE][POOL_YEAR]))
     total_adults = sum(adults for *_, adults in components)
 
@@ -221,14 +222,13 @@ def invert(cumulative, target_fraction, lowest, highest):
 
 
 def report(extract, world_variant, country_variants):
-    wid_world = extract["world"]["thresholds"][POOL_YEAR]
     print(f"World pool: {world_variant['countryCount']} countries, {world_variant['population']:,} adults")
-    for fraction in ("0.1", "0.5", "0.9", "0.99"):
-        print(f"  P{float(fraction) * 100:g}: ours {value_at(world_variant['cdf'], float(fraction)):,.0f} vs WID world {wid_world[fraction]:,.0f}")
+    for fraction in (0.1, 0.5, 0.9, 0.99):
+        print(f"  P{fraction * 100:g}: US${value_at(world_variant['cdf'], fraction):,.0f}")
     print(f"Countries published: {len(country_variants)}")
     for code in ("AU", "US", "GB", "IN", "CN"):
         variant = country_variants[code]
-        print(f"  {code} {variant['year']}: median ${value_at(variant['cdf'], 0.5):,.0f} PPP, adults {variant['population']:,}")
+        print(f"  {code} {variant['year']}: median US${value_at(variant['cdf'], 0.5):,.0f}, P69 US${value_at(variant['cdf'], 0.69):,.0f}")
 
 
 def value_at(cdf, target_fraction):
