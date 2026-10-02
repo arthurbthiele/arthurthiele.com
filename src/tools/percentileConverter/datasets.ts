@@ -421,7 +421,7 @@ export const DATASETS: DatasetDefinition[] = [
     defaultValue: 60,
     rankWords: { higher: "fastest", lower: "slowest" },
     caveat:
-      "From 168,000 volunteers who took an online typing test (Dhakal et al., CHI 2018), so a self-selected, keyboard-keen crowd, about two-thirds American. The curve matches the paper's published mean (51.6 WPM), spread and skew; typists of 120+ WPM do exist in it.",
+      "Not a random sample. These are 168,000 volunteers who chose to take an online typing test (Dhakal et al., CHI 2018), likely faster than the population at large and about two-thirds American. No population-wide measurement of typing speed seems to exist. The curve matches the paper's published mean (51.6 WPM), spread and skew; typists of 120+ WPM do exist in it.",
     load: loadTypingSpeed
   },
   {
@@ -430,7 +430,8 @@ export const DATASETS: DatasetDefinition[] = [
     unit: { decimals: 0 },
     defaultValue: 1500,
     rankWords: { higher: "highest-rated", lower: "lowest-rated" },
-    caveat: "Recently active Lichess players only, which is a self-selected, keen crowd rather than everyone who plays chess.",
+    caveat:
+      "Not a random sample. These are Lichess players who played at least two rated blitz games that week: a self-selected, keen crowd rather than everyone who plays chess, let alone everyone.",
     load: loadLichessRating
   },
   {
