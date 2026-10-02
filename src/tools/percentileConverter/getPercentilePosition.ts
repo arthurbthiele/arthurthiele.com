@@ -1,4 +1,11 @@
-import type { CumulativePoint, DataEdge, Distribution, NormalDistribution, PercentilePosition } from "./percentileTypes";
+import type {
+  CumulativePoint,
+  DataEdge,
+  Distribution,
+  LogNormalDistribution,
+  NormalDistribution,
+  PercentilePosition
+} from "./percentileTypes";
 import { standardNormalTails } from "./standardNormalTails";
 
 const EXTREME_TAIL_FRACTION = 1e-6;
@@ -10,6 +17,7 @@ interface PercentileLookup {
 
 export function getPercentilePosition(distribution: Distribution, value: number): PercentileLookup {
   if (distribution.kind === "normal") return getNormalPercentilePosition(distribution, value);
+  if (distribution.kind === "logNormal") return getLogNormalPercentilePosition(distribution, value);
   return getEmpiricalPercentilePosition(distribution.cumulativePoints, value);
 }
 
@@ -18,7 +26,16 @@ export function getPercentilePosition(distribution: Distribution, value: number)
  * like "1 cm" would otherwise produce a 1-in-10¹¹⁸ position and a negative height on the other side.
  */
 function getNormalPercentilePosition(distribution: NormalDistribution, value: number): PercentileLookup {
-  const position = standardNormalTails((value - distribution.mean) / distribution.standardDeviation);
+  return clampExtremeTails(standardNormalTails((value - distribution.mean) / distribution.standardDeviation));
+}
+
+/** ln(value) is normal, so the z-score is taken on the log; zero and negative values sit below all of the data. */
+function getLogNormalPercentilePosition(distribution: LogNormalDistribution, value: number): PercentileLookup {
+  if (value <= 0) return { position: positionFromFractionBelow(0), clampedAt: "belowData" };
+  return clampExtremeTails(standardNormalTails((Math.log(value) - distribution.logMean) / distribution.logStandardDeviation));
+}
+
+function clampExtremeTails(position: PercentilePosition): PercentileLookup {
   if (position.fractionAbove < EXTREME_TAIL_FRACTION) return { position: positionFromFractionBelow(1), clampedAt: "aboveData" };
   if (position.fractionBelow < EXTREME_TAIL_FRACTION) return { position: positionFromFractionBelow(0), clampedAt: "belowData" };
   return { position };

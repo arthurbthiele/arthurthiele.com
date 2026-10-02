@@ -2,14 +2,20 @@
 # requires-python = ">=3.11"
 # dependencies = ["openpyxl"]
 # ///
-"""Builds the two height datasets: Australian adults today, and height at 18 by birth year.
+"""Builds the body-measurement datasets: Australian adult height and weight today, and height at 18 by birth year.
 
-No Australian source publishes the spread of adult height, only means/medians. We take the
-mean from the ABS (or NCD-RisC for birth cohorts) and borrow the standard deviation from the
-measured US NHANES 2015–2018 percentile table, whose means are within half a centimetre of the
-Australian ones. The SD is recovered from three symmetric percentile spreads of a normal
-distribution: P95 − P5 = 2 × 1.6449σ, P90 − P10 = 2 × 1.2816σ, P75 − P25 = 2 × 0.6745σ.
+No Australian source publishes the spread of adult height or weight, only means. We take the mean from the ABS
+(or NCD-RisC for birth cohorts) and borrow the spread from the measured US NHANES 2015–2018 percentile tables.
+
+Height is close to normal, so its SD is recovered from three symmetric percentile spreads of a normal distribution:
+P95 − P5 = 2 × 1.6449σ, P90 − P10 = 2 × 1.2816σ, P75 − P25 = 2 × 0.6745σ.
+
+Weight is right-skewed and close to lognormal (ln(weight) is normal), so the same three spreads are taken on
+ln(weight) to get σ of the log. The log-mean μ is then set so the distribution's mean matches the ABS mean, using
+mean = exp(μ + σ²/2), i.e. μ = ln(mean) − σ²/2. NHANES's three log spreads agree to within 0.005, so the shape fits.
 """
+
+import math
 
 import csv
 import io
@@ -32,12 +38,24 @@ DOWNLOAD_TIMEOUT_SECONDS = 30
 
 ABS_ADULT_COLUMN_HEADER = "Total 18 years and over"
 ABS_MEAN_HEIGHT_ROW_LABEL = "Average measured height (cm)"
+ABS_MEAN_WEIGHT_ROW_LABEL = "Average measured weight (kg)"
+ABS_ADULT_COUNT_ROW_LABEL_BY_SEX = {
+    "male": "Total males aged 18 years and over",
+    "female": "Total females aged 18 years and over"
+}
+ABS_COUNTS_IN_THOUSANDS = 1000
 
 # Fryar et al. 2021, Vital Health Stat 3(46), Tables 9 and 11, "All race and Hispanic-origin groups, 20 and over".
 # Transcribed by hand because the CDC CDN refuses scripted downloads.
 NHANES_ADULT_HEIGHT_PERCENTILES_CM = {
     "male": {5: 162.8, 10: 165.8, 25: 170.1, 75: 180.2, 90: 184.7, 95: 187.4},
     "female": {5: 149.8, 10: 152.5, 25: 156.4, 75: 166.0, 90: 170.2, 95: 172.5}
+}
+
+# Fryar et al. 2021, Tables 3 and 5, "All race and Hispanic-origin groups, 20 and over", kilograms.
+NHANES_ADULT_WEIGHT_PERCENTILES_KG = {
+    "male": {5: 61.7, 10: 66.6, 25: 75.3, 75: 101.9, 90: 119.4, 95: 130.3},
+    "female": {5: 49.8, 10: 53.9, 25: 62.2, 75: 88.6, 90: 105.3, 95: 119.6}
 }
 
 STANDARD_NORMAL_QUANTILE_BY_UPPER_PERCENTILE = {95: 1.6449, 90: 1.2816, 75: 0.6745}
@@ -50,28 +68,44 @@ def main():
         sex: estimate_standard_deviation(percentiles) for sex, percentiles in NHANES_ADULT_HEIGHT_PERCENTILES_CM.items()
     }
     print("NHANES-derived SD (cm):", standard_deviation_by_sex)
-    write_australian_height(standard_deviation_by_sex)
+    abs_adults = read_abs_adults()
+    write_australian_height(abs_adults, standard_deviation_by_sex)
+    write_australian_weight(abs_adults)
     write_height_by_birth_year(standard_deviation_by_sex)
 
 
-def estimate_standard_deviation(percentiles):
+def estimate_standard_deviation(percentiles, transform=lambda value: value, decimals=2):
     estimates = [
-        (percentiles[upper] - percentiles[100 - upper]) / (2 * quantile)
+        (transform(percentiles[upper]) - transform(percentiles[100 - upper])) / (2 * quantile)
         for upper, quantile in STANDARD_NORMAL_QUANTILE_BY_UPPER_PERCENTILE.items()
     ]
-    return round(sum(estimates) / len(estimates), 2)
+    return round(sum(estimates) / len(estimates), decimals)
 
 
-def write_australian_height(standard_deviation_by_sex):
+def read_abs_adults():
+    """Mean height, mean weight and headcount of adults (18+) by sex, from ABS NHS 2022 Table 8.1. The sheet lists
+    persons, then males, then females, so the second and third matching rows of each measure are male and female."""
     workbook = openpyxl.load_workbook(download_cached(ABS_HEIGHT_URL, "NHSDC08.xlsx"), read_only=True)
-    estimates_sheet = workbook.worksheets[1]
-    rows = list(estimates_sheet.iter_rows(values_only=True))
+    rows = list(workbook.worksheets[1].iter_rows(values_only=True))
     header_row = next(row for row in rows if ABS_ADULT_COLUMN_HEADER in row)
     adult_column_index = header_row.index(ABS_ADULT_COLUMN_HEADER)
-    mean_height_rows = [row for row in rows if row[0] == ABS_MEAN_HEIGHT_ROW_LABEL]
-    persons_row, male_row, female_row = mean_height_rows
-    mean_by_sex = {"male": male_row[adult_column_index], "female": female_row[adult_column_index]}
 
+    def adult_values(row_label):
+        _, male_row, female_row = [row for row in rows if row[0] == row_label]
+        return {"male": male_row[adult_column_index], "female": female_row[adult_column_index]}
+
+    population_by_sex = {
+        sex: round(next(row for row in rows if row[0] == row_label)[adult_column_index] * ABS_COUNTS_IN_THOUSANDS)
+        for sex, row_label in ABS_ADULT_COUNT_ROW_LABEL_BY_SEX.items()
+    }
+    return {
+        "meanHeightBySex": adult_values(ABS_MEAN_HEIGHT_ROW_LABEL),
+        "meanWeightBySex": adult_values(ABS_MEAN_WEIGHT_ROW_LABEL),
+        "populationBySex": population_by_sex
+    }
+
+
+def write_australian_height(abs_adults, standard_deviation_by_sex):
     output = {
         "source": {
             "name": "ABS National Health Survey 2022 (Table 8, mean measured height, adults 18+); spread from NHANES 2015–2018 (Fryar et al. 2021)",
@@ -79,11 +113,39 @@ def write_australian_height(standard_deviation_by_sex):
             "licence": "CC BY 4.0"
         },
         "variants": {
-            sex: {"mean": mean_by_sex[sex], "standardDeviation": standard_deviation_by_sex[sex]} for sex in mean_by_sex
+            sex: {
+                "mean": mean,
+                "standardDeviation": standard_deviation_by_sex[sex],
+                "population": abs_adults["populationBySex"][sex]
+            }
+            for sex, mean in abs_adults["meanHeightBySex"].items()
         }
     }
     write_json("australianHeight.json", output)
-    print("ABS adult means (cm):", mean_by_sex)
+    print("ABS adult means (cm):", abs_adults["meanHeightBySex"], "adults:", abs_adults["populationBySex"])
+
+
+def write_australian_weight(abs_adults):
+    variants = {}
+    for sex, mean in abs_adults["meanWeightBySex"].items():
+        log_standard_deviation = estimate_standard_deviation(NHANES_ADULT_WEIGHT_PERCENTILES_KG[sex], math.log, 4)
+        log_mean = math.log(mean) - log_standard_deviation**2 / 2
+        variants[sex] = {
+            "logMean": round(log_mean, 4),
+            "logStandardDeviation": log_standard_deviation,
+            "population": abs_adults["populationBySex"][sex]
+        }
+    output = {
+        "source": {
+            "name": "ABS National Health Survey 2022 (Table 8, mean measured weight, adults 18+); shape from NHANES 2015–2018 (Fryar et al. 2021)",
+            "url": ABS_HEIGHT_URL,
+            "licence": "CC BY 4.0"
+        },
+        "variants": variants
+    }
+    write_json("australianWeight.json", output)
+    medians = {sex: round(math.exp(variant["logMean"]), 1) for sex, variant in variants.items()}
+    print("ABS adult mean weights (kg):", abs_adults["meanWeightBySex"], "lognormal medians:", medians, variants)
 
 
 def write_height_by_birth_year(standard_deviation_by_sex):

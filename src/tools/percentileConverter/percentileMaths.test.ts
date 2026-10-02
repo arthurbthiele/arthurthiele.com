@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { describeRank } from "./describeRank";
 import { getPercentilePosition } from "./getPercentilePosition";
 import { getValueAtPosition } from "./getValueAtPosition";
 import { inverseStandardNormal } from "./inverseStandardNormal";
-import type { EmpiricalDistribution, NormalDistribution } from "./percentileTypes";
+import type { EmpiricalDistribution, LogNormalDistribution, NormalDistribution } from "./percentileTypes";
 import { standardNormalTails } from "./standardNormalTails";
 
 const ERFC_RELATIVE_TOLERANCE = 2e-7;
@@ -61,6 +62,48 @@ describe("normal round trip", () => {
   it("maps a man to the same z-score as a woman", () => {
     const { position } = getPercentilePosition(australianMen, 174.8 + 2 * 7.45);
     expect(getValueAtPosition(australianWomen, position).value).toBeCloseTo(161.5 + 2 * 6.97, 4);
+  });
+});
+
+describe("lognormal distributions", () => {
+  // Australian men's weight: Python's statistics.NormalDist gives P90 = 113.21 kg and 76.84% below 100 kg.
+  const australianMensWeight: LogNormalDistribution = { kind: "logNormal", logMean: 4.4391, logStandardDeviation: 0.2264 };
+
+  it("matches reference quantiles", () => {
+    expect(getValueAtPosition(australianMensWeight, { fractionBelow: 0.9, fractionAbove: 0.1 }).value).toBeCloseTo(113.21, 1);
+    expect(getPercentilePosition(australianMensWeight, 100).position.fractionBelow).toBeCloseTo(0.7684, 3);
+  });
+
+  it("puts non-positive values below the data", () => {
+    expect(getPercentilePosition(australianMensWeight, 0).clampedAt).toBe("belowData");
+  });
+});
+
+describe("describeRank", () => {
+  const heightWords = { higher: "tallest", lower: "shortest" };
+
+  it("counts from the top in the upper half", () => {
+    expect(describeRank({ fractionBelow: 0.76, fractionAbove: 0.24 }, 9_712_900, heightWords)).toBe(
+      "about the 2,300,000th tallest of 9.7 million"
+    );
+  });
+
+  it("counts from the bottom in the lower half", () => {
+    expect(describeRank({ fractionBelow: 0.0012, fractionAbove: 0.9988 }, 700_358, heightWords)).toBe(
+      "about the 840th shortest of 700,000"
+    );
+  });
+
+  it("rounds small ranks to whole people", () => {
+    expect(describeRank({ fractionBelow: 1 - 1e-6, fractionAbove: 1e-6 }, 9_712_900, heightWords)).toBe(
+      "about the 10th tallest of 9.7 million"
+    );
+  });
+
+  it("calls a rank of one the tallest", () => {
+    expect(describeRank({ fractionBelow: 1 - 1e-9, fractionAbove: 1e-9 }, 9_712_900, heightWords)).toBe(
+      "about the tallest of 9.7 million"
+    );
   });
 });
 

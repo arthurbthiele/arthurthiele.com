@@ -8,6 +8,7 @@ export interface EmpiricalDatasetFile {
 interface EmpiricalVariant {
   label?: string;
   year?: number;
+  population?: number;
   cdf: number[][];
 }
 
@@ -46,7 +47,8 @@ export function createEmpiricalDataset({
     describePopulation: (selection) => {
       const variantId = getVariantId(selection);
       return describePopulation(variantId, labelByVariantId.get(variantId) ?? variantId, file.variants[variantId]);
-    }
+    },
+    findPopulationSize: (selection) => file.variants[getVariantId(selection)]?.population
   };
 }
 

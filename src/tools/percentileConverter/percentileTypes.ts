@@ -4,6 +4,12 @@ export interface NormalDistribution {
   standardDeviation: number;
 }
 
+export interface LogNormalDistribution {
+  kind: "logNormal";
+  logMean: number;
+  logStandardDeviation: number;
+}
+
 export interface EmpiricalDistribution {
   kind: "empirical";
   cumulativePoints: CumulativePoint[];
@@ -11,7 +17,7 @@ export interface EmpiricalDistribution {
 
 export type CumulativePoint = [value: number, fractionAtOrBelow: number];
 
-export type Distribution = NormalDistribution | EmpiricalDistribution;
+export type Distribution = NormalDistribution | LogNormalDistribution | EmpiricalDistribution;
 
 export interface PercentilePosition {
   fractionBelow: number;
@@ -53,6 +59,12 @@ export interface LoadedDataset {
   source: DatasetSource;
   getDistribution: (selection: ParameterSelection) => Distribution;
   describePopulation: (selection: ParameterSelection) => string;
+  findPopulationSize: (selection: ParameterSelection) => number | undefined;
+}
+
+export interface RankWords {
+  higher: string;
+  lower: string;
 }
 
 export interface DatasetDefinition {
@@ -61,6 +73,7 @@ export interface DatasetDefinition {
   unit: UnitFormat;
   defaultValue: number;
   chartAxis?: ChartAxis;
+  rankWords?: RankWords;
   caveat?: string;
   load: () => Promise<LoadedDataset>;
 }

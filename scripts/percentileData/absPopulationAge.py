@@ -68,9 +68,9 @@ def main():
             "licence": "CC BY 4.0"
         },
         "variants": {
-            "persons": {"label": "Australian population, persons", "cdf": build_cdf(persons)},
-            "male": {"label": "Australian population, male", "cdf": build_cdf(male)},
-            "female": {"label": "Australian population, female", "cdf": build_cdf(female)}
+            "persons": {"label": "Australian population, persons", "population": sum(persons), "cdf": build_cdf(persons)},
+            "male": {"label": "Australian population, male", "population": sum(male), "cdf": build_cdf(male)},
+            "female": {"label": "Australian population, female", "population": sum(female), "cdf": build_cdf(female)}
         }
     }
     write_json("absPopulationAge.json", output)

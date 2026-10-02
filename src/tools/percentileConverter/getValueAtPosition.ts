@@ -10,6 +10,9 @@ export function getValueAtPosition(distribution: Distribution, position: Percent
   if (distribution.kind === "normal") {
     return { value: distribution.mean + distribution.standardDeviation * inverseStandardNormal(position) };
   }
+  if (distribution.kind === "logNormal") {
+    return { value: Math.exp(distribution.logMean + distribution.logStandardDeviation * inverseStandardNormal(position)) };
+  }
   return getEmpiricalValue(distribution.cumulativePoints, position.fractionBelow);
 }
 

@@ -16,7 +16,7 @@ const DEFAULT_COHORT_BIRTH_YEAR = 1900;
 
 async function loadAustralianHeight(): Promise<LoadedDataset> {
   const { default: file } = await import("./data/australianHeight.json");
-  const variants: Record<string, { mean: number; standardDeviation: number }> = file.variants;
+  const variants: Record<string, { mean: number; standardDeviation: number; population: number }> = file.variants;
   const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
   return {
     source: file.source,
@@ -24,9 +24,27 @@ async function loadAustralianHeight(): Promise<LoadedDataset> {
     getDistribution: (selection) => {
       const variant = variants[getSex(selection)];
       if (variant == null) throw new Error(`No height data for sex "${getSex(selection)}"`);
-      return { kind: "normal", ...variant };
+      return { kind: "normal", mean: variant.mean, standardDeviation: variant.standardDeviation };
     },
-    describePopulation: (selection) => `Australian ${PLURAL_NOUN_BY_SEX[getSex(selection)]} (adults, 2022)`
+    describePopulation: (selection) => `Australian ${PLURAL_NOUN_BY_SEX[getSex(selection)]} (adults, 2022)`,
+    findPopulationSize: (selection) => variants[getSex(selection)]?.population
+  };
+}
+
+async function loadAustralianWeight(): Promise<LoadedDataset> {
+  const { default: file } = await import("./data/australianWeight.json");
+  const variants: Record<string, { logMean: number; logStandardDeviation: number; population: number }> = file.variants;
+  const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
+  return {
+    source: file.source,
+    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: "male" }],
+    getDistribution: (selection) => {
+      const variant = variants[getSex(selection)];
+      if (variant == null) throw new Error(`No weight data for sex "${getSex(selection)}"`);
+      return { kind: "logNormal", logMean: variant.logMean, logStandardDeviation: variant.logStandardDeviation };
+    },
+    describePopulation: (selection) => `Australian ${PLURAL_NOUN_BY_SEX[getSex(selection)]} (adults, 2022)`,
+    findPopulationSize: (selection) => variants[getSex(selection)]?.population
   };
 }
 
@@ -71,8 +89,21 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
     describePopulation: (selection) => {
       const { countryId, sex, birthYear } = getSelection(selection);
       return `${PLURAL_NOUN_BY_SEX[sex]} born in ${countries[countryId]?.label ?? countryId} in ${birthYear} (height at 18)`;
-    }
+    },
+    findPopulationSize: () => undefined
   };
+}
+
+async function loadAustralianLifespan() {
+  const { default: file } = await import("./data/australianLifespan.json");
+  return createEmpiricalDataset({
+    file,
+    parameterId: "sex",
+    parameterLabel: "Sex",
+    defaultVariantId: "male",
+    orderedVariantOptions: SEX_OPTIONS,
+    describePopulation: (variantId) => `Australian ${PLURAL_NOUN_BY_SEX[variantId]} (age at death, at 2022–24 death rates)`
+  });
 }
 
 async function loadAustralianTaxableIncome() {
@@ -133,6 +164,7 @@ export const DATASETS: DatasetDefinition[] = [
     label: "Height (Australia, today)",
     unit: { suffix: " cm", decimals: 1 },
     defaultValue: 180,
+    rankWords: { higher: "tallest", lower: "shortest" },
     caveat: HEIGHT_SPREAD_CAVEAT,
     load: loadAustralianHeight
   },
@@ -145,11 +177,31 @@ export const DATASETS: DatasetDefinition[] = [
     load: loadHeightByBirthYear
   },
   {
+    id: "weight",
+    label: "Weight (Australia, today)",
+    unit: { suffix: " kg", decimals: 1 },
+    defaultValue: 80,
+    rankWords: { higher: "heaviest", lower: "lightest" },
+    caveat:
+      "Averages are the ABS's measured 2022 figures. The shape of the distribution, which is skewed towards heavier weights, is borrowed from measured US data (NHANES 2015–2018) and modelled as lognormal.",
+    load: loadAustralianWeight
+  },
+  {
+    id: "lifespan",
+    label: "Lifespan (Australia)",
+    unit: { suffix: " years", decimals: 1 },
+    defaultValue: 85,
+    caveat:
+      "From the ABS life table: the ages at which a group born today would die if 2022–24 death rates held for their whole lives. Death rates keep falling, so real lifespans will probably be longer. The table stops at 100.",
+    load: loadAustralianLifespan
+  },
+  {
     id: "taxableIncome",
     label: "Taxable income (Australia)",
     unit: { prefix: "A$", decimals: 0 },
     defaultValue: 80_000,
     chartAxis: "logarithmic",
+    rankWords: { higher: "highest-earning", lower: "lowest-earning" },
     caveat:
       "Covers people who lodged a tax return with taxable income, not every Australian, so the bottom of the distribution is missing. The ATO's top band is open-ended above A$429,530, so anything higher is treated as the top band.",
     load: loadAustralianTaxableIncome
@@ -160,6 +212,7 @@ export const DATASETS: DatasetDefinition[] = [
     unit: { prefix: "$", suffix: " / year", decimals: 0 },
     defaultValue: 30_000,
     chartAxis: "logarithmic",
+    rankWords: { higher: "highest-income", lower: "lowest-income" },
     caveat:
       "Household income or consumption per person, in 2021 international dollars (adjusted for local prices). Some countries measure consumption rather than income, as the World Bank does.",
     load: loadWorldIncome
@@ -169,6 +222,7 @@ export const DATASETS: DatasetDefinition[] = [
     label: "Chess rating (Lichess blitz)",
     unit: { decimals: 0 },
     defaultValue: 1500,
+    rankWords: { higher: "highest-rated", lower: "lowest-rated" },
     caveat: "Recently active Lichess players only, which is a self-selected, keen crowd rather than everyone who plays chess.",
     load: loadLichessRating
   },
@@ -177,6 +231,7 @@ export const DATASETS: DatasetDefinition[] = [
     label: "Age (Australia)",
     unit: { suffix: " years", decimals: 1 },
     defaultValue: 30,
+    rankWords: { higher: "oldest", lower: "youngest" },
     load: loadAustralianAge
   }
 ];

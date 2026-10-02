@@ -1,5 +1,6 @@
 import { DATASETS } from "./datasets";
 import { describePosition } from "./describePosition";
+import { describeRank } from "./describeRank";
 import { formatBoundedValue } from "./formatBoundedValue";
 import { formatValue } from "./formatValue";
 import { getPercentilePosition } from "./getPercentilePosition";
@@ -416,10 +417,24 @@ function renderExplanation({
   const outputText = formatBoundedValue(conversion.outputValue, toDefinition.unit, conversion.outputBound);
   const inputPositionText = describePosition(conversion.inputPosition, conversion.inputClampedAt);
   const outputPositionText = describePosition(conversion.outputPosition, conversion.outputPositionClampedAt);
-  const inputSentence = `${inputText} puts you in ${inputPositionText} among ${fromPopulation}.`;
+  const inputRank = findRankSuffix({
+    dataset: fromDataset,
+    definition: fromDefinition,
+    selection: state.from.selection,
+    position: conversion.inputPosition,
+    isClamped: conversion.inputClampedAt != null
+  });
+  const outputRank = findRankSuffix({
+    dataset: toDataset,
+    definition: toDefinition,
+    selection: state.to.selection,
+    position: conversion.outputPosition,
+    isClamped: conversion.outputBound != null
+  });
+  const inputSentence = `${inputText} puts you in ${inputPositionText} among ${fromPopulation}${inputRank}.`;
   const outputSentence = state.flipped
-    ? `Flipped, that's ${outputPositionText}, which among ${toPopulation} is ${outputText}.`
-    : `The same position among ${toPopulation} is ${outputText}.`;
+    ? `Flipped, that's ${outputPositionText}, which among ${toPopulation} is ${outputText}${outputRank}.`
+    : `The same position among ${toPopulation} is ${outputText}${outputRank}.`;
   elements.explanation.textContent = `${inputSentence} ${outputSentence}`;
 
   const warnings = [
@@ -433,6 +448,21 @@ function renderExplanation({
       return item;
     })
   );
+}
+
+interface RankSuffixParams {
+  dataset: LoadedDataset;
+  definition: DatasetDefinition;
+  selection: ParameterSelection;
+  position: PercentilePosition;
+  isClamped: boolean;
+}
+
+/** Ranks are skipped past the edge of the data, where "the 1st tallest" would overstate what we know. */
+function findRankSuffix({ dataset, definition, selection, position, isClamped }: RankSuffixParams) {
+  const populationSize = dataset.findPopulationSize(selection);
+  if (isClamped || populationSize == null || definition.rankWords == null) return "";
+  return `: ${describeRank(position, populationSize, definition.rankWords)}`;
 }
 
 function describeInputClamp(inputText: string) {

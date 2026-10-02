@@ -2,7 +2,8 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""Builds the Lichess rating distribution dataset (bullet, blitz, rapid, classical).
+"""Builds the Lichess blitz rating distribution dataset. (Other time controls work the same way; the site only
+shows blitz, the one most people mean by "my chess rating".)
 
 Each `/stat/rating/distribution/<perf>` page embeds a 97-element histogram as JSON in a
 `<script id="page-init-data">` tag: `{"freq": [...], "myRating": null, "otherRating": null,
@@ -55,10 +56,7 @@ RATING_DISTRIBUTION_GROUP_WIDTH = 25
 
 # id -> (lila PerfKey, display label, prose noun used in "<N> <noun> players this week")
 TIME_CONTROLS = {
-    "bullet": ("bullet", "Lichess bullet rating", "Bullet"),
-    "blitz": ("blitz", "Lichess blitz rating", "Blitz"),
-    "rapid": ("rapid", "Lichess rapid rating", "Rapid"),
-    "classical": ("classical", "Lichess classical rating", "Classical")
+    "blitz": ("blitz", "Lichess blitz rating", "Blitz")
 }
 
 BROWSER_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
@@ -74,7 +72,7 @@ def main():
         html = download_cached(url, f"lichess_{perf}.html").read_text()
         freq = parse_freq(html)
         assert_matches_stated_player_count(html, freq, prose_noun)
-        variants[variant_id] = {"label": label, "cdf": build_cdf(freq)}
+        variants[variant_id] = {"label": label, "population": sum(freq), "cdf": build_cdf(freq)}
         print(f"{perf}: {len(freq)} bins, {sum(freq)} weekly players")
 
     output = {

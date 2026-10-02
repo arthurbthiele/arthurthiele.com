@@ -29,5 +29,5 @@ Each dataset has a build script in `scripts/percentileData/` (run with `uv run s
 that downloads its source into `scripts/percentileData/.cache/` and writes JSON to
 `src/tools/percentileConverter/data/`. Sources, licences and caveats are shown on the tool page under "About the data".
 
-- The NCD-RisC server drops connections mid-download; `height.py` resumes and validates the file.
-- The CDC CDN blocks scripted downloads, so the NHANES percentiles in `height.py` are transcribed by hand.
+- The NCD-RisC server drops connections mid-download; `bodyMeasurements.py` resumes and validates the file.
+- The CDC CDN blocks scripted downloads, so the NHANES percentiles in `bodyMeasurements.py` are transcribed by hand.

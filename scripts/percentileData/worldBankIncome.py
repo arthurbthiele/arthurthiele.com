@@ -191,6 +191,7 @@ def build_country_variant(choice: CountryChoice, label: str) -> dict:
         "label": label,
         "year": choice.year,
         "welfareType": choice.welfare_type,
+        "population": round(choice.bins["pop"].sum()),
         "cdf": cdf,
     }
 
@@ -203,8 +204,7 @@ def quantile_bins_to_cdf(bins: pd.DataFrame) -> list[list[float]]:
     bins = fill_open_ended_top_bin(bins)
     total_pop = bins["pop"].sum()
     sorted_bins = bins.sort_values("quantile")
-    cumulative_pop = sorted_bins["pop"].cumsum()
-    fractions = cumulative_pop / total_pop
+    fractions = cumulative_fractions(sorted_bins, total_pop)
     values = (sorted_bins["quantile"] * DAYS_PER_YEAR).map(round_sensibly)
     return dedupe_cdf_keeping_highest_fraction(values.tolist(), fractions.tolist())
 
@@ -212,13 +212,23 @@ def quantile_bins_to_cdf(bins: pd.DataFrame) -> list[list[float]]:
 def fill_open_ended_top_bin(bins: pd.DataFrame) -> pd.DataFrame:
     """PIP's 100th percentile bin has no finite upper threshold (`quantile` is NaN --
     the richest 1% is unbounded above). We use that bin's reported average welfare
-    (`avg_welfare`, always populated) as its CDF value instead, anchored at the bin's
-    true cumulative population fraction. This is the only bin where we fall back to an
-    average rather than a threshold."""
+    (`avg_welfare`, always populated) as its CDF value instead. The average sits inside
+    the bin, not at its top, so cumulative_fractions places it halfway through the bin's
+    population (the 99.5th percentile for a single country) rather than at 100%."""
     bins = bins.copy()
     open_ended = bins["quantile"].isna()
+    bins["open_ended"] = open_ended
     bins.loc[open_ended, "quantile"] = bins.loc[open_ended, "avg_welfare"]
     return bins
+
+
+def cumulative_fractions(sorted_bins: pd.DataFrame, total_pop: float) -> pd.Series:
+    """Each threshold bin contributes its whole population at its upper threshold; an
+    open-ended bin's average stands for its middle, so only half its population is
+    counted by that point."""
+    cumulative_pop = sorted_bins["pop"].cumsum()
+    half_of_open_ended_pop = sorted_bins["pop"].where(sorted_bins["open_ended"], 0) / 2
+    return (cumulative_pop - half_of_open_ended_pop) / total_pop
 
 
 def round_sensibly(value: float) -> int:
@@ -260,8 +270,7 @@ def build_world_variant(country_choices: dict[str, CountryChoice]) -> dict:
     representative_year = round(weighted_year_sum / total_pop)
 
     sorted_bins = all_bins.sort_values("quantile")
-    cumulative_pop = sorted_bins["pop"].cumsum()
-    fractions = cumulative_pop / total_pop
+    fractions = cumulative_fractions(sorted_bins, total_pop)
     values = (sorted_bins["quantile"] * DAYS_PER_YEAR).map(round_sensibly)
 
     full_cdf = dedupe_cdf_keeping_highest_fraction(values.tolist(), fractions.tolist())
@@ -271,6 +280,7 @@ def build_world_variant(country_choices: dict[str, CountryChoice]) -> dict:
         "label": "World",
         "year": representative_year,
         "welfareType": "mixed",
+        "population": round(total_pop),
         "cdf": downsampled_cdf,
     }
 

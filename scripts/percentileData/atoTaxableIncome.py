@@ -66,7 +66,11 @@ def main():
             "licence": "CC BY 4.0"
         },
         "variants": {
-            variant: {"cdf": build_cdf(counts_by_percentile, sexes)} for variant, sexes in VARIANT_SEXES.items()
+            variant: {
+                "population": count_individuals(counts_by_percentile, sexes),
+                "cdf": build_cdf(counts_by_percentile, sexes)
+            }
+            for variant, sexes in VARIANT_SEXES.items()
         }
     }
     write_json("atoTaxableIncome.json", output)
@@ -90,10 +94,12 @@ def read_percentile_sex_counts(xlsx_path):
     return counts_by_percentile
 
 
+def count_individuals(counts_by_percentile, sexes):
+    return sum(counts_by_percentile[percentile][sex] for percentile in counts_by_percentile for sex in sexes)
+
+
 def build_cdf(counts_by_percentile, sexes):
-    total_individuals = sum(
-        counts_by_percentile[percentile][sex] for percentile in counts_by_percentile for sex in sexes
-    )
+    total_individuals = count_individuals(counts_by_percentile, sexes)
     cumulative_individuals = 0
     cdf = []
     for percentile in sorted(counts_by_percentile):
