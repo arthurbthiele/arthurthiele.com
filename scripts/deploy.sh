@@ -15,10 +15,19 @@ if [[ -n "$uncommitted_changes" ]]; then
   echo
 fi
 
+run_quietly() {
+  local step_output
+  if ! step_output=$("$@" 2>&1); then
+    echo "$step_output"
+    echo "Failed: $*" >&2
+    exit 1
+  fi
+}
+
 echo "== Typecheck, tests, build"
-yarn -s typecheck
-yarn -s test
-yarn -s build
+run_quietly yarn -s typecheck
+run_quietly yarn -s test
+run_quietly yarn -s build
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 git fetch -q origin main
