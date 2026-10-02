@@ -555,10 +555,10 @@ function renderSources({ fromDataset, toDataset, fromDefinition, toDefinition, e
       link.textContent = dataset.source.name;
       sourceLine.append("Source: ", link, ` (${dataset.source.licence})`);
       section.append(heading, sourceLine);
-      if (definition.caveat != null) {
-        const caveat = document.createElement("p");
-        caveat.textContent = definition.caveat;
-        section.append(caveat);
+      for (const paragraphText of definition.caveat?.split("\n\n") ?? []) {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = paragraphText;
+        section.append(paragraph);
       }
       return section;
     })
