@@ -17,7 +17,7 @@ const SEX_OPTIONS = [
 ];
 
 const EVERYONE = "everyone";
-const SEX_OPTIONS_WITH_EVERYONE = [...SEX_OPTIONS, { id: EVERYONE, label: "Everyone" }];
+const SEX_OPTIONS_WITH_EVERYONE = [{ id: EVERYONE, label: "Everyone" }, ...SEX_OPTIONS];
 const PLURAL_NOUN_BY_SEX: Record<string, string> = { male: "men", female: "women" };
 const EQUAL_SPLIT_MALE_SHARE = 0.5;
 // About 105 boys are born per 100 girls, and a life table follows a cohort from birth.
@@ -80,10 +80,10 @@ interface AustralianAdultsDatasetParams {
 /** Men, women, or everyone pooled in proportion to the ABS headcount of each. */
 function createAustralianAdultsDataset({ source, populationBySex, getSexDistribution }: AustralianAdultsDatasetParams): LoadedDataset {
   const totalPopulation = populationBySex.male + populationBySex.female;
-  const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
+  const getSex = (selection: ParameterSelection) => selection.sex ?? EVERYONE;
   return {
     source,
-    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" }],
+    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: EVERYONE }],
     getDistribution: (selection) => {
       const sex = getSex(selection);
       if (sex !== EVERYONE) return getSexDistribution(sex);
@@ -126,7 +126,7 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
       options: Object.entries(countries).map(([countryId, { label }]) => ({ id: countryId, label })),
       defaultOptionId: DEFAULT_COHORT_COUNTRY_ID
     },
-    { id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" },
+    { id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: EVERYONE },
     {
       id: "birthYear",
       label: "Born in",
@@ -136,7 +136,7 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
   ];
   const getSelection = (selection: ParameterSelection) => ({
     countryId: selection.country ?? DEFAULT_COHORT_COUNTRY_ID,
-    sex: selection.sex ?? "male",
+    sex: selection.sex ?? EVERYONE,
     birthYear: Number(selection.birthYear ?? DEFAULT_COHORT_BIRTH_YEAR)
   });
   return {
@@ -165,7 +165,7 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
 async function loadAustralianLifespan(): Promise<LoadedDataset> {
   const { default: file } = await import("./data/australianLifespan.json");
   const variants: Record<string, { cdf: number[][] }> = file.variants;
-  const getSex = (selection: ParameterSelection) => selection.sex ?? "male";
+  const getSex = (selection: ParameterSelection) => selection.sex ?? EVERYONE;
   const getSexDistribution = (sex: string): Distribution => {
     const variant = variants[sex];
     if (variant == null) throw new Error(`No lifespan data for sex "${sex}"`);
@@ -173,7 +173,7 @@ async function loadAustralianLifespan(): Promise<LoadedDataset> {
   };
   return {
     source: file.source,
-    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: "male" }],
+    parameters: [{ id: "sex", label: "Sex", options: SEX_OPTIONS_WITH_EVERYONE, defaultOptionId: EVERYONE }],
     getDistribution: (selection) => {
       const sex = getSex(selection);
       if (sex !== EVERYONE) return getSexDistribution(sex);

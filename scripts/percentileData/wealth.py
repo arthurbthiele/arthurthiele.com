@@ -111,7 +111,9 @@ FIRST_NEW_FRANC_YEAR = 1960
 
 def build_history_variants(countries):
     """Each year's distribution in that year's own money: constant-2025 amounts times WID's price index for the year
-    (1 in 2025) give nominal amounts in today's currency, then French years get francs back from euros."""
+    (1 in 2025) give nominal amounts in today's currency, then French years get francs back from euros. Each variant
+    also records todaysMoneyPerUnit, the 2025 pounds or euros one unit of that year's money is worth, for comparing
+    years on one axis."""
     variants = {}
     for code in HISTORY_COUNTRY_CODES:
         country = countries[code]
@@ -120,6 +122,7 @@ def build_history_variants(countries):
             to_nominal = country[PRICE_INDEX_VARIABLE][year] * local_currency_per_euro
             variants[f"{code}|{year}"] = {
                 "currency": currency,
+                "todaysMoneyPerUnit": float(f"{1 / to_nominal:.6g}"),
                 "population": round(country[ADULT_POPULATION_VARIABLE][year]),
                 "cdf": to_cdf(threshold_points(country, year, 1 / to_nominal))
             }

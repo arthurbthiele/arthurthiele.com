@@ -2,9 +2,9 @@ import type { DatasetSource, Distribution, LoadedDataset, ParameterSelection } f
 
 const EVERYONE = "everyone";
 const SEX_OPTIONS = [
+  { id: EVERYONE, label: "Everyone" },
   { id: "male", label: "Men" },
-  { id: "female", label: "Women" },
-  { id: EVERYONE, label: "Everyone" }
+  { id: "female", label: "Women" }
 ];
 // These sources publish no headcount by sex and age, so "everyone" pools men and women equally.
 const EVERYONE_MALE_SHARE = 0.5;
@@ -42,7 +42,7 @@ export function createSexAndAgeDataset<Variant>({
     return { sex, ageBand, key: `${sex}|${ageBand}` };
   };
   const getKey = (selection: ParameterSelection) => {
-    const sex = selection.sex ?? "male";
+    const sex = selection.sex ?? EVERYONE;
     const requestedAgeBand = selection.age ?? defaultAgeBand;
     if (sex === EVERYONE) return { ...getKeyForSex("male", requestedAgeBand), sex };
     return getKeyForSex(sex, requestedAgeBand);
@@ -56,7 +56,7 @@ export function createSexAndAgeDataset<Variant>({
   return {
     source,
     parameters: [
-      { id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: "male" },
+      { id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: EVERYONE },
       { id: "age", label: "Age", options: allAgeBands.map((ageBand) => ({ id: ageBand, label: ageBand })), defaultOptionId: defaultAgeBand }
     ],
     getDistribution: (selection) => {
