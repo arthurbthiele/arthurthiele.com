@@ -8,6 +8,7 @@ import {
   Group,
   Line,
   LineBasicMaterial,
+  LineDashedMaterial,
   Mesh,
   MeshLambertMaterial,
   PerspectiveCamera,
@@ -41,6 +42,9 @@ const WEALTH_TICKS = [-10_000, 0, 1_000, 10_000, 100_000, 1_000_000, 10_000_000]
 const YEAR_TICK_STEP = 50;
 const INITIAL_CAMERA_POSITION = new Vector3(8, 7.5, 8.5);
 const MARKER_RADIUS = 0.09;
+// WID's British series switches method in 1995 (survey-based accounts replace a reconstruction of the lower half), which
+// shows as a sudden flattening; labelling it keeps that from reading as real history.
+const METHOD_BREAK_YEAR_BY_COUNTRY: Record<string, number> = { GB: 1995 };
 
 interface HistoryVariant {
   todaysMoneyPerUnit: number;
@@ -178,9 +182,11 @@ function buildSurface({ content, countryId, year, nominalValue }: BuildSurfacePa
   const binCentreX = (binIndex: number) => toX(fromAxis(axisLowest + (binIndex + 0.5) * axisBinWidth));
 
   content.add(createSurfaceMesh({ slices, binCentreX, toZ, toHeight }));
+  const methodBreakYear = METHOD_BREAK_YEAR_BY_COUNTRY[countryId];
   for (const slice of slices) {
     const isHighlighted = slice.year === nearestYear(slices, year);
     content.add(createRidge({ slice, binCentreX, toZ, toHeight, isHighlighted }));
+    if (slice.year === methodBreakYear && !isHighlighted) content.add(createMethodBreakRidge({ slice, binCentreX, toZ, toHeight }));
   }
 
   const highlightedSlice = slices.find((slice) => slice.year === nearestYear(slices, year));
@@ -204,6 +210,9 @@ function buildSurface({ content, countryId, year, nominalValue }: BuildSurfacePa
   content.add(
     createLabel(`net wealth per adult, 2025 ${countryId === "FR" ? "euros" : "pounds"}`, new Vector3(0, -0.6, 0.9), "history-3d__axis-title")
   );
+  if (methodBreakYear != null) {
+    content.add(createLabel(`${methodBreakYear}: method change`, new Vector3(SURFACE_WIDTH / 2 + 0.2, 1.3, toZ(methodBreakYear)), "history-3d__method-break"));
+  }
 }
 
 interface SurfaceMeshParams {
@@ -257,6 +266,13 @@ function createRidge({ slice, binCentreX, toZ, toHeight, isHighlighted }: RidgeP
     opacity: isHighlighted ? 1 : 0.18
   });
   return new Line(new BufferGeometry().setFromPoints(points), material);
+}
+
+function createMethodBreakRidge({ slice, binCentreX, toZ, toHeight }: Omit<RidgeParams, "isHighlighted">) {
+  const points = slice.densities.map((density, binIndex) => new Vector3(binCentreX(binIndex), toHeight(density) + 0.02, toZ(slice.year)));
+  const ridge = new Line(new BufferGeometry().setFromPoints(points), new LineDashedMaterial({ color: HIGHLIGHT_COLOUR, dashSize: 0.12, gapSize: 0.08 }));
+  ridge.computeLineDistances();
+  return ridge;
 }
 
 function createLabel(text: string, position: Vector3, className = "history-3d__label") {

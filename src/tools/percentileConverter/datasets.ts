@@ -415,7 +415,7 @@ export const DATASETS: DatasetDefinition[] = [
   },
   {
     id: "worldIncome",
-    label: "Income (worldwide, price-adjusted)",
+    label: "Income (international, price-adjusted)",
     unit: { prefix: "US$", suffix: " / year", decimals: 0 },
     defaultValue: 30_000,
     chartAxis: "logarithmic",
@@ -437,7 +437,7 @@ export const DATASETS: DatasetDefinition[] = [
   },
   {
     id: "wealthWorldwide",
-    label: "Net wealth (worldwide)",
+    label: "Net wealth (international, US$)",
     unit: { prefix: "US$", decimals: 0 },
     defaultValue: 100_000,
     chartAxis: "signedLogarithmic",
@@ -454,7 +454,7 @@ export const DATASETS: DatasetDefinition[] = [
     chartAxis: "signedLogarithmic",
     rankWords: { higher: "wealthiest", lower: "least wealthy" },
     caveat:
-      "Net personal wealth per adult (couples' wealth split equally) from the World Inequality Database, in each year's own money: pounds for Britain; old francs before 1960, then francs, then euros from 2002 for France. France's series back to 1800 is reconstructed from inheritance records (Garbinti, Goupille-Lebret & Piketty). Britain's rests on estate and tax records from about 1895; its earlier years (1820, 1850, 1880) are WID's modelled reconstruction, a serious academic estimate rather than a measurement. Amounts were converted to each year's money with WID's own price index.",
+      "Net personal wealth per adult (couples' wealth split equally) from the World Inequality Database, in each year's own money: pounds for Britain; old francs before 1960, then francs, then euros from 2002 for France. France's series back to 1800 is reconstructed from inheritance records (Garbinti, Goupille-Lebret & Piketty). Britain's top end rests on estate records from about 1895, and its earlier years (1820, 1850, 1880) are WID's modelled reconstruction. Britain also has a method change in 1995: from then on WID uses household-survey accounts that capture debts and people with almost nothing, while before 1995 the lower half is a smooth reconstruction in which nobody has zero or negative wealth. So pre-1995 British percentiles are more trustworthy for large fortunes than for ordinary wealth. Amounts were converted to each year's money with WID's own price index.",
     load: loadWealthHistory
   },
   {
