@@ -1,6 +1,13 @@
 import { createEmpiricalDataset } from "./createEmpiricalDataset";
 import { createSexAndAgeDataset } from "./createSexAndAgeDataset";
-import type { DatasetDefinition, DatasetParameter, LoadedDataset, ParameterSelection } from "./percentileTypes";
+import type {
+  CumulativePoint,
+  DatasetDefinition,
+  DatasetParameter,
+  LoadedDataset,
+  ParameterSelection,
+  UnitFormat
+} from "./percentileTypes";
 
 const SEX_OPTIONS = [
   { id: "male", label: "Men" },
@@ -13,6 +20,18 @@ const HEIGHT_SPREAD_CAVEAT =
   "No source publishes the spread of heights for these populations, only averages. The spread is borrowed from measured US data (NHANES 2015–2018), whose averages are within half a centimetre of Australia's, and heights are modelled as a normal distribution.";
 
 const DEFAULT_COHORT_COUNTRY_ID = "AUS";
+const HISTORY_COUNTRIES = [
+  { id: "GB", label: "Britain", adjective: "British" },
+  { id: "FR", label: "France", adjective: "French" }
+];
+const DEFAULT_HISTORY_COUNTRY_ID = "GB";
+const DEFAULT_HISTORY_YEAR = 1820;
+const UNIT_BY_HISTORICAL_CURRENCY: Record<string, UnitFormat> = {
+  pound: { prefix: "£", decimals: 0 },
+  oldFranc: { suffix: " old francs", decimals: 0 },
+  newFranc: { suffix: " francs", decimals: 0 },
+  euro: { prefix: "€", decimals: 0 }
+};
 const COUNTRY_NAMES_TAKING_THE = new Set(["United States", "United Kingdom", "Netherlands", "Czech Republic", "Philippines", "United Arab Emirates", "Gambia", "Bahamas"]);
 const DEFAULT_COHORT_BIRTH_YEAR = 1900;
 
@@ -197,6 +216,64 @@ async function loadSuperannuation() {
   });
 }
 
+interface HistoricalWealthVariant {
+  currency: string;
+  population: number;
+  cdf: number[][];
+}
+
+/**
+ * Britain and France have different sets of years, so a year chosen for one country falls back to the other
+ * country's nearest year; the description always names the year actually used.
+ */
+async function loadWealthHistory(): Promise<LoadedDataset> {
+  const { default: file } = await import("./data/wealthHistory.json");
+  const variants: Record<string, HistoricalWealthVariant> = file.variants;
+  const yearsByCountry = new Map<string, number[]>();
+  for (const key of Object.keys(variants)) {
+    const [countryId = "", year = ""] = key.split("|");
+    yearsByCountry.set(countryId, [...(yearsByCountry.get(countryId) ?? []), Number(year)]);
+  }
+  const allYears = [...new Set([...yearsByCountry.values()].flat())].sort((first, second) => first - second);
+
+  const getChoice = (selection: ParameterSelection) => {
+    const countryId = selection.country ?? DEFAULT_HISTORY_COUNTRY_ID;
+    const requestedYear = Number(selection.year ?? DEFAULT_HISTORY_YEAR);
+    const countryYears = yearsByCountry.get(countryId) ?? [];
+    const year = countryYears.reduce(
+      (closest, candidate) => (Math.abs(candidate - requestedYear) < Math.abs(closest - requestedYear) ? candidate : closest),
+      countryYears[0] ?? requestedYear
+    );
+    const variant = variants[`${countryId}|${year}`];
+    if (variant == null) throw new Error(`No wealth history for ${countryId} ${year}`);
+    return { countryId, year, variant };
+  };
+
+  return {
+    source: file.source,
+    parameters: [
+      { id: "country", label: "Country", options: HISTORY_COUNTRIES, defaultOptionId: DEFAULT_HISTORY_COUNTRY_ID },
+      {
+        id: "year",
+        label: "Year",
+        options: allYears.map((year) => ({ id: String(year), label: String(year) })),
+        defaultOptionId: String(DEFAULT_HISTORY_YEAR)
+      }
+    ],
+    getDistribution: (selection) => ({
+      kind: "empirical",
+      cumulativePoints: getChoice(selection).variant.cdf.map(([value = 0, fraction = 0]): CumulativePoint => [value, fraction])
+    }),
+    describePopulation: (selection) => {
+      const { countryId, year } = getChoice(selection);
+      const adjective = HISTORY_COUNTRIES.find(({ id }) => id === countryId)?.adjective ?? countryId;
+      return `${adjective} adults in ${year}`;
+    },
+    findPopulationSize: (selection) => getChoice(selection).variant.population,
+    findUnit: (selection) => UNIT_BY_HISTORICAL_CURRENCY[getChoice(selection).variant.currency]
+  };
+}
+
 async function loadLichessRating() {
   const { default: file } = await import("./data/lichessRating.json");
   return createEmpiricalDataset({
@@ -306,6 +383,17 @@ export const DATASETS: DatasetDefinition[] = [
     caveat:
       "Net personal wealth (housing, land, savings, shares and other assets, minus debts) per adult, with couples' shared wealth split equally, converted to US dollars at 2025 market exchange rates. Countries are those where the World Inequality Database builds wealth from country-specific research or European household surveys, plus Australia, Brazil, Canada, Indonesia, Japan, Mexico, New Zealand and South Africa, whose figures lean more on modelling. \"World\" is our own pool of 216 countries weighted by adult population.",
     load: loadWorldWealth
+  },
+  {
+    id: "wealthHistory",
+    label: "Net wealth through history (Britain, France)",
+    unit: { prefix: "£", decimals: 0 },
+    defaultValue: 1000,
+    chartAxis: "signedLogarithmic",
+    rankWords: { higher: "wealthiest", lower: "least wealthy" },
+    caveat:
+      "Net personal wealth per adult (couples' wealth split equally) from the World Inequality Database, in each year's own money: pounds for Britain; old francs before 1960, then francs, then euros from 2002 for France. France's series back to 1800 is reconstructed from inheritance records (Garbinti, Goupille-Lebret & Piketty). Britain's rests on estate and tax records from about 1895; its earlier years (1820, 1850, 1880) are WID's modelled reconstruction, a serious academic estimate rather than a measurement. Amounts were converted to each year's money with WID's own price index.",
+    load: loadWealthHistory
   },
   {
     id: "superannuation",

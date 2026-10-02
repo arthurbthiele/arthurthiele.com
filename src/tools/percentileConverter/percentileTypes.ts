@@ -62,6 +62,7 @@ export interface LoadedDataset {
   getDistribution: (selection: ParameterSelection) => Distribution;
   describePopulation: (selection: ParameterSelection) => string;
   findPopulationSize: (selection: ParameterSelection) => number | undefined;
+  findUnit?: (selection: ParameterSelection) => UnitFormat | undefined;
 }
 
 export interface RankWords {

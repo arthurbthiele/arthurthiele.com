@@ -1,5 +1,6 @@
 import { DATASETS } from "./datasets";
 import { formatBoundedValue } from "./formatBoundedValue";
+import { getUnit } from "./getUnit";
 import { getValueAtPosition } from "./getValueAtPosition";
 import type { DataEdge, LoadedDataset, ParameterSelection, PercentilePosition } from "./percentileTypes";
 
@@ -39,7 +40,7 @@ export async function renderEverythingTable({
           return {
             datasetLabel: definition.label,
             population: dataset.describePopulation(selection),
-            valueText: formatBoundedValue(lookup.value, definition.unit, bound)
+            valueText: formatBoundedValue(lookup.value, getUnit(definition, dataset, selection), bound)
           };
         });
     })

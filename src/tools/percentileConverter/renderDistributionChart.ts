@@ -11,7 +11,11 @@ const FALLBACK_CHART_HEIGHT_PX = 96;
 const NORMAL_CURVE_SAMPLE_COUNT = 160;
 const VISIBLE_TAIL_FRACTION = 0.005;
 const EMPIRICAL_DISPLAY_BIN_COUNT = 60;
-const SIGNED_LOG_LINEAR_WIDTH = 1000;
+// The signed-log axis is linear within ±(this fraction of the median), so it adapts to the data's scale: £20 medians
+// in 1820 and A$300,000 medians today both get a readable curve.
+const SIGNED_LOG_LINEAR_WIDTH_PER_MEDIAN = 0.01;
+const MINIMUM_SIGNED_LOG_LINEAR_WIDTH = 1;
+const EDGE_LABEL_MARGIN_PX = 40;
 const MEDIAN_POSITION = { fractionBelow: 0.5, fractionAbove: 0.5 };
 
 export type ShadedSide = "below" | "above";
@@ -26,13 +30,18 @@ interface DistributionChartParams {
   onPickValue?: (value: number) => void;
 }
 
+interface AxisTransform {
+  axis: ChartAxis;
+  signedLogLinearWidth: number;
+}
+
 interface CurvePoint {
   value: number;
   density: number;
 }
 
 interface ChartScale {
-  axis: ChartAxis;
+  transform: AxisTransform;
   minimumValue: number;
   maximumValue: number;
   maximumDensity: number;
@@ -54,9 +63,14 @@ export function renderDistributionChart({
   const heightPx = container.clientHeight || FALLBACK_CHART_HEIGHT_PX;
   const minimumValue = getValueAtPosition(distribution, { fractionBelow: VISIBLE_TAIL_FRACTION, fractionAbove: 1 - VISIBLE_TAIL_FRACTION }).value;
   const maximumValue = getValueAtPosition(distribution, { fractionBelow: 1 - VISIBLE_TAIL_FRACTION, fractionAbove: VISIBLE_TAIL_FRACTION }).value;
-  const curve = getDensityCurve(distribution, minimumValue, maximumValue, axis);
-  const scale: ChartScale = {
+  const medianValue = getValueAtPosition(distribution, MEDIAN_POSITION).value;
+  const transform: AxisTransform = {
     axis,
+    signedLogLinearWidth: Math.max(MINIMUM_SIGNED_LOG_LINEAR_WIDTH, Math.abs(medianValue) * SIGNED_LOG_LINEAR_WIDTH_PER_MEDIAN)
+  };
+  const curve = getDensityCurve(distribution, minimumValue, maximumValue, transform);
+  const scale: ChartScale = {
+    transform,
     minimumValue,
     maximumValue,
     maximumDensity: Math.max(...curve.map(({ density }) => density)),
@@ -89,7 +103,7 @@ export function renderDistributionChart({
     createSvgElement("path", { class: "distribution-chart__shade", d: toAreaPath(shadedPoints, scale) }),
     createSvgElement("path", { class: "distribution-chart__line", d: toLinePath(curve, scale) }),
     createMarker(clampedMarkerValue, scale),
-    createMedianTick(distribution, unit, scale)
+    createMedianTick(medianValue, unit, scale)
   );
   if (minimumValue < 0 && maximumValue > 0) svg.append(createZeroTick(unit, scale));
 
@@ -106,7 +120,7 @@ export function renderDistributionChart({
  * sign(v)·ln(1 + |v|/c), does the same for data that goes negative (net wealth): logarithmic for large debts and
  * fortunes alike, near-linear within ±c of zero.
  */
-function getDensityCurve(distribution: Distribution, minimumValue: number, maximumValue: number, axis: ChartAxis): CurvePoint[] {
+function getDensityCurve(distribution: Distribution, minimumValue: number, maximumValue: number, transform: AxisTransform): CurvePoint[] {
   if (distribution.kind === "normal") {
     const { mean, standardDeviation } = distribution;
     return sampleCurve(minimumValue, maximumValue, (value) => standardNormalDensity((value - mean) / standardDeviation) / standardDeviation);
@@ -119,7 +133,7 @@ function getDensityCurve(distribution: Distribution, minimumValue: number, maxim
       return standardNormalDensity((Math.log(shiftedValue) - logMean) / logStandardDeviation) / (shiftedValue * logStandardDeviation);
     });
   }
-  return getEmpiricalStepCurve(distribution, minimumValue, maximumValue, axis);
+  return getEmpiricalStepCurve(distribution, minimumValue, maximumValue, transform);
 }
 
 function sampleCurve(minimumValue: number, maximumValue: number, getDensity: (value: number) => number): CurvePoint[] {
@@ -133,13 +147,13 @@ function standardNormalDensity(zScore: number) {
   return Math.exp((-zScore * zScore) / 2) / Math.sqrt(2 * Math.PI);
 }
 
-function getEmpiricalStepCurve(distribution: Distribution, minimumValue: number, maximumValue: number, axis: ChartAxis) {
-  const axisMinimum = toAxisUnits(minimumValue, axis);
-  const axisBinWidth = (toAxisUnits(maximumValue, axis) - axisMinimum) / EMPIRICAL_DISPLAY_BIN_COUNT;
+function getEmpiricalStepCurve(distribution: Distribution, minimumValue: number, maximumValue: number, transform: AxisTransform) {
+  const axisMinimum = toAxisUnits(minimumValue, transform);
+  const axisBinWidth = (toAxisUnits(maximumValue, transform) - axisMinimum) / EMPIRICAL_DISPLAY_BIN_COUNT;
   const steps: CurvePoint[] = [];
   for (let binIndex = 0; binIndex < EMPIRICAL_DISPLAY_BIN_COUNT; binIndex += 1) {
-    const lowerValue = fromAxisUnits(axisMinimum + binIndex * axisBinWidth, axis);
-    const upperValue = fromAxisUnits(axisMinimum + (binIndex + 1) * axisBinWidth, axis);
+    const lowerValue = fromAxisUnits(axisMinimum + binIndex * axisBinWidth, transform);
+    const upperValue = fromAxisUnits(axisMinimum + (binIndex + 1) * axisBinWidth, transform);
     const fractionInBin =
       getPercentilePosition(distribution, upperValue).position.fractionBelow -
       getPercentilePosition(distribution, lowerValue).position.fractionBelow;
@@ -169,28 +183,28 @@ function toLinePath(points: CurvePoint[], scale: ChartScale) {
   return points.map((point, index) => `${index === 0 ? "M" : "L"}${toX(point.value, scale)},${toY(point.density, scale)}`).join(" ");
 }
 
-function toX(value: number, { axis, minimumValue, maximumValue, widthPx }: ChartScale) {
-  const axisMinimum = toAxisUnits(minimumValue, axis);
-  return ((toAxisUnits(value, axis) - axisMinimum) / (toAxisUnits(maximumValue, axis) - axisMinimum)) * widthPx;
+function toX(value: number, { transform, minimumValue, maximumValue, widthPx }: ChartScale) {
+  const axisMinimum = toAxisUnits(minimumValue, transform);
+  return ((toAxisUnits(value, transform) - axisMinimum) / (toAxisUnits(maximumValue, transform) - axisMinimum)) * widthPx;
 }
 
-function toAxisUnits(value: number, axis: ChartAxis) {
+function toAxisUnits(value: number, { axis, signedLogLinearWidth }: AxisTransform) {
   switch (axis) {
     case "logarithmic":
       return Math.log(value);
     case "signedLogarithmic":
-      return Math.sign(value) * Math.log1p(Math.abs(value) / SIGNED_LOG_LINEAR_WIDTH);
+      return Math.sign(value) * Math.log1p(Math.abs(value) / signedLogLinearWidth);
     default:
       return value;
   }
 }
 
-function fromAxisUnits(axisValue: number, axis: ChartAxis) {
+function fromAxisUnits(axisValue: number, { axis, signedLogLinearWidth }: AxisTransform) {
   switch (axis) {
     case "logarithmic":
       return Math.exp(axisValue);
     case "signedLogarithmic":
-      return Math.sign(axisValue) * SIGNED_LOG_LINEAR_WIDTH * Math.expm1(Math.abs(axisValue));
+      return Math.sign(axisValue) * signedLogLinearWidth * Math.expm1(Math.abs(axisValue));
     default:
       return axisValue;
   }
@@ -211,23 +225,33 @@ function createMarker(value: number, scale: ChartScale) {
   });
 }
 
-function createMedianTick(distribution: Distribution, unit: UnitFormat, scale: ChartScale) {
-  const medianValue = getValueAtPosition(distribution, MEDIAN_POSITION).value;
+function createMedianTick(medianValue: number, unit: UnitFormat, scale: ChartScale) {
+  const x = toX(medianValue, scale);
   const label = createSvgElement("text", {
     class: "distribution-chart__axis-label",
-    x: String(toX(medianValue, scale)),
+    x: String(x),
     y: String(scale.heightPx - 4),
-    "text-anchor": "middle"
+    "text-anchor": getEdgeAwareAnchor(x, scale.widthPx)
   });
   label.textContent = `median ${formatValue(medianValue, unit)}`;
   return label;
+}
+
+function getEdgeAwareAnchor(x: number, widthPx: number) {
+  if (x < EDGE_LABEL_MARGIN_PX) return "start";
+  if (x > widthPx - EDGE_LABEL_MARGIN_PX) return "end";
+  return "middle";
 }
 
 function createZeroTick(unit: UnitFormat, scale: ChartScale) {
   const x = String(toX(0, scale));
   const group = createSvgElement("g", { class: "distribution-chart__zero" });
   const tick = createSvgElement("line", { x1: x, x2: x, y1: String(PLOT_TOP_PADDING_PX), y2: String(scale.plotBottomPx) });
-  const label = createSvgElement("text", { x, y: String(PLOT_TOP_PADDING_PX + 2), "text-anchor": "middle" });
+  const label = createSvgElement("text", {
+    x,
+    y: String(PLOT_TOP_PADDING_PX + 2),
+    "text-anchor": getEdgeAwareAnchor(Number(x), scale.widthPx)
+  });
   label.textContent = formatValue(0, unit);
   group.append(tick, label);
   return group;
@@ -256,9 +280,9 @@ function createHoverLayer({ container, svg, distribution, unit, scale, onPickVal
 
   const getValueAtPointer = (event: PointerEvent) => {
     const fractionAcross = Math.min(Math.max((event.clientX - svg.getBoundingClientRect().left) / scale.widthPx, 0), 1);
-    const axisMinimum = toAxisUnits(scale.minimumValue, scale.axis);
-    const axisMaximum = toAxisUnits(scale.maximumValue, scale.axis);
-    return fromAxisUnits(axisMinimum + fractionAcross * (axisMaximum - axisMinimum), scale.axis);
+    const axisMinimum = toAxisUnits(scale.minimumValue, scale.transform);
+    const axisMaximum = toAxisUnits(scale.maximumValue, scale.transform);
+    return fromAxisUnits(axisMinimum + fractionAcross * (axisMaximum - axisMinimum), scale.transform);
   };
 
   svg.addEventListener("pointermove", (event) => {

@@ -94,9 +94,44 @@ def main():
         "extendedCoverageCountries": [code for code in published_codes if countries[code]["sourceTier"] == "extended"],
         "variants": {"world": world_variant, **country_variants}
     })
+    write_json("wealthHistory.json", {"source": SOURCE, "variants": build_history_variants(countries)})
     australia = countries["AU"]
     write_json("wealthAustralia.json", {"source": SOURCE, "variants": {"adults": build_local_currency_variant(australia)}})
     report(extract, world_variant, country_variants)
+
+
+HISTORY_COUNTRY_CODES = ["GB", "FR"]
+# Official conversion rates: 1 euro = 6.55957 French francs (fixed 31 December 1998), and the 1960 new franc replaced
+# 100 old francs. WID expresses all French amounts in euros, so earlier years are converted back to that year's francs.
+FRENCH_FRANCS_PER_EURO = 6.55957
+OLD_FRANCS_PER_NEW_FRANC = 100
+FIRST_EURO_YEAR = 2002
+FIRST_NEW_FRANC_YEAR = 1960
+
+
+def build_history_variants(countries):
+    """Each year's distribution in that year's own money: constant-2025 amounts times WID's price index for the year
+    (1 in 2025) give nominal amounts in today's currency, then French years get francs back from euros."""
+    variants = {}
+    for code in HISTORY_COUNTRY_CODES:
+        country = countries[code]
+        for year in sorted(country["thresholds"], key=int):
+            currency, local_currency_per_euro = historical_currency(code, int(year))
+            to_nominal = country[PRICE_INDEX_VARIABLE][year] * local_currency_per_euro
+            variants[f"{code}|{year}"] = {
+                "currency": currency,
+                "population": round(country[ADULT_POPULATION_VARIABLE][year]),
+                "cdf": to_cdf(threshold_points(country, year, 1 / to_nominal))
+            }
+    return variants
+
+
+def historical_currency(code, year):
+    if code != "FR" or year >= FIRST_EURO_YEAR:
+        return ("pound" if code == "GB" else "euro"), 1
+    if year >= FIRST_NEW_FRANC_YEAR:
+        return "newFranc", FRENCH_FRANCS_PER_EURO
+    return "oldFranc", FRENCH_FRANCS_PER_EURO * OLD_FRANCS_PER_NEW_FRANC
 
 
 SOURCE = {

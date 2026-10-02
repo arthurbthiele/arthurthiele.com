@@ -5,6 +5,7 @@ import { formatBoundedValue } from "./formatBoundedValue";
 import { findTypedNumber } from "./findTypedNumber";
 import { formatValue } from "./formatValue";
 import { getPercentilePosition } from "./getPercentilePosition";
+import { getUnit } from "./getUnit";
 import { getValueAtPosition } from "./getValueAtPosition";
 import { renderDistributionChart } from "./renderDistributionChart";
 import { renderEverythingTable } from "./renderEverythingTable";
@@ -97,23 +98,25 @@ export function mountPercentileConverter(root: HTMLElement) {
     renderParameters({ side: "to", dataset: toDataset, state, elements, onChange: render });
     const fromDefinition = getDatasetDefinition(state.from.datasetId);
     const toDefinition = getDatasetDefinition(state.to.datasetId);
-    elements.unitPrefix.textContent = fromDefinition.unit.prefix ?? "";
-    elements.unitSuffix.textContent = fromDefinition.unit.suffix ?? "";
+    const fromUnit = getUnit(fromDefinition, fromDataset, state.from.selection);
+    const toUnit = getUnit(toDefinition, toDataset, state.to.selection);
+    elements.unitPrefix.textContent = fromUnit.prefix ?? "";
+    elements.unitSuffix.textContent = fromUnit.suffix ?? "";
 
     const conversion = convert({ state, fromDataset, toDataset });
     latestOutputValue = conversion.outputValue;
-    elements.result.textContent = formatBoundedValue(conversion.outputValue, toDefinition.unit, conversion.outputBound);
-    renderExplanation({ state, conversion, fromDataset, toDataset, fromDefinition, toDefinition, elements });
+    elements.result.textContent = formatBoundedValue(conversion.outputValue, toUnit, conversion.outputBound);
+    renderExplanation({ state, conversion, fromDataset, toDataset, fromDefinition, toDefinition, fromUnit, toUnit, elements });
     renderSources({ fromDataset, toDataset, fromDefinition, toDefinition, elements });
     renderDistributionChart({
       container: elements.sides.from.chart,
       distribution: fromDataset.getDistribution(state.from.selection),
-      unit: fromDefinition.unit,
+      unit: fromUnit,
       markerValue: state.inputValue,
       shadedSide: state.flipped ? "above" : "below",
       axis: fromDefinition.chartAxis,
       onPickValue: (pickedValue) => {
-        state.inputValue = roundToDecimals(pickedValue, fromDefinition.unit.decimals);
+        state.inputValue = roundToDecimals(pickedValue, fromUnit.decimals);
         elements.valueInput.value = String(state.inputValue);
         void render();
       }
@@ -121,7 +124,7 @@ export function mountPercentileConverter(root: HTMLElement) {
     renderDistributionChart({
       container: elements.sides.to.chart,
       distribution: toDataset.getDistribution(state.to.selection),
-      unit: toDefinition.unit,
+      unit: toUnit,
       markerValue: conversion.outputValue,
       shadedSide: "below",
       axis: toDefinition.chartAxis
@@ -131,7 +134,7 @@ export function mountPercentileConverter(root: HTMLElement) {
     elements.everything.hidden = !state.showEverything;
     elements.everythingToggle.textContent = state.showEverything ? "Hide the full list" : "Compare against everything →";
     if (!state.showEverything) return;
-    elements.everythingHeading.textContent = `${formatValue(state.inputValue, fromDefinition.unit)} among ${fromDataset.describePopulation(state.from.selection)} is the same position${state.flipped ? ", flipped," : ""} as…`;
+    elements.everythingHeading.textContent = `${formatValue(state.inputValue, fromUnit)} among ${fromDataset.describePopulation(state.from.selection)} is the same position${state.flipped ? ", flipped," : ""} as…`;
     await renderEverythingTable({
       container: elements.everythingTable,
       position: conversion.outputPosition,
@@ -401,6 +404,8 @@ interface RenderExplanationParams {
   fromDefinition: DatasetDefinition;
   toDefinition: DatasetDefinition;
   elements: ConverterElements;
+  fromUnit: UnitFormat;
+  toUnit: UnitFormat;
 }
 
 function renderExplanation({
@@ -410,12 +415,14 @@ function renderExplanation({
   toDataset,
   fromDefinition,
   toDefinition,
-  elements
+  elements,
+  fromUnit,
+  toUnit
 }: RenderExplanationParams) {
   const fromPopulation = fromDataset.describePopulation(state.from.selection);
   const toPopulation = toDataset.describePopulation(state.to.selection);
-  const inputText = formatValue(state.inputValue, fromDefinition.unit);
-  const outputText = formatBoundedValue(conversion.outputValue, toDefinition.unit, conversion.outputBound);
+  const inputText = formatValue(state.inputValue, fromUnit);
+  const outputText = formatBoundedValue(conversion.outputValue, toUnit, conversion.outputBound);
   const inputPositionText = describePosition(conversion.inputPosition, conversion.inputClampedAt);
   const outputPositionText = describePosition(conversion.outputPosition, conversion.outputPositionClampedAt);
   const inputRank = findRankSuffix({
