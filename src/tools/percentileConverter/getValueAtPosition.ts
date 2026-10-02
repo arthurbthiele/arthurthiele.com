@@ -11,7 +11,8 @@ export function getValueAtPosition(distribution: Distribution, position: Percent
     return { value: distribution.mean + distribution.standardDeviation * inverseStandardNormal(position) };
   }
   if (distribution.kind === "logNormal") {
-    return { value: Math.exp(distribution.logMean + distribution.logStandardDeviation * inverseStandardNormal(position)) };
+    const shift = distribution.shift ?? 0;
+    return { value: shift + Math.exp(distribution.logMean + distribution.logStandardDeviation * inverseStandardNormal(position)) };
   }
   return getEmpiricalValue(distribution.cumulativePoints, position.fractionBelow);
 }

@@ -97,8 +97,8 @@ export function renderDistributionChart({
 }
 
 /**
- * Normal: the probability density φ((x − μ)/σ)/σ. Lognormal: φ((ln x − μ)/σ)/(xσ), the extra 1/x being the
- * Jacobian of the log. Empirical: the CDF is piecewise linear, so its derivative (the
+ * Normal: the probability density φ((x − μ)/σ)/σ. Lognormal: φ((ln(x − s) − μ)/σ)/((x − s)σ) for shift s, the
+ * extra 1/(x − s) being the Jacobian of the log. Empirical: the CDF is piecewise linear, so its derivative (the
  * density) is constant within each bin at Δfraction / Δvalue. Source bins vary wildly in width, so for display we
  * re-bin into equal widths along the axis and draw steps: a coarser but still honest histogram.
  * On a logarithmic axis the density is per unit of ln(value), Δfraction / Δln(value), so equal areas still hold equal
@@ -112,12 +112,12 @@ function getDensityCurve(distribution: Distribution, minimumValue: number, maxim
     return sampleCurve(minimumValue, maximumValue, (value) => standardNormalDensity((value - mean) / standardDeviation) / standardDeviation);
   }
   if (distribution.kind === "logNormal") {
-    const { logMean, logStandardDeviation } = distribution;
-    return sampleCurve(
-      minimumValue,
-      maximumValue,
-      (value) => standardNormalDensity((Math.log(value) - logMean) / logStandardDeviation) / (value * logStandardDeviation)
-    );
+    const { logMean, logStandardDeviation, shift = 0 } = distribution;
+    return sampleCurve(minimumValue, maximumValue, (value) => {
+      const shiftedValue = value - shift;
+      if (shiftedValue <= 0) return 0;
+      return standardNormalDensity((Math.log(shiftedValue) - logMean) / logStandardDeviation) / (shiftedValue * logStandardDeviation);
+    });
   }
   return getEmpiricalStepCurve(distribution, minimumValue, maximumValue, axis);
 }

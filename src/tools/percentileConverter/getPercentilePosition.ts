@@ -29,10 +29,11 @@ function getNormalPercentilePosition(distribution: NormalDistribution, value: nu
   return clampExtremeTails(standardNormalTails((value - distribution.mean) / distribution.standardDeviation));
 }
 
-/** ln(value) is normal, so the z-score is taken on the log; zero and negative values sit below all of the data. */
+/** ln(value − shift) is normal, so the z-score is taken on the log; values at or below the shift sit below all data. */
 function getLogNormalPercentilePosition(distribution: LogNormalDistribution, value: number): PercentileLookup {
-  if (value <= 0) return { position: positionFromFractionBelow(0), clampedAt: "belowData" };
-  return clampExtremeTails(standardNormalTails((Math.log(value) - distribution.logMean) / distribution.logStandardDeviation));
+  const shiftedValue = value - (distribution.shift ?? 0);
+  if (shiftedValue <= 0) return { position: positionFromFractionBelow(0), clampedAt: "belowData" };
+  return clampExtremeTails(standardNormalTails((Math.log(shiftedValue) - distribution.logMean) / distribution.logStandardDeviation));
 }
 
 function clampExtremeTails(position: PercentilePosition): PercentileLookup {

@@ -4,10 +4,12 @@ export interface NormalDistribution {
   standardDeviation: number;
 }
 
+/** ln(value − shift) is normal; a shift (default 0) lets the curve start somewhere other than zero. */
 export interface LogNormalDistribution {
   kind: "logNormal";
   logMean: number;
   logStandardDeviation: number;
+  shift?: number;
 }
 
 export interface EmpiricalDistribution {

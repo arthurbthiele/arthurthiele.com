@@ -1,4 +1,5 @@
 import { createEmpiricalDataset } from "./createEmpiricalDataset";
+import { createSexAndAgeDataset } from "./createSexAndAgeDataset";
 import type { DatasetDefinition, DatasetParameter, LoadedDataset, ParameterSelection } from "./percentileTypes";
 
 const SEX_OPTIONS = [
@@ -159,6 +160,43 @@ async function loadWorldWealth() {
   });
 }
 
+async function loadGripStrength() {
+  const { default: file } = await import("./data/gripStrength.json");
+  return createSexAndAgeDataset({
+    source: file.source,
+    variants: file.variants as Record<string, { mean: number; standardDeviation: number }>,
+    defaultAgeBand: "30–34",
+    toDistribution: ({ mean, standardDeviation }) => ({ kind: "normal", mean, standardDeviation }),
+    describePopulation: (sex, ageBand) => `Canadian ${PLURAL_NOUN_BY_SEX[sex]} aged ${ageBand}`
+  });
+}
+
+async function loadTypingSpeed(): Promise<LoadedDataset> {
+  const { default: file } = await import("./data/typingSpeed.json");
+  const { logMean, logStandardDeviation, shift, population } = file.variants.all;
+  return {
+    source: file.source,
+    parameters: [],
+    getDistribution: () => ({ kind: "logNormal", logMean, logStandardDeviation, shift }),
+    describePopulation: () => "people who took a large online typing test (2018)",
+    findPopulationSize: () => population
+  };
+}
+
+async function loadSuperannuation() {
+  const { default: file } = await import("./data/superannuation.json");
+  return createSexAndAgeDataset({
+    source: file.source,
+    variants: file.variants as Record<string, { cdf: number[][] }>,
+    defaultAgeBand: "30–34",
+    toDistribution: ({ cdf }) => ({
+      kind: "empirical",
+      cumulativePoints: cdf.map(([value = 0, fraction = 0]): [number, number] => [value, fraction])
+    }),
+    describePopulation: (sex, ageBand) => `Australian ${PLURAL_NOUN_BY_SEX[sex]} with super, aged ${ageBand.toLowerCase()} (2023)`
+  });
+}
+
 async function loadLichessRating() {
   const { default: file } = await import("./data/lichessRating.json");
   return createEmpiricalDataset({
@@ -268,6 +306,35 @@ export const DATASETS: DatasetDefinition[] = [
     caveat:
       "Net personal wealth (housing, land, savings, shares and other assets, minus debts) per adult, with couples' shared wealth split equally, converted to US dollars at 2025 market exchange rates. Countries are those where the World Inequality Database builds wealth from country-specific research or European household surveys, plus Australia, Brazil, Canada, Indonesia, Japan, Mexico, New Zealand and South Africa, whose figures lean more on modelling. \"World\" is our own pool of 216 countries weighted by adult population.",
     load: loadWorldWealth
+  },
+  {
+    id: "superannuation",
+    label: "Super balance (Australia)",
+    unit: { prefix: "A$", decimals: 0 },
+    defaultValue: 100_000,
+    chartAxis: "signedLogarithmic",
+    caveat:
+      "Total super across all of a person's accounts, at June 2023, from ASFA's analysis of the ATO's 2% sample of tax records. ASFA publishes the 10th, 25th, 50th, 75th and 90th percentiles; between them we interpolate, and above the 90th we extend each group with a fitted curve, which runs slightly generous against the ATO's own counts of $2M+ balances. The oldest band is 70–74 for men and 70 and over for women.",
+    load: loadSuperannuation
+  },
+  {
+    id: "gripStrength",
+    label: "Grip strength (both hands combined)",
+    unit: { suffix: " kg", decimals: 1 },
+    defaultValue: 90,
+    caveat:
+      "Measured in Canada's national health survey (2016–17): the best of two squeezes with each hand on a dynamometer, added together. One hand alone is roughly half. Modelled as a normal curve fitted to Statistics Canada's published percentiles, within 2.4 kg of every one of them.",
+    load: loadGripStrength
+  },
+  {
+    id: "typingSpeed",
+    label: "Typing speed",
+    unit: { suffix: " WPM", decimals: 0 },
+    defaultValue: 60,
+    rankWords: { higher: "fastest", lower: "slowest" },
+    caveat:
+      "From 168,000 volunteers who took an online typing test (Dhakal et al., CHI 2018), so a self-selected, keyboard-keen crowd, about two-thirds American. The curve matches the paper's published mean (51.6 WPM), spread and skew; typists of 120+ WPM do exist in it.",
+    load: loadTypingSpeed
   },
   {
     id: "lichessRating",

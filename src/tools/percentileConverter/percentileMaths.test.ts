@@ -75,6 +75,13 @@ describe("lognormal distributions", () => {
     expect(getPercentilePosition(australianMensWeight, 100).position.fractionBelow).toBeCloseTo(0.7684, 3);
   });
 
+  it("applies a shift", () => {
+    // Typing speed: Python's statistics.NormalDist gives 98.26% below 100 WPM and a median of 49.89 WPM.
+    const typingSpeed: LogNormalDistribution = { kind: "logNormal", logMean: 4.76715, logStandardDeviation: 0.16818, shift: -67.698 };
+    expect(getPercentilePosition(typingSpeed, 100).position.fractionBelow).toBeCloseTo(0.9826, 3);
+    expect(getValueAtPosition(typingSpeed, { fractionBelow: 0.5, fractionAbove: 0.5 }).value).toBeCloseTo(49.89, 1);
+  });
+
   it("puts non-positive values below the data", () => {
     expect(getPercentilePosition(australianMensWeight, 0).clampedAt).toBe("belowData");
   });
