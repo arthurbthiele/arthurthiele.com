@@ -5,9 +5,9 @@ import { getValueAtPosition } from "./getValueAtPosition";
 import type { ChartAxis, Distribution, UnitFormat } from "./percentileTypes";
 
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-const CHART_HEIGHT_PX = 96;
 const PLOT_TOP_PADDING_PX = 8;
 const AXIS_LABEL_HEIGHT_PX = 18;
+const FALLBACK_CHART_HEIGHT_PX = 96;
 const NORMAL_CURVE_SAMPLE_COUNT = 160;
 const VISIBLE_TAIL_FRACTION = 0.005;
 const EMPIRICAL_DISPLAY_BIN_COUNT = 60;
@@ -36,6 +36,7 @@ interface ChartScale {
   maximumValue: number;
   maximumDensity: number;
   widthPx: number;
+  heightPx: number;
   plotBottomPx: number;
 }
 
@@ -49,6 +50,7 @@ export function renderDistributionChart({
   onPickValue
 }: DistributionChartParams) {
   const widthPx = Math.max(container.clientWidth, 1);
+  const heightPx = container.clientHeight || FALLBACK_CHART_HEIGHT_PX;
   const minimumValue = getValueAtPosition(distribution, { fractionBelow: VISIBLE_TAIL_FRACTION, fractionAbove: 1 - VISIBLE_TAIL_FRACTION }).value;
   const maximumValue = getValueAtPosition(distribution, { fractionBelow: 1 - VISIBLE_TAIL_FRACTION, fractionAbove: VISIBLE_TAIL_FRACTION }).value;
   const curve = getDensityCurve(distribution, minimumValue, maximumValue, axis);
@@ -58,14 +60,15 @@ export function renderDistributionChart({
     maximumValue,
     maximumDensity: Math.max(...curve.map(({ density }) => density)),
     widthPx,
-    plotBottomPx: CHART_HEIGHT_PX - AXIS_LABEL_HEIGHT_PX
+    heightPx,
+    plotBottomPx: heightPx - AXIS_LABEL_HEIGHT_PX
   };
   const clampedMarkerValue = Math.min(Math.max(markerValue, minimumValue), maximumValue);
 
   const svg = createSvgElement("svg", {
     width: String(widthPx),
-    height: String(CHART_HEIGHT_PX),
-    viewBox: `0 0 ${widthPx} ${CHART_HEIGHT_PX}`,
+    height: String(heightPx),
+    viewBox: `0 0 ${widthPx} ${heightPx}`,
     role: "img",
     "aria-label": `Distribution curve with ${formatValue(markerValue, unit)} marked`
   });
@@ -179,7 +182,7 @@ function createMedianTick(distribution: Distribution, unit: UnitFormat, scale: C
   const label = createSvgElement("text", {
     class: "distribution-chart__axis-label",
     x: String(toX(medianValue, scale)),
-    y: String(CHART_HEIGHT_PX - 4),
+    y: String(scale.heightPx - 4),
     "text-anchor": "middle"
   });
   label.textContent = `median ${formatValue(medianValue, unit)}`;

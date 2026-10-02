@@ -11,9 +11,18 @@
 
 [hidden] { display: none !important; }
 
-html { background: var(--paper); }
+/*
+ * Scales the whole design with the window: 100% up to ~900px wide, rising linearly to 120% at ~1300px
+ * (0.8vw + 8.8px is 16px at 900px and 19.2px at 1300px). Everything is sized in rem, so it all scales together,
+ * and a reader's own browser zoom still applies on top.
+ */
+html {
+  font-size: clamp(1rem, 0.8vw + 8.8px, 1.2rem);
+  background: var(--paper);
+}
 
 body {
+  display: flow-root;
   margin: 0;
   min-height: 100vh;
   background: var(--paper);
@@ -217,8 +226,8 @@ footer.site {
 
 .intro__portrait {
   flex: none;
-  width: 112px;
-  height: 112px;
+  width: 7rem;
+  height: 7rem;
   border-radius: 50%;
   object-fit: cover;
 }
