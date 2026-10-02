@@ -38,6 +38,8 @@ const LOW_COLOUR = new Color("#4f7f4a");
 const HIGH_COLOUR = new Color("#d8b25a");
 const RIDGE_COLOUR = "#3b2a17";
 const HIGHLIGHT_COLOUR = "#8d2a1c";
+const FADED_COLOUR = new Color("#e6d8b4");
+const FADE_AMOUNT = 0.7;
 const WEALTH_TICKS = [-10_000, 0, 1_000, 10_000, 100_000, 1_000_000, 10_000_000];
 const YEAR_TICK_STEP = 50;
 const INITIAL_CAMERA_POSITION = new Vector3(8, 7.5, 8.5);
@@ -45,6 +47,8 @@ const MARKER_RADIUS = 0.09;
 // WID's British series switches method in 1995 (survey-based accounts replace a reconstruction of the lower half), which
 // shows as a sudden flattening; labelling it keeps that from reading as real history.
 const METHOD_BREAK_YEAR_BY_COUNTRY: Record<string, number> = { GB: 1995 };
+// Before that break, Britain's lower half keeps fixed proportions to the median from 1913 to 1994 while the top swings,
+// which looks like a template rather than measurement, so the part below each year's median is faded.
 
 interface HistoryVariant {
   todaysMoneyPerUnit: number;
@@ -61,6 +65,7 @@ interface YearSlice {
   year: number;
   densities: number[];
   todaysMoneyPerUnit: number;
+  fadedBelowBin: number;
 }
 
 export interface WealthHistorySurface {
@@ -162,12 +167,16 @@ function buildSurface({ content, countryId, year, nominalValue }: BuildSurfacePa
   const axisBinWidth = (toAxis(highestValue) - axisLowest) / WEALTH_BIN_COUNT;
   const binEdges = Array.from({ length: WEALTH_BIN_COUNT + 1 }, (_, index) => fromAxis(axisLowest + index * axisBinWidth));
 
+  const methodBreakYear = METHOD_BREAK_YEAR_BY_COUNTRY[countryId];
   const slices: YearSlice[] = countryEntries.map(({ year: sliceYear, variant }) => {
     const points = toTodaysPoints(variant);
     const fractions = binEdges.map((edge) => fractionAtValue(points, edge));
+    const isReconstructed = methodBreakYear != null && sliceYear < methodBreakYear;
+    const medianBin = Math.floor((toAxis(valueAtFraction(points, 0.5)) - axisLowest) / axisBinWidth);
     return {
       year: sliceYear,
       todaysMoneyPerUnit: variant.todaysMoneyPerUnit,
+      fadedBelowBin: isReconstructed ? medianBin : -1,
       densities: smooth(fractions.slice(1).map((fraction, index) => (fraction - (fractions[index] ?? 0)) / axisBinWidth))
     };
   });
@@ -182,7 +191,6 @@ function buildSurface({ content, countryId, year, nominalValue }: BuildSurfacePa
   const binCentreX = (binIndex: number) => toX(fromAxis(axisLowest + (binIndex + 0.5) * axisBinWidth));
 
   content.add(createSurfaceMesh({ slices, binCentreX, toZ, toHeight }));
-  const methodBreakYear = METHOD_BREAK_YEAR_BY_COUNTRY[countryId];
   for (const slice of slices) {
     const isHighlighted = slice.year === nearestYear(slices, year);
     content.add(createRidge({ slice, binCentreX, toZ, toHeight, isHighlighted }));
@@ -212,6 +220,13 @@ function buildSurface({ content, countryId, year, nominalValue }: BuildSurfacePa
   );
   if (methodBreakYear != null) {
     content.add(createLabel(`${methodBreakYear}: method change`, new Vector3(SURFACE_WIDTH / 2 + 0.2, 1.3, toZ(methodBreakYear)), "history-3d__method-break"));
+    content.add(
+      createLabel(
+        `faded: lower half before ${methodBreakYear}, reconstructed rather than measured`,
+        new Vector3(-SURFACE_WIDTH / 4, SURFACE_HEIGHT * 1.3, toZ((firstYear + methodBreakYear) / 2)),
+        "history-3d__method-break"
+      )
+    );
   }
 }
 
@@ -231,6 +246,7 @@ function createSurfaceMesh({ slices, binCentreX, toZ, toHeight }: SurfaceMeshPar
       const height = toHeight(slice.densities[binIndex] ?? 0);
       positions.push(binCentreX(binIndex), height, toZ(slice.year));
       const colour = LOW_COLOUR.clone().lerp(HIGH_COLOUR, height / SURFACE_HEIGHT);
+      if (binIndex < slice.fadedBelowBin) colour.lerp(FADED_COLOUR, FADE_AMOUNT);
       colours.push(colour.r, colour.g, colour.b);
     }
   }
