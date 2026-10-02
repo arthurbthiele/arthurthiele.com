@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { SITE_TOOLS } from "../../siteTools";
+---
+
+<BaseLayout title="Tools — Arthur Thiele" description="Small tools by Arthur Thiele.">
+  <h1>Tools</h1>
+  <p class="lede">Little things I've built and wanted on the web.</p>
+  <ul class="tool-cards">
+    {SITE_TOOLS.map((tool) => (
+      <li>
+        <a class="tool-card" href={tool.href}>
+          <span class="tool-card__glyph" aria-hidden="true">{tool.glyph}</span>
+          <span class="tool-card__title">{tool.title}</span>
+          <span class="tool-card__description">{tool.description}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

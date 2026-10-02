@@ -1,0 +1,233 @@
+/*
+ * Grimoire: an illuminated manuscript kept in a mossy cave. The page is vellum with a gilt vine border, lit by
+ * fireflies, over layered cave rock.
+ */
+
+html {
+  --ink: #2b1d10;
+  --ink-muted: #5a4429;
+  --ink-faint: #8a6f4a;
+  --paper: #07100d;
+  --vellum: #eadcb9;
+  --surface: rgba(255, 248, 228, 0.45);
+  --input-bg: #f6edd3;
+  --rule: #b99d68;
+  --accent: #2f6b3a;
+  --accent-ink: #f6edd3;
+  --gilt: #a8812f;
+  --rubric: #8d2a1c;
+  --code-bg: #e2d2aa;
+  --control-track: #dccb9d;
+  --radius: 3px;
+  --font-display: "IM Fell English", Georgia, serif;
+  --font-body: "Alegreya Variable", Georgia, serif;
+  --font-ui: "Alegreya Variable", Georgia, serif;
+  color-scheme: light;
+}
+
+body {
+  font-size: 1.15rem;
+  background:
+    radial-gradient(50rem 30rem at 50% -5%, rgba(127, 224, 192, 0.14), transparent 70%),
+    radial-gradient(30rem 30rem at 0% 60%, rgba(127, 224, 192, 0.08), transparent 70%),
+    radial-gradient(30rem 30rem at 100% 40%, rgba(240, 180, 94, 0.07), transparent 70%),
+    linear-gradient(180deg, #0c1612, #06100c);
+  background-attachment: fixed;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto 0 0;
+  height: 34vh;
+  z-index: 0;
+  background: url("/themes/rocks.svg") no-repeat bottom / 100% 100%;
+  pointer-events: none;
+}
+
+.shell {
+  margin: 3rem auto 6rem;
+  padding: 4.2rem 4rem 3rem;
+  max-width: 52rem;
+  color: var(--ink);
+  background:
+    url("/themes/parchment.svg"),
+    radial-gradient(ellipse at center, #f3e7c6 30%, #e0cd9f 85%, #c9b07a 100%);
+  border: 44px solid transparent;
+  border-image: url("/themes/vine-border.svg") 44 round;
+  background-clip: border-box;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 120px rgba(127, 224, 192, 0.12);
+}
+
+@media (max-width: 40rem) {
+  .shell {
+    padding: 2rem 1.2rem 2rem;
+    border-width: 24px;
+    border-image-width: 24px;
+    margin: 1rem 0.5rem 4rem;
+  }
+}
+
+.masthead {
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 0;
+  margin-bottom: 2.5rem;
+}
+
+.masthead::after {
+  content: "❦";
+  display: block;
+  width: min(16rem, 70%);
+  margin-top: 0.3rem;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--gilt);
+  opacity: 0.75;
+  background:
+    linear-gradient(var(--gilt), var(--gilt)) left center / 42% 1px no-repeat,
+    linear-gradient(var(--gilt), var(--gilt)) right center / 42% 1px no-repeat;
+}
+
+.masthead__name {
+  margin: 0;
+  font-family: "UnifrakturCook", var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--rubric);
+}
+
+.masthead nav {
+  font-family: "IM Fell English SC", var(--font-ui);
+  font-size: 1.05rem;
+  gap: 2rem;
+}
+
+.masthead nav a { color: var(--ink-muted); }
+.masthead nav a[aria-current="page"] { color: var(--rubric); }
+
+a { color: var(--rubric); }
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+h1::first-letter {
+  font-family: "UnifrakturCook", var(--font-display);
+  font-size: 1.12em;
+  color: var(--rubric);
+}
+
+article h2,
+article h3 {
+  font-weight: 400;
+  color: var(--rubric);
+}
+
+.lede { font-style: italic; }
+
+.section-heading {
+  text-align: center;
+  font-family: "IM Fell English SC", var(--font-ui);
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+  color: var(--rubric);
+}
+
+.section-heading::before,
+.section-heading::after {
+  content: " ❧ ";
+  color: var(--gilt);
+}
+
+.section-heading::before { display: inline-block; transform: scaleX(-1); }
+
+.index li { border-bottom: 1px dashed var(--rule); }
+
+.tool-card {
+  border: 1px solid var(--rule);
+  outline: 1px solid var(--rule);
+  outline-offset: -6px;
+  background: var(--surface);
+  box-shadow: inset 0 0 40px rgba(140, 100, 40, 0.18);
+}
+
+.tool-card { padding: 1.6rem; }
+
+.tool-card::after {
+  content: "✥";
+  position: absolute;
+  right: 0.8rem;
+  top: 0.5rem;
+  color: var(--gilt);
+}
+
+.tool-card:hover {
+  border-color: var(--gilt);
+  box-shadow: inset 0 0 40px rgba(140, 100, 40, 0.18), 0 0 0 3px rgba(168, 129, 47, 0.25);
+}
+
+.tool-card__glyph { color: var(--accent); font-size: 2rem; }
+.tool-card__title { font-size: 1.4rem; font-weight: 400; }
+
+.intro { justify-content: center; text-align: left; }
+
+.intro__portrait {
+  border-radius: 50% 50% 8px 8px;
+  border: 3px double var(--gilt);
+  filter: sepia(0.35);
+}
+
+footer.site {
+  text-align: center;
+  border-top: 0;
+  font-family: "IM Fell English SC", var(--font-ui);
+  color: var(--ink-muted);
+}
+
+.site__flourish {
+  display: block;
+  height: 72px;
+  margin: 0 auto 0.6rem;
+  width: 140px;
+  background: url("/themes/mushrooms.svg") no-repeat center / contain;
+}
+
+.atmosphere { display: block; }
+
+.firefly {
+  position: absolute;
+  left: calc(3% + var(--firefly-index) * 7%);
+  top: calc(15% + mod(var(--firefly-index) * 37, 70) * 1%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff3b0;
+  box-shadow: 0 0 10px 4px rgba(255, 220, 120, 0.55), 0 0 30px 8px rgba(127, 224, 192, 0.25);
+  animation:
+    grimoire-wander calc(9s + var(--firefly-index) * 0.9s) ease-in-out infinite alternate,
+    grimoire-blink calc(3s + var(--firefly-index) * 0.4s) ease-in-out infinite;
+  animation-delay: calc(var(--firefly-index) * -1.3s);
+}
+
+@keyframes grimoire-wander {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(40px, -30px); }
+  66% { transform: translate(-30px, 20px); }
+  100% { transform: translate(20px, 40px); }
+}
+
+@keyframes grimoire-blink {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .firefly { animation: none; opacity: 0.6; }
+}

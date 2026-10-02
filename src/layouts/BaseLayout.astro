@@ -1,5 +1,13 @@
 ---
+import { ClientRouter } from "astro:transitions";
+import "@fontsource/im-fell-english/latin-400.css";
+import "@fontsource/im-fell-english/latin-400-italic.css";
+import "@fontsource/im-fell-english-sc/latin-400.css";
+import "@fontsource/unifrakturcook/latin-700.css";
+import "@fontsource-variable/alegreya/wght.css";
+import "@fontsource-variable/alegreya/wght-italic.css";
 import "../styles/global.css";
+import "../styles/theme.css";
 
 interface Props {
   title: string;
@@ -7,6 +15,15 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+const FIREFLY_COUNT = 14;
+
+const NAV_LINKS = [
+  { href: "/writing/", label: "Writing" },
+  { href: "/tools/", label: "Tools" }
+];
+
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -21,16 +38,33 @@ const { title, description } = Astro.props;
     <meta property="og:type" content="website" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ClientRouter />
   </head>
   <body>
+    <div class="atmosphere" aria-hidden="true" transition:persist>
+      {Array.from({ length: FIREFLY_COUNT }, (_, index) => <span class="firefly" style={`--firefly-index: ${index}`} />)}
+    </div>
     <div class="shell">
-      <header class="masthead">
+      <header class="masthead" transition:name="masthead" transition:animate="none">
         <a class="masthead__name" href="/">Arthur Thiele</a>
+        <nav>
+          {NAV_LINKS.map(({ href, label }) => (
+            <a href={href} aria-current={currentPath.startsWith(href) ? "page" : undefined}>{label}</a>
+          ))}
+        </nav>
       </header>
-      <main>
+      <main transition:animate="fade">
         <slot />
       </main>
-      <footer class="site">arthurthiele.com</footer>
+      <footer class="site" transition:name="footer" transition:animate="none">
+        <span class="site__flourish" aria-hidden="true"></span>
+        arthurthiele.com
+      </footer>
     </div>
+    <script>
+      import { ignoreLinksToCurrentPage } from "../ignoreLinksToCurrentPage";
+
+      ignoreLinksToCurrentPage();
+    </script>
   </body>
 </html>

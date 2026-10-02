@@ -1,0 +1,350 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Percentile converter — Arthur Thiele"
+  description="Map a value in one distribution to the same, or the opposite, percentile in another."
+>
+  <h1>Percentile converter</h1>
+  <p class="lede">
+    Find where a value sits in one distribution, then what sits in the same spot in another. Tick “flip” to land
+    the same distance from the middle, on the other side.
+  </p>
+
+  <div class="converter" data-percentile-converter>
+    <section class="converter__side">
+      <h2>From</h2>
+      <select data-role="from-dataset" aria-label="Starting distribution"></select>
+      <div class="converter__parameters" data-role="from-parameters"></div>
+      <label class="converter__value">
+        <span class="visually-hidden">Value</span>
+        <span data-role="unit-prefix"></span>
+        <input data-role="value" type="number" inputmode="decimal" step="any" />
+        <span data-role="unit-suffix"></span>
+      </label>
+      <div class="converter__chart" data-role="from-chart"></div>
+    </section>
+
+    <div class="converter__controls">
+      <label class="converter__flip"><input data-role="flip" type="checkbox" /> Flip percentile</label>
+      <button data-role="swap" type="button" title="Swap sides, carrying the result over">⇅ Swap</button>
+    </div>
+
+    <section class="converter__side">
+      <h2>To</h2>
+      <select data-role="to-dataset" aria-label="Target distribution"></select>
+      <div class="converter__parameters" data-role="to-parameters"></div>
+      <output class="converter__result" data-role="result" aria-live="polite"></output>
+      <div class="converter__chart" data-role="to-chart"></div>
+    </section>
+
+    <p class="converter__explanation" data-role="explanation"></p>
+    <ul class="converter__warnings" data-role="warnings"></ul>
+
+    <button class="converter__everything-toggle" data-role="everything-toggle" type="button"></button>
+    <section class="everything" data-role="everything" hidden>
+      <h2 class="everything__heading" data-role="everything-heading"></h2>
+      <div data-role="everything-table"></div>
+    </section>
+
+    <details class="converter__sources">
+      <summary>About the data</summary>
+      <div data-role="sources"></div>
+    </details>
+  </div>
+</BaseLayout>
+
+<script>
+  import { mountPercentileConverter } from "../../tools/percentileConverter/mountPercentileConverter";
+
+  document.addEventListener("astro:page-load", () => {
+    const root = document.querySelector<HTMLElement>("[data-percentile-converter]");
+    if (root != null) mountPercentileConverter(root);
+  });
+</script>
+
+<style>
+  .converter {
+    max-width: var(--measure);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+  }
+
+  .converter__side {
+    display: grid;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: 1.2rem 1.3rem 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    outline: 1px solid var(--rule);
+    outline-offset: -6px;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 40px rgba(140, 100, 40, 0.18);
+  }
+
+  .converter__side h2 {
+    margin: 0;
+    font-family: "IM Fell English SC", var(--font-ui);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--rubric);
+  }
+
+  .converter__parameters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .converter__parameters :global(.parameter-select) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    color: var(--ink-muted);
+  }
+
+  .converter :global(select),
+  .converter input[type="number"],
+  .converter button {
+    font: inherit;
+    color: var(--ink);
+    background-color: var(--input-bg);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 0.35rem 0.6rem;
+  }
+
+  .converter :global(select) {
+    appearance: none;
+    min-width: 0;
+    max-width: 100%;
+    padding-right: 1.9rem;
+    text-overflow: ellipsis;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238d2a1c' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    cursor: pointer;
+  }
+
+  .converter__side > select {
+    width: 100%;
+  }
+
+  .converter :global(select:focus-visible),
+  .converter input:focus-visible,
+  .converter button:focus-visible {
+    outline: 2px solid var(--gilt);
+    outline-offset: 1px;
+  }
+
+  .converter :global(.segmented button) {
+    border: 0;
+    padding: 0.3rem 0.9rem;
+  }
+
+  .converter__value {
+    display: flex;
+    gap: 0.4rem;
+    align-items: baseline;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    color: var(--ink-muted);
+  }
+
+  .converter__value input {
+    width: 8ch;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    color: var(--ink);
+  }
+
+  .converter__result {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    line-height: 1.1;
+    color: var(--rubric);
+  }
+
+  .converter__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 0.2rem;
+  }
+
+  .converter__flip {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .converter__flip input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--accent);
+  }
+
+  .converter button {
+    cursor: pointer;
+  }
+
+  .converter button:hover {
+    border-color: var(--gilt);
+  }
+
+  .converter__chart {
+    position: relative;
+    height: 96px;
+    margin-top: 0.3rem;
+  }
+
+  .converter__chart :global(svg) {
+    display: block;
+    overflow: visible;
+    touch-action: manipulation;
+  }
+
+  .converter__chart :global(.distribution-chart--pickable) {
+    cursor: crosshair;
+  }
+
+  .converter__chart :global(.distribution-chart__baseline) {
+    stroke: var(--rule);
+    stroke-width: 1;
+  }
+
+  .converter__chart :global(.distribution-chart__wash) {
+    fill: var(--accent);
+    opacity: 0.1;
+  }
+
+  .converter__chart :global(.distribution-chart__shade) {
+    fill: var(--accent);
+    opacity: 0.35;
+  }
+
+  .converter__chart :global(.distribution-chart__line) {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .converter__chart :global(.distribution-chart__marker) {
+    stroke: var(--rubric);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .converter__chart :global(.distribution-chart__crosshair) {
+    stroke: var(--ink-faint);
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  .converter__chart :global(.distribution-chart__axis-label) {
+    fill: var(--ink-faint);
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+  }
+
+  .converter__chart :global(.distribution-chart__tooltip) {
+    position: absolute;
+    top: -2.2rem;
+    transform: translateX(-50%);
+    padding: 0.15rem 0.6rem;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--input-bg);
+    border: 1px solid var(--gilt);
+    box-shadow: 0 2px 8px rgba(60, 40, 10, 0.2);
+    pointer-events: none;
+  }
+
+  .converter__explanation {
+    margin: 1.4rem 0 0.4rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+  }
+
+  .converter__warnings {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  .converter__everything-toggle {
+    margin-top: 1rem;
+  }
+
+  .everything__heading {
+    margin: 1.6rem 0 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--rubric);
+  }
+
+  .everything :global(table) {
+    display: table;
+  }
+
+  .everything :global(td) {
+    vertical-align: top;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .everything :global(.everything__dataset) {
+    display: block;
+    font-family: "IM Fell English SC", var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+  }
+
+  .everything :global(.everything__value) {
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .converter__sources {
+    margin-top: 1.8rem;
+    color: var(--ink-muted);
+  }
+
+  .converter__sources summary {
+    cursor: pointer;
+    font-family: "IM Fell English SC", var(--font-ui);
+    font-size: 1.05rem;
+    color: var(--rubric);
+  }
+
+  .converter__sources :global(h3) {
+    margin: 1.1rem 0 0.25rem;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .converter__sources :global(p) {
+    margin: 0.25rem 0;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+</style>

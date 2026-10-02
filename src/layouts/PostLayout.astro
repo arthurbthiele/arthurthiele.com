@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { typographicQuotes } from "../typographicQuotes";
 
 interface Props {
   title: string;
@@ -16,9 +17,9 @@ const formattedDate = publishedOn.toLocaleDateString("en-AU", {
 });
 ---
 
-<BaseLayout title={`${title} — Arthur Thiele`} description={description}>
+<BaseLayout title={`${typographicQuotes(title)} — Arthur Thiele`} description={typographicQuotes(description)}>
   <article>
-    <h1>{title}</h1>
+    <h1>{typographicQuotes(title)}</h1>
     <p class="dateline"><time datetime={publishedOn.toISOString()}>{formattedDate}</time></p>
     <slot />
   </article>
