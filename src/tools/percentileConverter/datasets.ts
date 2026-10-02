@@ -133,6 +133,31 @@ async function loadWorldIncome() {
   });
 }
 
+async function loadAustralianWealth() {
+  const { default: file } = await import("./data/wealthAustralia.json");
+  return createEmpiricalDataset({
+    file,
+    parameterId: "group",
+    parameterLabel: "Group",
+    defaultVariantId: "adults",
+    describePopulation: (_variantId, _variantLabel, variant) => `Australian adults (${variant?.year ?? "latest"})`
+  });
+}
+
+async function loadWorldWealth() {
+  const { default: file } = await import("./data/wealthWorldwide.json");
+  return createEmpiricalDataset({
+    file,
+    parameterId: "country",
+    parameterLabel: "Where",
+    defaultVariantId: "world",
+    describePopulation: (variantId, variantLabel, variant) =>
+      variantId === "world"
+        ? `adults worldwide (${variant?.year ?? "latest"})`
+        : `adults in ${variantLabel} (${variant?.year ?? "latest"})`
+  });
+}
+
 async function loadLichessRating() {
   const { default: file } = await import("./data/lichessRating.json");
   return createEmpiricalDataset({
@@ -216,6 +241,28 @@ export const DATASETS: DatasetDefinition[] = [
     caveat:
       "Household income or consumption per person, in 2021 international dollars (adjusted for local prices). Some countries measure consumption rather than income, as the World Bank does.",
     load: loadWorldIncome
+  },
+  {
+    id: "wealthAustralia",
+    label: "Net wealth (Australia)",
+    unit: { prefix: "A$", decimals: 0 },
+    defaultValue: 300_000,
+    chartAxis: "signedLogarithmic",
+    rankWords: { higher: "wealthiest", lower: "least wealthy" },
+    caveat:
+      "Net personal wealth (assets minus debts) per adult, with couples' shared wealth split equally between them, in 2025 dollars. These are the World Inequality Database's modelled estimates for Australia. They sit close to the ABS's household survey in the middle, but put more wealth at the top (WID corrects for surveys under-counting the very rich) and more adults below zero.",
+    load: loadAustralianWealth
+  },
+  {
+    id: "wealthWorldwide",
+    label: "Net wealth (worldwide)",
+    unit: { prefix: "$", decimals: 0 },
+    defaultValue: 100_000,
+    chartAxis: "signedLogarithmic",
+    rankWords: { higher: "wealthiest", lower: "least wealthy" },
+    caveat:
+      "Net personal wealth per adult, with couples' shared wealth split equally, in US dollars adjusted for local prices (purchasing-power parity, 2025 prices). Countries are those where the World Inequality Database builds wealth from country-specific research or European household surveys, plus Australia, Brazil, Canada, Indonesia, Japan, Mexico, New Zealand and South Africa, whose figures lean more on modelling. \"World\" is our own pool of 216 countries weighted by adult population; it agrees with WID's own world figures to within about 6% at the median.",
+    load: loadWorldWealth
   },
   {
     id: "lichessRating",

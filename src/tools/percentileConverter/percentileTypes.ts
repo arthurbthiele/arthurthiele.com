@@ -26,7 +26,7 @@ export interface PercentilePosition {
 
 export type DataEdge = "belowData" | "aboveData";
 
-export type ChartAxis = "linear" | "logarithmic";
+export type ChartAxis = "linear" | "logarithmic" | "signedLogarithmic";
 
 export interface UnitFormat {
   prefix?: string;

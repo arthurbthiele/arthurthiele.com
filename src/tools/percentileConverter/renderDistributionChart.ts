@@ -11,6 +11,7 @@ const FALLBACK_CHART_HEIGHT_PX = 96;
 const NORMAL_CURVE_SAMPLE_COUNT = 160;
 const VISIBLE_TAIL_FRACTION = 0.005;
 const EMPIRICAL_DISPLAY_BIN_COUNT = 60;
+const SIGNED_LOG_LINEAR_WIDTH = 1000;
 const MEDIAN_POSITION = { fractionBelow: 0.5, fractionAbove: 0.5 };
 
 export type ShadedSide = "below" | "above";
@@ -90,6 +91,7 @@ export function renderDistributionChart({
     createMarker(clampedMarkerValue, scale),
     createMedianTick(distribution, unit, scale)
   );
+  if (minimumValue < 0 && maximumValue > 0) svg.append(createZeroTick(unit, scale));
 
   container.replaceChildren(svg, createHoverLayer({ container, svg, distribution, unit, scale, onPickValue }));
 }
@@ -100,7 +102,9 @@ export function renderDistributionChart({
  * density) is constant within each bin at Δfraction / Δvalue. Source bins vary wildly in width, so for display we
  * re-bin into equal widths along the axis and draw steps: a coarser but still honest histogram.
  * On a logarithmic axis the density is per unit of ln(value), Δfraction / Δln(value), so equal areas still hold equal
- * shares of people; incomes then look like a hump instead of a wall against the left edge.
+ * shares of people; incomes then look like a hump instead of a wall against the left edge. The signed logarithmic axis,
+ * sign(v)·ln(1 + |v|/c), does the same for data that goes negative (net wealth): logarithmic for large debts and
+ * fortunes alike, near-linear within ±c of zero.
  */
 function getDensityCurve(distribution: Distribution, minimumValue: number, maximumValue: number, axis: ChartAxis): CurvePoint[] {
   if (distribution.kind === "normal") {
@@ -171,11 +175,25 @@ function toX(value: number, { axis, minimumValue, maximumValue, widthPx }: Chart
 }
 
 function toAxisUnits(value: number, axis: ChartAxis) {
-  return axis === "logarithmic" ? Math.log(value) : value;
+  switch (axis) {
+    case "logarithmic":
+      return Math.log(value);
+    case "signedLogarithmic":
+      return Math.sign(value) * Math.log1p(Math.abs(value) / SIGNED_LOG_LINEAR_WIDTH);
+    default:
+      return value;
+  }
 }
 
 function fromAxisUnits(axisValue: number, axis: ChartAxis) {
-  return axis === "logarithmic" ? Math.exp(axisValue) : axisValue;
+  switch (axis) {
+    case "logarithmic":
+      return Math.exp(axisValue);
+    case "signedLogarithmic":
+      return Math.sign(axisValue) * SIGNED_LOG_LINEAR_WIDTH * Math.expm1(Math.abs(axisValue));
+    default:
+      return axisValue;
+  }
 }
 
 function toY(density: number, { maximumDensity, plotBottomPx }: ChartScale) {
@@ -203,6 +221,16 @@ function createMedianTick(distribution: Distribution, unit: UnitFormat, scale: C
   });
   label.textContent = `median ${formatValue(medianValue, unit)}`;
   return label;
+}
+
+function createZeroTick(unit: UnitFormat, scale: ChartScale) {
+  const x = String(toX(0, scale));
+  const group = createSvgElement("g", { class: "distribution-chart__zero" });
+  const tick = createSvgElement("line", { x1: x, x2: x, y1: String(PLOT_TOP_PADDING_PX), y2: String(scale.plotBottomPx) });
+  const label = createSvgElement("text", { x, y: String(PLOT_TOP_PADDING_PX + 2), "text-anchor": "middle" });
+  label.textContent = formatValue(0, unit);
+  group.append(tick, label);
+  return group;
 }
 
 interface HoverLayerParams {

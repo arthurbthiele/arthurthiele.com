@@ -31,3 +31,4 @@ that downloads its source into `scripts/percentileData/.cache/` and writes JSON 
 
 - The NCD-RisC server drops connections mid-download; `bodyMeasurements.py` resumes and validates the file.
 - The CDC CDN blocks scripted downloads, so the NHANES percentiles in `bodyMeasurements.py` are transcribed by hand.
+- `wealth.py` downloads WID's full bulk dataset (~880 MB, cached) and caches a compact extract, so reruns take seconds.

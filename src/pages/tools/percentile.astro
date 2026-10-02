@@ -245,6 +245,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     stroke-linecap: round;
   }
 
+  .converter__chart :global(.distribution-chart__zero line) {
+    stroke: var(--ink-faint);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+  }
+
+  .converter__chart :global(.distribution-chart__zero text) {
+    fill: var(--ink-faint);
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    dominant-baseline: hanging;
+  }
+
   .converter__chart :global(.distribution-chart__crosshair) {
     stroke: var(--ink-faint);
     stroke-width: 1;
