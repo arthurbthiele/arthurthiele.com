@@ -1,8 +1,7 @@
 ---
 import { existsSync } from "node:fs";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PostList from "../components/PostList.astro";
-import { SITE_TOOLS } from "../siteTools";
+import EntryList from "../components/EntryList.astro";
 
 const PORTRAIT_FILE = "portrait.jpg";
 
@@ -15,28 +14,10 @@ const hasPortrait = existsSync(`public/${PORTRAIT_FILE}`);
       <img class="intro__portrait" src={`/${PORTRAIT_FILE}`} alt="Arthur Thiele" width="112" height="112" />
     )}
     <div>
-      <h1>Arthur Thiele</h1>
+      <h1 class="visually-hidden">Arthur Thiele</h1>
       <p class="lede">Software engineer. I make things sometimes.</p>
     </div>
   </div>
 
-  <section class="home-section">
-    <h2 class="section-heading">Tools</h2>
-    <ul class="tool-cards">
-      {SITE_TOOLS.map((tool) => (
-        <li>
-          <a class="tool-card" href={tool.href}>
-            <span class="tool-card__glyph" aria-hidden="true">{tool.glyph}</span>
-            <span class="tool-card__title">{tool.title}</span>
-            <span class="tool-card__description">{tool.description}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="home-section">
-    <h2 class="section-heading">Writing</h2>
-    <PostList />
-  </section>
+  <EntryList />
 </BaseLayout>

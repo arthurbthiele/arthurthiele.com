@@ -100,15 +100,6 @@ body::after {
   color: var(--rubric);
 }
 
-.masthead nav {
-  font-family: "IM Fell English SC", var(--font-ui);
-  font-size: 1.05rem;
-  gap: 2rem;
-}
-
-.masthead nav a { color: var(--ink-muted); }
-.masthead nav a[aria-current="page"] { color: var(--rubric); }
-
 a { color: var(--rubric); }
 
 h1 {
@@ -130,51 +121,6 @@ article h3 {
 }
 
 .lede { font-style: italic; }
-
-.section-heading {
-  text-align: center;
-  font-family: "IM Fell English SC", var(--font-ui);
-  font-size: 1.3rem;
-  letter-spacing: 0.1em;
-  text-transform: none;
-  color: var(--rubric);
-}
-
-.section-heading::before,
-.section-heading::after {
-  content: " ❧ ";
-  color: var(--gilt);
-}
-
-.section-heading::before { display: inline-block; transform: scaleX(-1); }
-
-.index li { border-bottom: 1px dashed var(--rule); }
-
-.tool-card {
-  border: 1px solid var(--rule);
-  outline: 1px solid var(--rule);
-  outline-offset: -6px;
-  background: var(--surface);
-  box-shadow: inset 0 0 40px rgba(140, 100, 40, 0.18);
-}
-
-.tool-card { padding: 1.6rem; }
-
-.tool-card::after {
-  content: "✥";
-  position: absolute;
-  right: 0.8rem;
-  top: 0.5rem;
-  color: var(--gilt);
-}
-
-.tool-card:hover {
-  border-color: var(--gilt);
-  box-shadow: inset 0 0 40px rgba(140, 100, 40, 0.18), 0 0 0 3px rgba(168, 129, 47, 0.25);
-}
-
-.tool-card__glyph { color: var(--accent); font-size: 2rem; }
-.tool-card__title { font-size: 1.4rem; font-weight: 400; }
 
 .intro { justify-content: center; text-align: left; }
 
@@ -230,4 +176,14 @@ footer.site {
 
 @media (prefers-reduced-motion: reduce) {
   .firefly { animation: none; opacity: 0.6; }
+}
+
+.entry { border-bottom: 1px dashed var(--rule); }
+.entry__meta { font-family: "IM Fell English SC", var(--font-ui); font-size: 0.95rem; letter-spacing: 0.04em; }
+.entry__title { color: var(--rubric); }
+.entry__image {
+  border: 3px double var(--gilt);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(60, 40, 10, 0.25);
+  filter: sepia(0.15);
 }

@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import { MADE_THINGS, type SiteEntry } from "../siteEntries";
+import { typographicQuotes } from "../typographicQuotes";
+
+const posts = await getCollection("writing", ({ data }) => !data.draft);
+const postEntries: SiteEntry[] = posts.map((post) => ({
+  kind: "Post",
+  title: typographicQuotes(post.data.title),
+  description: typographicQuotes(post.data.description),
+  href: `/writing/${post.id}/`,
+  date: post.data.publishedOn
+}));
+const entries = [...MADE_THINGS, ...postEntries].sort((first, second) => second.date.valueOf() - first.date.valueOf());
+
+function formatEntryDate(date: Date) {
+  return date.toLocaleDateString("en-AU", { month: "long", year: "numeric" });
+}
+---
+
+<ul class="entries">
+  {entries.map((entry) => (
+    <li class="entry">
+      <a class="entry__link" href={entry.href}>
+        {entry.image && <img class="entry__image" src={entry.image.src} alt={entry.image.alt} width="130" height="186" loading="lazy" />}
+        <span class="entry__meta">
+          {entry.kind} · <time datetime={entry.date.toISOString()}>{formatEntryDate(entry.date)}</time>
+        </span>
+        <span class="entry__title">{entry.title}</span>
+        <span class="entry__description">{entry.description}</span>
+      </a>
+    </li>
+  ))}
+</ul>
