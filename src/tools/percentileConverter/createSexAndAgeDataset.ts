@@ -1,4 +1,4 @@
-import type { DatasetSource, Distribution, LoadedDataset, ParameterSelection } from "./percentileTypes";
+import type { ChartAxis, DatasetSource, Distribution, LoadedDataset, ParameterSelection, UnitFormat } from "./percentileTypes";
 
 const EVERYONE = "everyone";
 const SEX_OPTIONS = [
@@ -8,6 +8,12 @@ const SEX_OPTIONS = [
 ];
 // These sources publish no headcount by sex and age, so "everyone" pools men and women equally.
 const EVERYONE_MALE_SHARE = 0.5;
+const CLOSED_AGE_BAND_PATTERN = /^(\d+)\D+(\d+)$/;
+const OPEN_ENDED_AGE_BAND_PATTERN = /^(\d+)\D*(?:and over|\+)$/i;
+// Open-ended bands get a central age by assumption: "Under 20" is mostly 15–19 in these sources, and "70 and over"
+// is treated as about 70–79.
+const UNDER_TWENTY_CENTRE = 17.5;
+const OPEN_ENDED_BAND_CENTRE_OFFSET = 5;
 
 interface SexAndAgeDatasetParams<Variant> {
   source: DatasetSource;
@@ -16,6 +22,7 @@ interface SexAndAgeDatasetParams<Variant> {
   defaultAgeBand: string;
   toDistribution: (variant: Variant) => Distribution;
   describePopulation: (sex: string, ageBand: string) => string;
+  surface: { valueTitle: string; unit: UnitFormat; axis: ChartAxis };
 }
 
 /**
@@ -27,7 +34,8 @@ export function createSexAndAgeDataset<Variant>({
   variants,
   defaultAgeBand,
   toDistribution,
-  describePopulation
+  describePopulation,
+  surface
 }: SexAndAgeDatasetParams<Variant>): LoadedDataset {
   const ageBandsBySex = new Map<string, string[]>();
   for (const key of Object.keys(variants)) {
@@ -52,6 +60,16 @@ export function createSexAndAgeDataset<Variant>({
     if (variant == null) throw new Error(`No "${key}" variant in ${source.name}`);
     return toDistribution(variant);
   };
+  const getBandDistribution = (sex: string, ageBand: string): Distribution => {
+    if (sex !== EVERYONE) return getVariantDistribution(getKeyForSex(sex, ageBand).key);
+    return {
+      kind: "mixture",
+      components: [
+        { weight: EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("male", ageBand).key) },
+        { weight: 1 - EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("female", ageBand).key) }
+      ]
+    };
+  };
 
   return {
     source,
@@ -59,16 +77,19 @@ export function createSexAndAgeDataset<Variant>({
       { id: "sex", label: "Sex", options: SEX_OPTIONS, defaultOptionId: EVERYONE },
       { id: "age", label: "Age", options: allAgeBands.map((ageBand) => ({ id: ageBand, label: ageBand })), defaultOptionId: defaultAgeBand }
     ],
-    getDistribution: (selection) => {
-      const { sex, key } = getKey(selection);
-      if (sex !== EVERYONE) return getVariantDistribution(key);
-      const requestedAgeBand = selection.age ?? defaultAgeBand;
+    getDistribution: (selection) => getBandDistribution(selection.sex ?? EVERYONE, selection.age ?? defaultAgeBand),
+    findSurface: (selection, value) => {
+      const sex = selection.sex ?? EVERYONE;
+      const { ageBand } = getKey(selection);
+      const sliceAgeBands = ageBandsBySex.get(sex === EVERYONE ? "male" : sex) ?? [];
       return {
-        kind: "mixture",
-        components: [
-          { weight: EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("male", requestedAgeBand).key) },
-          { weight: 1 - EVERYONE_MALE_SHARE, distribution: getVariantDistribution(getKeyForSex("female", requestedAgeBand).key) }
-        ]
+        slices: sliceAgeBands.map((band) => ({ position: getAgeBandCentre(band), label: band, distribution: getBandDistribution(sex, band) })),
+        highlightPosition: getAgeBandCentre(ageBand),
+        highlightValue: value,
+        depthTitle: "age",
+        valueTitle: surface.valueTitle,
+        unit: surface.unit,
+        axis: surface.axis
       };
     },
     describePopulation: (selection) => {
@@ -77,4 +98,14 @@ export function createSexAndAgeDataset<Variant>({
     },
     findPopulationSize: () => undefined
   };
+}
+
+/** The middle of a band of whole years: "30–34" covers ages 30.0 up to 35.0, so its centre is 32.5. */
+function getAgeBandCentre(ageBand: string) {
+  if (/^under 20$/i.test(ageBand)) return UNDER_TWENTY_CENTRE;
+  const closedBand = CLOSED_AGE_BAND_PATTERN.exec(ageBand);
+  if (closedBand != null) return (Number(closedBand[1]) + Number(closedBand[2]) + 1) / 2;
+  const openEndedBand = OPEN_ENDED_AGE_BAND_PATTERN.exec(ageBand);
+  if (openEndedBand != null) return Number(openEndedBand[1]) + OPEN_ENDED_BAND_CENTRE_OFFSET;
+  throw new Error(`Unrecognised age band "${ageBand}"`);
 }

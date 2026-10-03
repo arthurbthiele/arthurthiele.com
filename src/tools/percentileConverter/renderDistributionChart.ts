@@ -1,5 +1,7 @@
 import { describePosition } from "./describePosition";
+import { formatTickValue } from "./formatTickValue";
 import { formatValue } from "./formatValue";
+import { getAxisTickCandidates } from "./getAxisTickCandidates";
 import { getPercentilePosition } from "./getPercentilePosition";
 import { getValueAtPosition } from "./getValueAtPosition";
 import type { ChartAxis, Distribution, UnitFormat } from "./percentileTypes";
@@ -17,12 +19,8 @@ const EMPIRICAL_DISPLAY_BIN_COUNT = 60;
 const SIGNED_LOG_LINEAR_WIDTH_PER_MEDIAN = 0.25;
 const MINIMUM_SIGNED_LOG_LINEAR_WIDTH = 1;
 const EDGE_LABEL_MARGIN_PX = 40;
-const TARGET_TICK_COUNT = 5;
 const MINIMUM_TICK_SPACING_PX = 64;
 const TICK_LENGTH_PX = 4;
-const MAXIMUM_TICK_SUFFIX_LENGTH = 4;
-const NICE_STEP_MULTIPLIERS = [1, 2, 2.5, 5, 10];
-const LOG_TICK_MULTIPLIERS = [1, 2, 5];
 const MEDIAN_POSITION = { fractionBelow: 0.5, fractionAbove: 0.5 };
 
 export type ShadedSide = "below" | "above";
@@ -274,7 +272,12 @@ function getEdgeAwareAnchor(x: number, widthPx: number) {
 
 /** Round-valued ticks: 1–2–5 steps on a linear axis, powers of ten on a log axis, plus zero on a signed-log one. */
 function createAxisTicks(unit: UnitFormat, scale: ChartScale) {
-  const candidates = getTickCandidates(scale).filter((value) => toX(value, scale) >= 0 && toX(value, scale) <= scale.widthPx);
+  const candidates = getAxisTickCandidates({
+    axis: scale.transform.axis,
+    minimumValue: scale.minimumValue,
+    maximumValue: scale.maximumValue,
+    signedLogLinearWidth: scale.transform.signedLogLinearWidth
+  }).filter((value) => toX(value, scale) >= 0 && toX(value, scale) <= scale.widthPx);
   const byPriority = [...candidates.filter((value) => value === 0), ...candidates.filter((value) => value !== 0)];
   const kept: number[] = [];
   for (const value of byPriority) {
@@ -298,40 +301,6 @@ function createAxisTicks(unit: UnitFormat, scale: ChartScale) {
     group.append(label);
     return group;
   });
-}
-
-function getTickCandidates({ transform, minimumValue, maximumValue }: ChartScale) {
-  if (transform.axis === "linear") {
-    const step = getNiceStep((maximumValue - minimumValue) / TARGET_TICK_COUNT);
-    const firstTick = Math.ceil(minimumValue / step) * step;
-    return Array.from({ length: Math.floor((maximumValue - firstTick) / step) + 1 }, (_, index) => firstTick + index * step);
-  }
-  const powersOfTen = (lowest: number, highest: number) => {
-    const values: number[] = [];
-    for (let exponent = Math.floor(Math.log10(lowest)); exponent <= Math.ceil(Math.log10(highest)); exponent += 1) {
-      values.push(10 ** exponent);
-    }
-    return values;
-  };
-  if (transform.axis === "logarithmic") {
-    return powersOfTen(minimumValue, maximumValue).flatMap((power) => LOG_TICK_MULTIPLIERS.map((multiplier) => multiplier * power));
-  }
-  const positive = maximumValue > 0 ? powersOfTen(Math.max(transform.signedLogLinearWidth, 1), maximumValue) : [];
-  const negative = minimumValue < 0 ? powersOfTen(Math.max(transform.signedLogLinearWidth, 1), -minimumValue).map((value) => -value).reverse() : [];
-  return [...negative, ...(minimumValue < 0 && maximumValue > 0 ? [0] : []), ...positive];
-}
-
-function getNiceStep(roughStep: number) {
-  const magnitude = 10 ** Math.floor(Math.log10(roughStep));
-  const multiplier = NICE_STEP_MULTIPLIERS.find((candidate) => candidate * magnitude >= roughStep) ?? 10;
-  return multiplier * magnitude;
-}
-
-function formatTickValue(value: number, { prefix = "", suffix = "" }: UnitFormat) {
-  const magnitude = Math.abs(value);
-  const number = magnitude >= 1000 ? magnitude.toLocaleString("en-AU", { notation: "compact", maximumFractionDigits: 1 }) : magnitude.toLocaleString("en-AU", { maximumFractionDigits: 1 });
-  const shortSuffix = suffix.trim().length <= MAXIMUM_TICK_SUFFIX_LENGTH ? suffix : "";
-  return `${value < 0 ? "\u2212" : ""}${prefix}${number}${shortSuffix}`;
 }
 
 interface HoverLayerParams {

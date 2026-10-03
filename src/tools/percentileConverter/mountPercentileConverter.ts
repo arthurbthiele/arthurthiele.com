@@ -9,7 +9,7 @@ import { getUnit } from "./getUnit";
 import { getValueAtPosition } from "./getValueAtPosition";
 import { renderDistributionChart } from "./renderDistributionChart";
 import { renderEverythingTable } from "./renderEverythingTable";
-import type { WealthHistorySurface } from "./createWealthHistorySurface";
+import type { DistributionSurface } from "./createDistributionSurface";
 import type {
   DataEdge,
   DatasetDefinition,
@@ -25,9 +25,6 @@ const DEFAULT_TO_DATASET_ID = "height";
 const DEFAULT_FROM_SELECTION: ParameterSelection = { sex: "male" };
 const DEFAULT_TO_SELECTION: ParameterSelection = { sex: "female" };
 const MAXIMUM_SEGMENTED_OPTIONS = 3;
-const HISTORY_DATASET_ID = "wealthHistory";
-const HISTORY_DEFAULT_COUNTRY_ID = "GB";
-const HISTORY_DEFAULT_YEAR = 1820;
 const SELECTION_QUERY_PREFIX_BY_SIDE: Record<Side, string> = { from: "f.", to: "t." };
 
 type Side = "from" | "to";
@@ -43,7 +40,7 @@ interface ConverterState {
   inputValue: number;
   flipped: boolean;
   showEverything: boolean;
-  showHistorySurface: boolean;
+  showSurface: boolean;
 }
 
 interface SideElements {
@@ -67,10 +64,11 @@ interface ConverterElements {
   everything: HTMLElement;
   everythingHeading: HTMLElement;
   everythingTable: HTMLElement;
-  historyPanel: HTMLElement;
-  historyToggle: HTMLInputElement;
-  historyCanvas: HTMLElement;
-  historyHint: HTMLElement;
+  surfacePanel: HTMLElement;
+  surfaceToggle: HTMLInputElement;
+  surfaceToggleLabel: HTMLElement;
+  surfaceCanvas: HTMLElement;
+  surfaceHint: HTMLElement;
 }
 
 interface Conversion {
@@ -88,7 +86,7 @@ export function mountPercentileConverter(root: HTMLElement) {
   const loadedDatasets = new Map<string, Promise<LoadedDataset>>();
   const state = readStateFromUrl();
   let latestOutputValue: number | undefined;
-  let historySurface: WealthHistorySurface | undefined;
+  let surface: DistributionSurface | undefined;
   let renderGeneration = 0;
 
   const loadDataset = (datasetId: string) => {
@@ -142,26 +140,24 @@ export function mountPercentileConverter(root: HTMLElement) {
     });
     writeStateToUrl(state);
 
-    const historySide = findHistorySide(state);
-    const isSurfaceShown = historySide != null && state.showHistorySurface;
-    elements.historyPanel.hidden = historySide == null;
-    elements.historyToggle.checked = state.showHistorySurface;
-    elements.historyCanvas.hidden = !isSurfaceShown;
-    elements.historyHint.hidden = !isSurfaceShown;
+    const surfaceSpec =
+      fromDataset.findSurface?.(state.from.selection, state.inputValue) ??
+      toDataset.findSurface?.(state.to.selection, conversion.outputValue);
+    const isSurfaceShown = surfaceSpec != null && state.showSurface;
+    elements.surfacePanel.hidden = surfaceSpec == null;
+    elements.surfaceToggle.checked = state.showSurface;
+    elements.surfaceToggleLabel.textContent = `Show every ${surfaceSpec?.depthTitle ?? "option"} in 3D`;
+    elements.surfaceCanvas.hidden = !isSurfaceShown;
+    elements.surfaceHint.hidden = !isSurfaceShown;
     if (!isSurfaceShown) {
-      historySurface?.dispose();
-      historySurface = undefined;
+      surface?.dispose();
+      surface = undefined;
     }
     if (isSurfaceShown) {
-      const { createWealthHistorySurface } = await import("./createWealthHistorySurface");
+      const { createDistributionSurface } = await import("./createDistributionSurface");
       if (generation !== renderGeneration || !root.isConnected) return;
-      historySurface ??= createWealthHistorySurface(elements.historyCanvas);
-      const historySelection = state[historySide].selection;
-      historySurface.update({
-        countryId: historySelection.country ?? HISTORY_DEFAULT_COUNTRY_ID,
-        year: Number(historySelection.year ?? HISTORY_DEFAULT_YEAR),
-        nominalValue: historySide === "from" ? state.inputValue : conversion.outputValue
-      });
+      surface ??= createDistributionSurface(elements.surfaceCanvas);
+      surface.update(surfaceSpec);
     }
 
     elements.everything.hidden = !state.showEverything;
@@ -218,8 +214,8 @@ export function mountPercentileConverter(root: HTMLElement) {
     void render();
   });
 
-  elements.historyToggle.addEventListener("change", () => {
-    state.showHistorySurface = elements.historyToggle.checked;
+  elements.surfaceToggle.addEventListener("change", () => {
+    state.showSurface = elements.surfaceToggle.checked;
     void render();
   });
 
@@ -238,12 +234,6 @@ export function mountPercentileConverter(root: HTMLElement) {
   chartResizeObserver.observe(elements.sides.from.chart);
 
   void render();
-}
-
-function findHistorySide(state: ConverterState): Side | undefined {
-  if (state.from.datasetId === HISTORY_DATASET_ID) return "from";
-  if (state.to.datasetId === HISTORY_DATASET_ID) return "to";
-  return undefined;
 }
 
 function getConverterElements(root: HTMLElement): ConverterElements {
@@ -265,10 +255,11 @@ function getConverterElements(root: HTMLElement): ConverterElements {
     everything: getElement(root, "everything", HTMLElement),
     everythingHeading: getElement(root, "everything-heading", HTMLElement),
     everythingTable: getElement(root, "everything-table", HTMLElement),
-    historyPanel: getElement(root, "history-3d", HTMLElement),
-    historyToggle: getElement(root, "history-3d-toggle", HTMLInputElement),
-    historyCanvas: getElement(root, "history-3d-canvas", HTMLElement),
-    historyHint: getElement(root, "history-3d-hint", HTMLElement)
+    surfacePanel: getElement(root, "surface-3d", HTMLElement),
+    surfaceToggle: getElement(root, "surface-3d-toggle", HTMLInputElement),
+    surfaceToggleLabel: getElement(root, "surface-3d-toggle-label", HTMLElement),
+    surfaceCanvas: getElement(root, "surface-3d-canvas", HTMLElement),
+    surfaceHint: getElement(root, "surface-3d-hint", HTMLElement)
   };
 }
 
@@ -304,7 +295,7 @@ function readStateFromUrl(): ConverterState {
     inputValue: query.has("v") && Number.isFinite(queryValue) ? queryValue : getDatasetDefinition(fromDatasetId).defaultValue,
     flipped: query.get("flip") === "1",
     showEverything: query.get("all") === "1",
-    showHistorySurface: query.get("3d") === "1"
+    showSurface: query.get("3d") === "1"
   };
 }
 
@@ -326,7 +317,7 @@ function writeStateToUrl(state: ConverterState) {
   const query = new URLSearchParams({ from: state.from.datasetId, to: state.to.datasetId, v: String(state.inputValue) });
   if (state.flipped) query.set("flip", "1");
   if (state.showEverything) query.set("all", "1");
-  if (state.showHistorySurface) query.set("3d", "1");
+  if (state.showSurface) query.set("3d", "1");
   for (const side of ["from", "to"] as const) {
     for (const [parameterId, optionId] of Object.entries(state[side].selection)) {
       query.set(`${SELECTION_QUERY_PREFIX_BY_SIDE[side]}${parameterId}`, optionId);

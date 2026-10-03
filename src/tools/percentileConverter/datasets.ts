@@ -34,6 +34,11 @@ const HISTORY_COUNTRIES = [
 ];
 const DEFAULT_HISTORY_COUNTRY_ID = "GB";
 const DEFAULT_HISTORY_YEAR = 1820;
+// WID's British series switches method in 1995 (survey-based accounts replace a reconstruction of the lower half).
+const HISTORY_METHOD_BREAK_YEAR_BY_COUNTRY: Record<string, number> = { GB: 1995 };
+// Near-linear within ±1,000 of 2025 money: in 1820 the typical adult held a few thousand of today's pounds, so a zone
+// scaled to modern medians would squash early years into a sliver.
+const HISTORY_SURFACE_SIGNED_LOG_LINEAR_WIDTH = 1000;
 const UNIT_BY_HISTORICAL_CURRENCY: Record<string, UnitFormat> = {
   pound: { prefix: "£", decimals: 0 },
   oldFranc: { suffix: " old francs", decimals: 0 },
@@ -134,6 +139,16 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
       defaultOptionId: String(DEFAULT_COHORT_BIRTH_YEAR)
     }
   ];
+  const getCohortDistribution = (countryId: string, sex: string, birthYear: number): Distribution => {
+    const getSexDistribution = (cohortSex: string): Distribution => {
+      const mean = countries[countryId]?.meanBySex[cohortSex]?.[birthYear - file.firstBirthYear];
+      const standardDeviation = standardDeviationBySex[cohortSex];
+      if (mean == null || standardDeviation == null) throw new Error(`No height for ${countryId} ${cohortSex} ${birthYear}`);
+      return { kind: "normal", mean, standardDeviation };
+    };
+    if (sex !== EVERYONE) return getSexDistribution(sex);
+    return poolSexes(getSexDistribution("male"), getSexDistribution("female"), EQUAL_SPLIT_MALE_SHARE);
+  };
   const getSelection = (selection: ParameterSelection) => ({
     countryId: selection.country ?? DEFAULT_COHORT_COUNTRY_ID,
     sex: selection.sex ?? EVERYONE,
@@ -144,14 +159,19 @@ async function loadHeightByBirthYear(): Promise<LoadedDataset> {
     parameters,
     getDistribution: (selection) => {
       const { countryId, sex, birthYear } = getSelection(selection);
-      const getSexDistribution = (cohortSex: string): Distribution => {
-        const mean = countries[countryId]?.meanBySex[cohortSex]?.[birthYear - file.firstBirthYear];
-        const standardDeviation = standardDeviationBySex[cohortSex];
-        if (mean == null || standardDeviation == null) throw new Error(`No height for ${countryId} ${cohortSex} ${birthYear}`);
-        return { kind: "normal", mean, standardDeviation };
+      return getCohortDistribution(countryId, sex, birthYear);
+    },
+    findSurface: (selection, value) => {
+      const { countryId, sex, birthYear } = getSelection(selection);
+      return {
+        slices: birthYears.map((year) => ({ position: year, label: String(year), distribution: getCohortDistribution(countryId, sex, year) })),
+        highlightPosition: birthYear,
+        highlightValue: value,
+        depthTitle: "birth year",
+        valueTitle: "height at 18",
+        unit: { suffix: " cm", decimals: 1 },
+        axis: "linear"
       };
-      if (sex !== EVERYONE) return getSexDistribution(sex);
-      return poolSexes(getSexDistribution("male"), getSexDistribution("female"), EQUAL_SPLIT_MALE_SHARE);
     },
     describePopulation: (selection) => {
       const { countryId, sex, birthYear } = getSelection(selection);
@@ -247,6 +267,7 @@ async function loadGripStrength() {
     variants: file.variants as Record<string, { mean: number; standardDeviation: number }>,
     defaultAgeBand: "30–34",
     toDistribution: ({ mean, standardDeviation }) => ({ kind: "normal", mean, standardDeviation }),
+    surface: { valueTitle: "combined grip strength", unit: { suffix: " kg", decimals: 1 }, axis: "linear" },
     describePopulation: (sex, ageBand) => `${sex === EVERYONE ? "Canadians" : `Canadian ${PLURAL_NOUN_BY_SEX[sex]}`} aged ${ageBand}`
   });
 }
@@ -273,6 +294,7 @@ async function loadSuperannuation() {
       kind: "empirical",
       cumulativePoints: cdf.map(([value = 0, fraction = 0]): [number, number] => [value, fraction])
     }),
+    surface: { valueTitle: "total super balance", unit: { prefix: "A$", decimals: 0 }, axis: "signedLogarithmic" },
     describePopulation: (sex, ageBand) =>
       `${sex === EVERYONE ? "Australians" : `Australian ${PLURAL_NOUN_BY_SEX[sex]}`} with super, aged ${ageBand.toLowerCase()} (2023)`
   });
@@ -280,6 +302,7 @@ async function loadSuperannuation() {
 
 interface HistoricalWealthVariant {
   currency: string;
+  todaysMoneyPerUnit: number;
   population: number;
   cdf: number[][];
 }
@@ -332,7 +355,40 @@ async function loadWealthHistory(): Promise<LoadedDataset> {
       return `${adjective} adults in ${year}`;
     },
     findPopulationSize: (selection) => getChoice(selection).variant.population,
-    findUnit: (selection) => UNIT_BY_HISTORICAL_CURRENCY[getChoice(selection).variant.currency]
+    findUnit: (selection) => UNIT_BY_HISTORICAL_CURRENCY[getChoice(selection).variant.currency],
+    findSurface: (selection, value) => {
+      const { countryId, year, variant } = getChoice(selection);
+      const methodBreakYear = HISTORY_METHOD_BREAK_YEAR_BY_COUNTRY[countryId];
+      const isFrance = countryId === "FR";
+      return {
+        slices: (yearsByCountry.get(countryId) ?? []).flatMap((sliceYear) => {
+          const sliceVariant = variants[`${countryId}|${sliceYear}`];
+          if (sliceVariant == null) return [];
+          return [
+            {
+              position: sliceYear,
+              label: String(sliceYear),
+              isFadedBelowMedian: methodBreakYear != null && sliceYear < methodBreakYear,
+              distribution: {
+                kind: "empirical" as const,
+                cumulativePoints: sliceVariant.cdf.map(
+                  ([amount = 0, fraction = 0]): CumulativePoint => [amount * sliceVariant.todaysMoneyPerUnit, fraction]
+                )
+              }
+            }
+          ];
+        }),
+        highlightPosition: year,
+        highlightValue: value * variant.todaysMoneyPerUnit,
+        depthTitle: "year",
+        valueTitle: `net wealth per adult, in 2025 ${isFrance ? "euros" : "pounds"}`,
+        unit: { prefix: isFrance ? "€" : "£", decimals: 0 },
+        axis: "signedLogarithmic",
+        signedLogLinearWidth: HISTORY_SURFACE_SIGNED_LOG_LINEAR_WIDTH,
+        markers: methodBreakYear == null ? [] : [{ position: methodBreakYear, label: `${methodBreakYear}: method change` }],
+        notes: methodBreakYear == null ? [] : [`faded: lower half before ${methodBreakYear}, reconstructed rather than measured`]
+      };
+    }
   };
 }
 

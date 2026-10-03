@@ -74,6 +74,33 @@ export interface LoadedDataset {
   describePopulation: (selection: ParameterSelection) => string;
   findPopulationSize: (selection: ParameterSelection) => number | undefined;
   findUnit?: (selection: ParameterSelection) => UnitFormat | undefined;
+  /** Datasets with an ordered selector (years, age bands) can offer every option at once as a 3D surface. */
+  findSurface?: (selection: ParameterSelection, value: number) => SurfaceSpec | undefined;
+}
+
+export interface SurfaceSlice {
+  position: number;
+  label: string;
+  distribution: Distribution;
+  isFadedBelowMedian?: boolean;
+}
+
+export interface SurfaceMarker {
+  position: number;
+  label: string;
+}
+
+export interface SurfaceSpec {
+  slices: SurfaceSlice[];
+  highlightPosition: number;
+  highlightValue: number;
+  depthTitle: string;
+  valueTitle: string;
+  unit: UnitFormat;
+  axis: ChartAxis;
+  signedLogLinearWidth?: number;
+  markers?: SurfaceMarker[];
+  notes?: string[];
 }
 
 export interface RankWords {
