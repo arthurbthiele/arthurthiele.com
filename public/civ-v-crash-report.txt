@@ -1,0 +1,827 @@
+-------------------------------------
+Translated Report (Full Report Below)
+-------------------------------------
+Process:             Civilization V [19739]
+Path:                /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/Civilization V
+Identifier:          Civilization V
+Version:             ???
+Code Type:           X86-64 (Translated)
+Role:                Foreground
+Parent Process:      launchd [1]
+Coalition:           com.aspyr.civ5xp.steam [20678]
+User ID:             501
+
+Date/Time:           2026-09-06 13:37:17.5718 +1000
+Launch Time:         2026-09-06 13:21:37.0010 +1000
+Hardware Model:      Mac16,5
+OS Version:          macOS 26.6.2 (25G83)
+Release Type:        User
+
+Crash Reporter Key:  <redacted-device-id>
+Incident Identifier: <redacted-incident-id>
+
+Time Awake Since Boot: 780000 seconds
+
+System Integrity Protection: enabled
+
+Triggered by Thread: 4  WinMain (WinID 2)
+
+Exception Type:    EXC_BAD_ACCESS (SIGSEGV)
+Exception Subtype: KERN_INVALID_ADDRESS at 0x00007f9359251f3f
+Exception Codes:   0x0000000000000001, 0x00007f9359251f3f
+
+Termination Reason:  Namespace SIGNAL, Code 11, Segmentation fault: 11
+Terminating Process: exc handler [19739]
+
+
+VM Region Info: 0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593
+      REGION TYPE                    START - END         [ VSIZE] PRT/MAX SHRMOD  REGION DETAIL
+      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-/rwx SM=PRV  
+--->  GAP OF 0x652fdff000 BYTES
+      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x/r-x SM=COW  Object_id=b7f7e4d0
+
+Thread 0:: main Dispatch queue: com.apple.main-thread
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89055056c ???
+2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994
+3   libc++.1.dylib                	    0x7ff803f8b9d1 std::__1::condition_variable::__do_timed_wait(std::__1::unique_lock<std::__1::mutex>&, std::__1::chrono::time_point<std::__1::chrono::system_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>) + 93
+4   Civilization V                	       0x1000ea3cf 0x100000000 + 959439
+5   Civilization V                	       0x1000ea1f8 0x100000000 + 958968
+6   Civilization V                	       0x1000e74e8 0x100000000 + 947432
+7   Civilization V                	       0x1000e6e3a 0x100000000 + 945722
+8   Civilization V                	       0x1001bd98c 0x100000000 + 1825164
+9   dyld                          	       0x2072331c8 start + 3240
+
+Thread 1:: com.apple.rosetta.exceptionserver
+
+Thread 2:: SDLTimer
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89055056c ???
+2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994
+3   Civilization V                	       0x1003e69de 0x100000000 + 4090334
+4   Civilization V                	       0x1003e6cc0 0x100000000 + 4091072
+5   Civilization V                	       0x1003e78b8 0x100000000 + 4094136
+6   Civilization V                	       0x1003e748c 0x100000000 + 4093068
+7   Civilization V                	       0x1003e6ee9 0x100000000 + 4091625
+8   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+9   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 3:: com.apple.NSEventThread
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054b0f4 ???
+2   libsystem_kernel.dylib        	    0x7ff804037f57 mach_msg2_internal + 83
+3   libsystem_kernel.dylib        	    0x7ff804030b66 mach_msg_overwrite + 586
+4   libsystem_kernel.dylib        	    0x7ff804029e56 mach_msg + 19
+5   CoreFoundation                	    0x7ff80412923a __CFRunLoopServiceMachPort + 145
+6   CoreFoundation                	    0x7ff804127ce1 __CFRunLoopRun + 1358
+7   CoreFoundation                	    0x7ff8041ef525 _CFRunLoopRunSpecificWithOptions + 496
+8   AppKit                        	    0x7ff8080626a0 _NSEventThread + 158
+9   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+10  libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 4 Crashed:: WinMain (WinID 2)
+0   ???                           	       0x1304c24d0 ???
+1   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f956bf4 0x12f677000 + 3013620
+2   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f9524e5 0x12f677000 + 2995429
+3   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fab548e 0x12f677000 + 4449422
+4   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fac38b9 0x12f677000 + 4507833
+5   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fae3ad0 0x12f677000 + 4639440
+6   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf2526 0x12f677000 + 4699430
+7   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf7612 0x12f677000 + 4720146
+8   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf96de 0x12f677000 + 4728542
+9   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fae3806 0x12f677000 + 4638726
+10  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafb1c8 0x12f677000 + 4735432
+11  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafc297 0x12f677000 + 4739735
+12  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faff1a4 0x12f677000 + 4751780
+13  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafda2c 0x12f677000 + 4745772
+14  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafd74b 0x12f677000 + 4745035
+15  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fabce24 0x12f677000 + 4480548
+16  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b68c 0x12f677000 + 3819148
+17  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b9d5 0x12f677000 + 3819989
+18  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf1307 0x12f677000 + 4694791
+19  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf75aa 0x12f677000 + 4720042
+20  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf8820 0x12f677000 + 4724768
+21  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafb6ef 0x12f677000 + 4736751
+22  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafc297 0x12f677000 + 4739735
+23  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faff1a4 0x12f677000 + 4751780
+24  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafda2c 0x12f677000 + 4745772
+25  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafd74b 0x12f677000 + 4745035
+26  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fabce24 0x12f677000 + 4480548
+27  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b6c4 0x12f677000 + 3819204
+28  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa28ea2 0x12f677000 + 3874466
+29  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1f50c 0x12f677000 + 3835148
+30  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1e901 0x12f677000 + 3832065
+31  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1a2ca 0x12f677000 + 3814090
+32  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f998545 0x12f677000 + 3282245
+33  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f80ecfa 0x12f677000 + 1670394
+34  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f80d662 0x12f677000 + 1664610
+35  Civilization V                	       0x10059dc8e 0x100000000 + 5889166
+36  Civilization V                	       0x1008bff07 0x100000000 + 9174791
+37  Civilization V                	       0x1004915b0 0x100000000 + 4789680
+38  Civilization V                	       0x100b2d11a 0x100000000 + 11718938
+39  Civilization V                	       0x10049b3e5 0x100000000 + 4830181
+40  Civilization V                	       0x100132694 0x100000000 + 1255060
+41  Civilization V                	       0x100138118 0x100000000 + 1278232
+42  libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+43  libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 5:: TBB (WinID 3)
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104
+3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9
+4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 6:: TBB (WinID 4)
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104
+3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9
+4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 7:: TBB (WinID 5)
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104
+3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9
+4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 8:: caulk.messenger.shared:17
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158
+3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30
+4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*) + 41
+5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 9:: caulk.messenger.shared:high
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158
+3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30
+4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*) + 41
+5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 10:: caulk::deferred_logger
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054aee4 ???
+2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158
+3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30
+4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*) + 41
+5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 11:: com.apple.audio.IOThread.client
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054af14 ???
+2   caulk                         	    0x7ff810d79887 caulk::mach::semaphore::wait_signal_or_error(caulk::mach::semaphore&) + 23
+3   CoreAudio                     	    0x7ff806db84d2 HALC_ProxyIOContext::IOWorkLoop() + 5870
+4   CoreAudio                     	    0x7ff806db66ae invocation function for block in HALC_ProxyIOContext::HALC_ProxyIOContext(unsigned int, unsigned int) + 141
+5   CoreAudio                     	    0x7ff806f777c7 HALC_IOThread::Entry(void*) + 73
+6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 12:
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054af44 ???
+2   CarbonCore                    	    0x7ff807a9aafc MPWaitOnSemaphore + 74
+3   libMilesX64.dylib             	       0x110e25783 0x110de5000 + 264067
+4   libMilesX64.dylib             	       0x110e137c9 0x110de5000 + 190409
+5   libMilesX64.dylib             	       0x110e24ffc 0x110de5000 + 262140
+6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 13:: AQConverterThread
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89055056c ???
+2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994
+3   libAudioToolboxUtility.dylib  	    0x7ff8171f1ec8 CADeprecated::CAGuard::Wait() + 68
+4   AudioToolbox                  	    0x7ff8189f93ff AQConverterManager::AQConverterThread::ConverterThreadEntry(void*) + 397
+5   libAudioToolboxUtility.dylib  	    0x7ff8171dfb11 CADeprecated::CAPThread::Entry(void*) + 77
+6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 14:
+0   ???                           	    0x7ff88ff7ab80 ???
+1   ???                           	    0x7ff89054af44 ???
+2   CarbonCore                    	    0x7ff807a9aafc MPWaitOnSemaphore + 74
+3   libMilesX64.dylib             	       0x110e25783 0x110de5000 + 264067
+4   libMilesX64.dylib             	       0x110e0d9fe 0x110de5000 + 166398
+5   libMilesX64.dylib             	       0x110e24ffc 0x110de5000 + 262140
+6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115
+7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15
+
+Thread 15:
+
+Thread 16:
+
+Thread 17:
+
+Thread 18:
+
+
+Thread 4 crashed with X86 Thread State (64-bit):
+  rax: 0x00000000ffffffff  rbx: 0x000000030be7e4d0  rcx: 0x0000000000000002  rdx: 0x0000000000000000
+  rdi: 0x00007f9259251808  rsi: 0x00000000ffffffff  rbp: 0x000000030be7e2f0  rsp: 0x000000030be7e2f0
+   r8: 0x0000000094a0000a   r9: 0x0000000000000065  r10: 0x0000000094a00000  r11: 0x00000000000007fb
+  r12: 0x00006000051a6e50  r13: 0x000000030be7e430  r14: 0x0000000000000002  r15: 0x00000000000223c0
+  rip: 0x000000012fa52896  rfl: 0x0000000000000202
+ tmp0: 0x00007f9359251807 tmp1: 0x000000012f956990 tmp2: 0x000000012f956bf4
+
+
+Binary Images:
+       0x110c32000 -        0x110c32fff steamloader.dylib (*) <c85b1892-a204-3ace-a1aa-10e5f2b49bdf> /Users/USER/Library/Application Support/Steam/*/steamloader.dylib
+       0x110caf000 -        0x110cd3fff gameoverlayrenderer.dylib (*) <1c9e864f-f4b4-3296-a624-6141d4f902d6> /Users/USER/Library/Application Support/Steam/*/gameoverlayrenderer.dylib
+       0x100000000 -        0x100e13fff Civilization V (*) <0c91a3de-65cb-3122-89f3-d0ae896c8395> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/Civilization V
+       0x110d23000 -        0x110d3cfff libtbb.dylib (*) <6369f243-b54d-3d1f-a5fb-d910941990e9> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libtbb.dylib
+       0x110d8a000 -        0x110dacfff libBinkMacx64.dylib (*) <73688dc8-97eb-3254-aab2-1a0c4e34ee9b> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libBinkMacx64.dylib
+       0x110de5000 -        0x110e36fff libMilesX64.dylib (*) <1a540230-59d6-32ba-89b3-5b5bc43195b6> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libMilesX64.dylib
+       0x110c58000 -        0x110c60fff libsteam_api.dylib (*) <e4caa406-a4e3-3165-b90e-34b202295fef> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libsteam_api.dylib
+       0x117342000 -        0x118ac2fff steamclient.dylib (*) <47ea1b85-1fee-3d7e-a794-3f72c3384e89> /Users/USER/Library/Application Support/Steam/*/steamclient.dylib
+       0x1141da000 -        0x1141f5fff libtier0_s.dylib (*) <7c6b9e33-2136-34ef-af72-d9afbd2831d3> /Users/USER/Library/Application Support/Steam/*/libtier0_s.dylib
+       0x1142cd000 -        0x1142f8fff libvstdlib_s.dylib (*) <2b3af73e-94f9-3043-8ebe-da19bde62acb> /Users/USER/Library/Application Support/Steam/*/libvstdlib_s.dylib
+       0x114249000 -        0x114257fff libaudio.dylib (*) <bbfa0f96-77a4-3c66-a3b1-a10b8dcf934f> /Users/USER/Library/Application Support/Steam/*/libaudio.dylib
+       0x11439b000 -        0x1143b1fff crashhandler.dylib (*) <36f38ca1-fa51-34e5-bfbc-3a5dc1a596e9> /Users/USER/Library/Application Support/Steam/*/crashhandler.dylib
+       0x114284000 -        0x11428bfff com.googlecode.google-breakpad (*) <c98be7e7-b888-338c-a7e7-40dd223401d4> /Users/USER/Library/Application Support/Steam/*/Breakpad.framework/Versions/A/Breakpad
+       0x114172000 -        0x114181fff breakpadUtilities.dylib (*) <c62cc81e-aa3c-32b7-ab0e-68d19109fd3f> /Users/USER/Library/Application Support/Steam/*/Breakpad.framework/Versions/A/Resources/breakpadUtilities.dylib
+       0x11c848000 -        0x11d283fff com.apple.AGXMetalG16X (353.14) <a4e17d60-a5da-3abb-b5b6-866a3f00c65a> /System/Library/Extensions/AGXMetalG16X.bundle/Contents/MacOS/AGXMetalG16X
+       0x11731d000 -        0x117329fff libobjc-trampolines.dylib (*) <7ac27037-538b-3f7c-9aa5-8d7772a8c780> /usr/lib/libobjc-trampolines.dylib
+       0x11c77d000 -        0x11c793fff com.apple.iokit.IOHIDLib (2.0.0) <d38e2a8d-4eac-31ea-b904-8c469859f57a> /System/Library/Extensions/IOHIDFamily.kext/Contents/PlugIns/IOHIDLib.plugin/Contents/MacOS/IOHIDLib
+       0x121530000 -        0x121598fff com.apple.AppleMetalOpenGLRenderer (1.0) <a0abd5d5-1532-34b2-8797-cb150a838467> /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/MacOS/AppleMetalOpenGLRenderer
+       0x128db1000 -        0x128efbfff com.apple.audio.units.Components (1.14) <dcbc6d7c-15a5-3910-a82a-dc6f40479d7d> /System/Library/Components/CoreAudio.component/Contents/MacOS/CoreAudio
+       0x12a1d8000 -        0x12a9bcfff com.apple.audio.AudioDSPComponents (1.0) <745ebf91-65e1-3547-96d5-8193dfd03c1f> /System/Library/Components/AudioDSP.component/Contents/MacOS/AudioDSP
+       0x128b9a000 -        0x128bb0fff com.apple.security.csparser (3.0) <481ccce1-df9c-38a5-b88e-2700132ee90c> /System/Library/Frameworks/Security.framework/Versions/A/PlugIns/csparser.bundle/Contents/MacOS/csparser
+       0x117100000 -        0x11710dfff libMilesX64Ogg.asi (*) <4e650665-81db-322d-8dde-4115844be570> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Ogg.asi
+       0x11713d000 -        0x11714dfff libMilesX64Mp3.asi (*) <b3421bcd-0ed5-31d3-a37c-89a99420192c> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Mp3.asi
+       0x117166000 -        0x117171fff libMilesX64BinkA.asi (*) <6c896647-eede-31e1-9878-919c7578bea6> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64BinkA.asi
+       0x11718a000 -        0x117196fff libMilesX64Dsp.flt (*) <d95b059c-a787-3b5f-9b55-96d861155eba> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Dsp.flt
+       0x12f677000 -        0x12fbe7fff libCvGameCoreDLL_Expansion2_DLL.dylib (*) <a9b8664e-cc93-3db5-ae0e-1b369464baa2> /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libCvGameCoreDLL_Expansion2_DLL.dylib
+       0x207220000 -        0x2072ccfff dyld (*) <cf55ca34-3ecb-38f3-9e3e-e20592c197be> /usr/lib/dyld
+               0x0 - 0xffffffffffffffff ??? (*) <00000000-0000-0000-0000-000000000000> ???
+    0x7ff804068000 -     0x7ff804073ebf libsystem_pthread.dylib (*) <a55cf178-ea25-3cc0-8bcd-a4209f2acd1d> /usr/lib/system/libsystem_pthread.dylib
+    0x7ff803f86000 -     0x7ff804010b63 libc++.1.dylib (*) <dc8be9a5-9501-3439-9189-9e16c26df6b3> /usr/lib/libc++.1.dylib
+    0x7ff804029000 -     0x7ff8040675af libsystem_kernel.dylib (*) <0e16c3e3-e224-378f-9fdc-28bc144f39af> /usr/lib/system/libsystem_kernel.dylib
+    0x7ff8040ad000 -     0x7ff804569844 com.apple.CoreFoundation (6.9) <f4868d1f-71d7-3904-a288-3e20ce7f1fce> /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+    0x7ff807ed3000 -     0x7ff8096cfb16 com.apple.AppKit (6.9) <583bdb03-aa3d-3e8e-8f9b-fb919cdb5efb> /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit
+    0x7ff810d5e000 -     0x7ff810d8282f com.apple.audio.caulk (1.0) <7d527e3a-f6c8-386f-b19b-c8d521ba9860> /System/Library/PrivateFrameworks/caulk.framework/Versions/A/caulk
+    0x7ff806bc0000 -     0x7ff807365a93 com.apple.audio.CoreAudio (5.0) <ff424749-d74d-321d-b45c-eee40e1bec57> /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio
+    0x7ff807a28000 -     0x7ff807d16341 com.apple.CoreServices.CarbonCore (1333) <cd1cab46-6b8a-3dda-8cb0-c921e261526e> /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore
+    0x7ff8171d6000 -     0x7ff8171f7bbf libAudioToolboxUtility.dylib (*) <fbd32ab9-5553-3c8b-934a-bda2017c0e50> /usr/lib/libAudioToolboxUtility.dylib
+    0x7ff8189d3000 -     0x7ff818b99937 com.apple.audio.toolbox.AudioToolbox (1.14) <f141647c-c446-3104-8af3-31b3a0189680> /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox
+
+External Modification Summary:
+  Calls made by other processes targeting this process:
+    task_for_pid: 0
+    thread_create: 0
+    thread_set_state: 0
+  Calls made by this process:
+    task_for_pid: 0
+    thread_create: 0
+    thread_set_state: 0
+  Calls made by all processes on this machine:
+    task_for_pid: 0
+    thread_create: 0
+    thread_set_state: 0
+
+VM Region Summary:
+ReadOnly portion of Libraries: Total=1.4G resident=0K(0%) swapped_out_or_unallocated=1.4G(100%)
+Writable regions: Total=4.7G written=8076K(0%) resident=8076K(0%) swapped_out=0K(0%) unallocated=4.7G(100%)
+
+                                VIRTUAL   REGION 
+REGION TYPE                        SIZE    COUNT (non-coalesced) 
+===========                     =======  ======= 
+Accelerate framework               128K        1 
+Activity Tracing                   256K        1 
+CG image                           960K      120 
+ColorSync                            8K        2 
+CoreAnimation                      192K       20 
+CoreGraphics                        12K        2 
+CoreUI image data                 1112K        9 
+Foundation                          16K        1 
+Image IO                             8K        2 
+Kernel Alloc Once                    8K        1 
+MALLOC                             4.1G      313 
+MALLOC guard page                  576K       36 
+MALLOC_LARGE (reserved)           51.2M        3         reserved VM address space (unallocated)
+OpenGL GLSL                        256K        3 
+Rosetta Arena                     4096K        2 
+Rosetta Generic                   1296K      321 
+Rosetta IndirectBranch            1024K        1 
+Rosetta JIT                      128.0M        1 
+Rosetta Return Stack               340K       34 
+Rosetta Thread Context             340K       34 
+STACK GUARD                         16K        4 
+Stack                             33.8M       18 
+Stack Guard                       56.1M       14 
+VM_ALLOCATE                      229.8M     3658 
+VM_ALLOCATE (media)               10.0M        1 
+VM_ALLOCATE (reserved)              52K        8         reserved VM address space (unallocated)
+__CTF                               824        1 
+__DATA                           144.7M     1023 
+__DATA_CONST                     122.1M     1044 
+__DATA_DIRTY                      7993K      870 
+__FONT_DATA                        2352        1 
+__GLSLBUILTINS                    5174K        1 
+__LINKEDIT                       155.8M       29 
+__OBJC_RO                         65.2M        1 
+__OBJC_RW                         2595K        1 
+__TEXT                             1.3G     1076 
+__TPRO_CONST                         8K        2 
+dyld private memory                128K        1 
+mapped file                      373.3M      122 
+page table in kernel              8076K        1 
+shared memory                     19.3M       21 
+===========                     =======  ======= 
+TOTAL                              6.8G     8804 
+TOTAL, minus reserved VM space     6.7G     8804 
+
+
+Error Formulating Crash Report:
+RIP register does not match crashing frame (0x12FA52896 vs 0x1304C24D0)
+
+-----------
+Full Report
+-----------
+
+{"app_name":"Civilization V","timestamp":"2026-09-06 13:37:19.00 +1000","app_version":"","slice_uuid":"0c91a3de-65cb-3122-89f3-d0ae896c8395","build_version":"","platform":1,"share_with_app_devs":1,"is_first_party":1,"bug_type":"309","os_version":"macOS 26.6.2 (25G83)","roots_installed":0,"incident_id":"<redacted-incident-id>","name":"Civilization V"}
+{
+  "uptime" : 780000,
+  "procRole" : "Foreground",
+  "version" : 2,
+  "userID" : 501,
+  "deployVersion" : 210,
+  "modelCode" : "Mac16,5",
+  "coalitionID" : 20678,
+  "osVersion" : {
+    "train" : "macOS 26.6.2",
+    "build" : "25G83",
+    "releaseType" : "User"
+  },
+  "captureTime" : "2026-09-06 13:37:17.5718 +1000",
+  "codeSigningMonitor" : 2,
+  "incident" : "<redacted-incident-id>",
+  "pid" : 19739,
+  "translated" : true,
+  "cpuType" : "X86-64",
+  "procLaunch" : "2026-09-06 13:21:37.0010 +1000",
+  "procStartAbsTime" : 18733117357495,
+  "procExitAbsTime" : 18755690721099,
+  "procName" : "Civilization V",
+  "procPath" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/Civilization V",
+  "parentProc" : "launchd",
+  "parentPid" : 1,
+  "coalitionName" : "com.aspyr.civ5xp.steam",
+  "crashReporterKey" : "<redacted-device-id>",
+  "appleIntelligenceStatus" : {"reasons":["assetIsNotReady","notOptedIn"],"state":"unavailable"},
+  "developerMode" : 1,
+  "codeSigningID" : "Civilization V",
+  "codeSigningTeamID" : "VF8SGH77F7",
+  "codeSigningFlags" : 570425345,
+  "codeSigningValidationCategory" : 6,
+  "codeSigningTrustLevel" : 4294967295,
+  "codeSigningAuxiliaryInfo" : 0,
+  "bootSessionUUID" : "C555C680-A3DB-410C-9AC4-7E3F1B376ED0",
+  "sip" : "enabled",
+  "vmRegionInfo" : "0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593\n      REGION TYPE                    START - END         [ VSIZE] PRT\/MAX SHRMOD  REGION DETAIL\n      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-\/rwx SM=PRV  \n--->  GAP OF 0x652fdff000 BYTES\n      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x\/r-x SM=COW  Object_id=b7f7e4d0",
+  "exception" : {"codes":"0x0000000000000001, 0x00007f9359251f3f","rawCodes":[1,140270832525119],"type":"EXC_BAD_ACCESS","signal":"SIGSEGV","subtype":"KERN_INVALID_ADDRESS at 0x00007f9359251f3f"},
+  "termination" : {"flags":0,"code":11,"namespace":"SIGNAL","indicator":"Segmentation fault: 11","byProc":"exc handler","byPid":19739},
+  "vmregioninfo" : "0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593\n      REGION TYPE                    START - END         [ VSIZE] PRT\/MAX SHRMOD  REGION DETAIL\n      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-\/rwx SM=PRV  \n--->  GAP OF 0x652fdff000 BYTES\n      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x\/r-x SM=COW  Object_id=b7f7e4d0",
+  "extMods" : {"caller":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"system":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"targeted":{"thread_create":0,"thread_set_state":0,"task_for_pid":0},"warnings":0},
+  "faultingThread" : 4,
+  "threads" : [{"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":160},"r12":{"value":22},"rosetta":{"tmp2":{"value":140703195907848},"tmp1":{"value":140705543990100},"tmp0":{"value":18446744073709551615}},"rbx":{"value":0},"r8":{"value":140703196183829,"symbolLocation":0,"symbol":"_pthread_psynch_cond_cleanup"},"r15":{"value":8333334},"r10":{"value":0},"rdx":{"value":54533376},"rdi":{"value":8333334},"r9":{"value":160},"r13":{"value":234225667879740416},"rflags":{"value":658},"rax":{"value":260},"rsp":{"value":0},"r11":{"value":2908208256144640},"rcx":{"value":0},"r14":{"value":54533376},"rsi":{"value":0}},"id":9380752,"name":"main","queue":"com.apple.main-thread","frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550108012,"imageIndex":27},{"imageOffset":25079,"symbol":"_pthread_cond_wait","symbolLocation":994,"imageIndex":28},{"imageOffset":22993,"symbol":"std::__1::condition_variable::__do_timed_wait(std::__1::unique_lock<std::__1::mutex>&, std::__1::chrono::time_point<std::__1::chrono::system_clock, std::__1::chrono::duration<long long, std::__1::ratio<1l, 1000000000l>>>)","symbolLocation":93,"imageIndex":29},{"imageOffset":959439,"imageIndex":2},{"imageOffset":958968,"imageIndex":2},{"imageOffset":947432,"imageIndex":2},{"imageOffset":945722,"imageIndex":2},{"imageOffset":1825164,"imageIndex":2},{"imageOffset":78280,"symbol":"start","symbolLocation":3240,"imageIndex":26}]},{"id":9380770,"name":"com.apple.rosetta.exceptionserver","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":9908489551872},"r12":{"value":8589934592},"rosetta":{"tmp2":{"value":0},"tmp1":{"value":4582730230559},"tmp0":{"value":10337986281472}},"rbx":{"value":4582730230559},"r8":{"value":2307},"r15":{"value":4831838208},"r10":{"value":3},"rdx":{"value":0},"rdi":{"value":0},"r9":{"value":1},"r13":{"value":4772358768},"rflags":{"value":582},"rax":{"value":268451845},"rsp":{"value":10337986281472},"r11":{"value":0},"rcx":{"value":17314086914},"r14":{"value":5105263824},"rsi":{"value":2616}},"frames":[]},{"id":9380773,"name":"SDLTimer","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":65704},"r12":{"value":22},"rosetta":{"tmp2":{"value":140703195907848},"tmp1":{"value":140705543990100},"tmp0":{"value":18446744073709551615}},"rbx":{"value":0},"r8":{"value":140703196183829,"symbolLocation":0,"symbol":"_pthread_psynch_cond_cleanup"},"r15":{"value":99999000},"r10":{"value":0},"rdx":{"value":2092544},"rdi":{"value":99999000},"r9":{"value":65704},"r13":{"value":9108358621584640},"rflags":{"value":658},"rax":{"value":260},"rsp":{"value":0},"r11":{"value":0},"rcx":{"value":0},"r14":{"value":2092544},"rsi":{"value":0}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550108012,"imageIndex":27},{"imageOffset":25079,"symbol":"_pthread_cond_wait","symbolLocation":994,"imageIndex":28},{"imageOffset":4090334,"imageIndex":2},{"imageOffset":4091072,"imageIndex":2},{"imageOffset":4094136,"imageIndex":2},{"imageOffset":4093068,"imageIndex":2},{"imageOffset":4091625,"imageIndex":2},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380776,"name":"com.apple.NSEventThread","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":140750373257216},"r12":{"value":140750373257216},"rosetta":{"tmp2":{"value":140703195955031},"tmp1":{"value":140705543990384},"tmp0":{"value":18446744073709551615}},"rbx":{"value":140750373257216},"r8":{"value":12500510047098699817},"r15":{"value":0},"r10":{"value":140750373257216},"rdx":{"value":8589934592},"rdi":{"value":4294967295},"r9":{"value":140750373257216},"r13":{"value":21592279046},"rflags":{"value":643},"rax":{"value":268451845},"rsp":{"value":0},"r11":{"value":0},"rcx":{"value":21592279046},"r14":{"value":2},"rsi":{"value":2}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550086388,"imageIndex":27},{"imageOffset":61271,"symbol":"mach_msg2_internal","symbolLocation":83,"imageIndex":30},{"imageOffset":31590,"symbol":"mach_msg_overwrite","symbolLocation":586,"imageIndex":30},{"imageOffset":3670,"symbol":"mach_msg","symbolLocation":19,"imageIndex":30},{"imageOffset":508474,"symbol":"__CFRunLoopServiceMachPort","symbolLocation":145,"imageIndex":31},{"imageOffset":503009,"symbol":"__CFRunLoopRun","symbolLocation":1358,"imageIndex":31},{"imageOffset":1320229,"symbol":"_CFRunLoopRunSpecificWithOptions","symbolLocation":496,"imageIndex":31},{"imageOffset":1636000,"symbol":"_NSEventThread","symbolLocation":158,"imageIndex":32},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"triggered":true,"id":9380779,"name":"WinMain (WinID 2)","threadState":{"r13":{"value":13084648496},"rflags":{"value":514},"rax":{"value":4294967295},"rosetta":{"tmp2":{"value":5093288948},"tmp1":{"value":5093288336},"tmp0":{"value":140270832523271}},"r14":{"value":2},"rsi":{"value":4294967295},"r8":{"value":2493513738},"rdx":{"value":0},"r10":{"value":2493513728},"r9":{"value":101},"r15":{"value":140224},"rbx":{"value":13084648656},"r11":{"value":2043},"rip":{"value":5094320278,"matchesCrashFrame":0},"rbp":{"value":13084648176},"rsp":{"value":13084648176},"r12":{"value":105553201884752},"rcx":{"value":2},"flavor":"x86_THREAD_STATE","rdi":{"value":140266537555976}},"frames":[{"imageOffset":5105263824,"imageIndex":27},{"imageOffset":3013620,"imageIndex":25},{"imageOffset":2995429,"imageIndex":25},{"imageOffset":4449422,"imageIndex":25},{"imageOffset":4507833,"imageIndex":25},{"imageOffset":4639440,"imageIndex":25},{"imageOffset":4699430,"imageIndex":25},{"imageOffset":4720146,"imageIndex":25},{"imageOffset":4728542,"imageIndex":25},{"imageOffset":4638726,"imageIndex":25},{"imageOffset":4735432,"imageIndex":25},{"imageOffset":4739735,"imageIndex":25},{"imageOffset":4751780,"imageIndex":25},{"imageOffset":4745772,"imageIndex":25},{"imageOffset":4745035,"imageIndex":25},{"imageOffset":4480548,"imageIndex":25},{"imageOffset":3819148,"imageIndex":25},{"imageOffset":3819989,"imageIndex":25},{"imageOffset":4694791,"imageIndex":25},{"imageOffset":4720042,"imageIndex":25},{"imageOffset":4724768,"imageIndex":25},{"imageOffset":4736751,"imageIndex":25},{"imageOffset":4739735,"imageIndex":25},{"imageOffset":4751780,"imageIndex":25},{"imageOffset":4745772,"imageIndex":25},{"imageOffset":4745035,"imageIndex":25},{"imageOffset":4480548,"imageIndex":25},{"imageOffset":3819204,"imageIndex":25},{"imageOffset":3874466,"imageIndex":25},{"imageOffset":3835148,"imageIndex":25},{"imageOffset":3832065,"imageIndex":25},{"imageOffset":3814090,"imageIndex":25},{"imageOffset":3282245,"imageIndex":25},{"imageOffset":1670394,"imageIndex":25},{"imageOffset":1664610,"imageIndex":25},{"imageOffset":5889166,"imageIndex":2},{"imageOffset":9174791,"imageIndex":2},{"imageOffset":4789680,"imageIndex":2},{"imageOffset":11718938,"imageIndex":2},{"imageOffset":4830181,"imageIndex":2},{"imageOffset":1255060,"imageIndex":2},{"imageOffset":1278232,"imageIndex":2},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380849,"name":"TBB (WinID 3)","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":3},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":391233},"r8":{"value":0},"r15":{"value":1},"r10":{"value":391233},"rdx":{"value":0},"rdi":{"value":13089419264},"r9":{"value":3},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":1},"r11":{"value":0},"rcx":{"value":140266191304320},"r14":{"value":140268087121928},"rsi":{"value":391233}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":36984,"symbol":"tbb::internal::rml::private_worker::run()","symbolLocation":104,"imageIndex":3},{"imageOffset":36873,"symbol":"tbb::internal::rml::private_worker::thread_routine(void*)","symbolLocation":9,"imageIndex":3},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380850,"name":"TBB (WinID 4)","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":4702119682646093774},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":391058},"r8":{"value":0},"r15":{"value":1},"r10":{"value":391058},"rdx":{"value":0},"rdi":{"value":13093625856},"r9":{"value":4702119682646093774},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":7845},"r11":{"value":14118070674242686842},"rcx":{"value":140266191304320},"r14":{"value":140268348411528},"rsi":{"value":391058}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":36984,"symbol":"tbb::internal::rml::private_worker::run()","symbolLocation":104,"imageIndex":3},{"imageOffset":36873,"symbol":"tbb::internal::rml::private_worker::thread_routine(void*)","symbolLocation":9,"imageIndex":3},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380851,"name":"TBB (WinID 5)","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":14118063035642367077},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":391163},"r8":{"value":0},"r15":{"value":1},"r10":{"value":391163},"rdx":{"value":0},"rdi":{"value":13097832448},"r9":{"value":14118063035642367077},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":7845},"r11":{"value":14158260500018026050},"rcx":{"value":140266191304320},"r14":{"value":140268348412040},"rsi":{"value":391163}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":36984,"symbol":"tbb::internal::rml::private_worker::run()","symbolLocation":104,"imageIndex":3},{"imageOffset":36873,"symbol":"tbb::internal::rml::private_worker::thread_routine(void*)","symbolLocation":9,"imageIndex":3},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380852,"name":"caulk.messenger.shared:17","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":25},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":13098369130},"r8":{"value":105553155299456},"r15":{"value":0},"r10":{"value":13098369130},"rdx":{"value":0},"rdi":{"value":105553155299424},"r9":{"value":25},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":0},"r11":{"value":0},"rcx":{"value":105553148457850},"r14":{"value":105553155299456},"rsi":{"value":140703411075668,"symbolLocation":0,"symbol":"caulk::concurrent::details::worker_thread::run()"}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":6992,"symbol":"caulk::semaphore::timed_wait(double)","symbolLocation":158,"imageIndex":33},{"imageOffset":6770,"symbol":"caulk::concurrent::details::worker_thread::run()","symbolLocation":30,"imageIndex":33},{"imageOffset":6054,"symbol":"void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*)","symbolLocation":41,"imageIndex":33},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380853,"name":"caulk.messenger.shared:high","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":0},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":18},"r8":{"value":105553155301744},"r15":{"value":0},"r10":{"value":18},"rdx":{"value":118275},"rdi":{"value":105553155301712},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":4294967295},"r11":{"value":0},"rcx":{"value":118275},"r14":{"value":105553155301744},"rsi":{"value":0}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":6992,"symbol":"caulk::semaphore::timed_wait(double)","symbolLocation":158,"imageIndex":33},{"imageOffset":6770,"symbol":"caulk::concurrent::details::worker_thread::run()","symbolLocation":30,"imageIndex":33},{"imageOffset":6054,"symbol":"void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*)","symbolLocation":41,"imageIndex":33},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380907,"name":"caulk::deferred_logger","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":13},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195906415},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":0},"r8":{"value":105553158032056},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":1},"rdi":{"value":105553158032024},"r9":{"value":13},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":0},"r11":{"value":35184372121599},"rcx":{"value":0},"r14":{"value":105553158032056},"rsi":{"value":0}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085860,"imageIndex":27},{"imageOffset":6992,"symbol":"caulk::semaphore::timed_wait(double)","symbolLocation":158,"imageIndex":33},{"imageOffset":6770,"symbol":"caulk::concurrent::details::worker_thread::run()","symbolLocation":30,"imageIndex":33},{"imageOffset":6054,"symbol":"void* caulk::thread_proxy<std::__1::tuple<caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple<caulk::concurrent::details::worker_thread*>>>(void*)","symbolLocation":41,"imageIndex":33},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9380913,"name":"com.apple.audio.IOThread.client","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":0},"r12":{"value":1},"rosetta":{"tmp2":{"value":140703195956160},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":140267802203720},"r8":{"value":13100515088},"r15":{"value":1},"r10":{"value":140267802203720},"rdx":{"value":1099511628032},"rdi":{"value":105553148473184},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":663},"rax":{"value":14},"rsp":{"value":0},"r11":{"value":0},"rcx":{"value":139267},"r14":{"value":140267802203952},"rsi":{"value":0}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085908,"imageIndex":27},{"imageOffset":112775,"symbol":"caulk::mach::semaphore::wait_signal_or_error(caulk::mach::semaphore&)","symbolLocation":23,"imageIndex":33},{"imageOffset":2065618,"symbol":"HALC_ProxyIOContext::IOWorkLoop()","symbolLocation":5870,"imageIndex":34},{"imageOffset":2057902,"symbol":"invocation function for block in HALC_ProxyIOContext::HALC_ProxyIOContext(unsigned int, unsigned int)","symbolLocation":141,"imageIndex":34},{"imageOffset":3897287,"symbol":"HALC_IOThread::Entry(void*)","symbolLocation":73,"imageIndex":34},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9381418,"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085956,"imageIndex":27},{"imageOffset":469756,"symbol":"MPWaitOnSemaphore","symbolLocation":74,"imageIndex":35},{"imageOffset":264067,"imageIndex":5},{"imageOffset":190409,"imageIndex":5},{"imageOffset":262140,"imageIndex":5},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":0},"r12":{"value":0},"rosetta":{"tmp2":{"value":140703195912104},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":140704281551880,"symbolLocation":32,"symbol":"gOpaqueIDMutex"},"r8":{"value":105553148138656},"r15":{"value":0},"r10":{"value":140704281551880,"symbolLocation":32,"symbol":"gOpaqueIDMutex"},"rdx":{"value":0},"rdi":{"value":2147483647},"r9":{"value":0},"r13":{"value":4578385848,"symbolLocation":832,"symbol":"AIL_indent"},"rflags":{"value":659},"rax":{"value":14},"rsp":{"value":18446744069414584320},"r11":{"value":0},"rcx":{"value":2147483647},"r14":{"value":13072993992},"rsi":{"value":13072994304}}},{"id":9381419,"name":"AQConverterThread","threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":160},"r12":{"value":22},"rosetta":{"tmp2":{"value":140703195907848},"tmp1":{"value":140705543990100},"tmp0":{"value":18446744073709551615}},"rbx":{"value":0},"r8":{"value":140703196183829,"symbolLocation":0,"symbol":"_pthread_psynch_cond_cleanup"},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":23509504},"rdi":{"value":0},"r9":{"value":160},"r13":{"value":100972555143658240},"rflags":{"value":658},"rax":{"value":260},"rsp":{"value":0},"r11":{"value":0},"rcx":{"value":0},"r14":{"value":23509504},"rsi":{"value":0}},"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550108012,"imageIndex":27},{"imageOffset":25079,"symbol":"_pthread_cond_wait","symbolLocation":994,"imageIndex":28},{"imageOffset":114376,"symbol":"CADeprecated::CAGuard::Wait()","symbolLocation":68,"imageIndex":36},{"imageOffset":156671,"symbol":"AQConverterManager::AQConverterThread::ConverterThreadEntry(void*)","symbolLocation":397,"imageIndex":37},{"imageOffset":39697,"symbol":"CADeprecated::CAPThread::Entry(void*)","symbolLocation":77,"imageIndex":36},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}]},{"id":9381420,"frames":[{"imageOffset":140705543990144,"imageIndex":27},{"imageOffset":140705550085956,"imageIndex":27},{"imageOffset":469756,"symbol":"MPWaitOnSemaphore","symbolLocation":74,"imageIndex":35},{"imageOffset":264067,"imageIndex":5},{"imageOffset":166398,"imageIndex":5},{"imageOffset":262140,"imageIndex":5},{"imageOffset":23881,"symbol":"_pthread_start","symbolLocation":115,"imageIndex":28},{"imageOffset":6191,"symbol":"thread_start","symbolLocation":15,"imageIndex":28}],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":0},"r12":{"value":4578374888},"rosetta":{"tmp2":{"value":140703195912104},"tmp1":{"value":140705543990096},"tmp0":{"value":18446744073709551615}},"rbx":{"value":140704281551880,"symbolLocation":32,"symbol":"gOpaqueIDMutex"},"r8":{"value":105553148318560},"r15":{"value":4578374168},"r10":{"value":140704281551880,"symbolLocation":32,"symbol":"gOpaqueIDMutex"},"rdx":{"value":1000000},"rdi":{"value":4294967296000000},"r9":{"value":0},"r13":{"value":4578265606},"rflags":{"value":659},"rax":{"value":49},"rsp":{"value":18446744069414584320},"r11":{"value":137438953474},"rcx":{"value":4294967296000000},"r14":{"value":13073088232},"rsi":{"value":13073088512}}},{"id":9381532,"frames":[],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":18446744073709551615},"r12":{"value":0},"rosetta":{"tmp2":{"value":0},"tmp1":{"value":0},"tmp0":{"value":0}},"rbx":{"value":0},"r8":{"value":0},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":13074632704},"rdi":{"value":0},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":531},"rax":{"value":13075169280},"rsp":{"value":409604},"r11":{"value":0},"rcx":{"value":92819},"r14":{"value":0},"rsi":{"value":0}}},{"id":9382448,"frames":[],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":18446744073709551615},"r12":{"value":0},"rosetta":{"tmp2":{"value":0},"tmp1":{"value":0},"tmp0":{"value":0}},"rbx":{"value":0},"r8":{"value":0},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":13102764032},"rdi":{"value":0},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":531},"rax":{"value":13103300608},"rsp":{"value":409604},"r11":{"value":0},"rcx":{"value":148495},"r14":{"value":0},"rsi":{"value":0}}},{"id":9382450,"frames":[],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":18446744073709551615},"r12":{"value":0},"rosetta":{"tmp2":{"value":0},"tmp1":{"value":0},"tmp0":{"value":0}},"rbx":{"value":0},"r8":{"value":0},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":13103878144},"rdi":{"value":0},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":531},"rax":{"value":13104414720},"rsp":{"value":409604},"r11":{"value":0},"rcx":{"value":160035},"r14":{"value":0},"rsi":{"value":0}}},{"id":9382452,"frames":[],"threadState":{"flavor":"x86_THREAD_STATE","rbp":{"value":18446744073709551615},"r12":{"value":0},"rosetta":{"tmp2":{"value":0},"tmp1":{"value":0},"tmp0":{"value":0}},"rbx":{"value":0},"r8":{"value":0},"r15":{"value":0},"r10":{"value":0},"rdx":{"value":13104992256,"symbolLocation":0,"region":"Rosetta Runtime Routines"},"rdi":{"value":0},"r9":{"value":0},"r13":{"value":0},"rflags":{"value":515},"rax":{"value":13105528832,"symbolLocation":536576,"region":"Rosetta Runtime Routines"},"rsp":{"value":278532},"r11":{"value":0},"rcx":{"value":0},"r14":{"value":0},"rsi":{"value":0}}}],
+  "usedImages" : [
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4576190464,
+    "size" : 4096,
+    "uuid" : "c85b1892-a204-3ace-a1aa-10e5f2b49bdf",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/steamloader.dylib",
+    "name" : "steamloader.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4576702464,
+    "size" : 151552,
+    "uuid" : "1c9e864f-f4b4-3296-a624-6141d4f902d6",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/gameoverlayrenderer.dylib",
+    "name" : "gameoverlayrenderer.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4294967296,
+    "size" : 14761984,
+    "uuid" : "0c91a3de-65cb-3122-89f3-d0ae896c8395",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/Civilization V",
+    "name" : "Civilization V"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4577177600,
+    "size" : 106496,
+    "uuid" : "6369f243-b54d-3d1f-a5fb-d910941990e9",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libtbb.dylib",
+    "name" : "libtbb.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4577599488,
+    "size" : 143360,
+    "uuid" : "73688dc8-97eb-3254-aab2-1a0c4e34ee9b",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libBinkMacx64.dylib",
+    "name" : "libBinkMacx64.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4577972224,
+    "size" : 335872,
+    "uuid" : "1a540230-59d6-32ba-89b3-5b5bc43195b6",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libMilesX64.dylib",
+    "name" : "libMilesX64.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4576346112,
+    "size" : 36864,
+    "uuid" : "e4caa406-a4e3-3165-b90e-34b202295fef",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libsteam_api.dylib",
+    "name" : "libsteam_api.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4684259328,
+    "size" : 24645632,
+    "uuid" : "47ea1b85-1fee-3d7e-a794-3f72c3384e89",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/steamclient.dylib",
+    "name" : "steamclient.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4632453120,
+    "size" : 114688,
+    "uuid" : "7c6b9e33-2136-34ef-af72-d9afbd2831d3",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/libtier0_s.dylib",
+    "name" : "libtier0_s.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4633448448,
+    "size" : 180224,
+    "uuid" : "2b3af73e-94f9-3043-8ebe-da19bde62acb",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/libvstdlib_s.dylib",
+    "name" : "libvstdlib_s.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4632907776,
+    "size" : 61440,
+    "uuid" : "bbfa0f96-77a4-3c66-a3b1-a10b8dcf934f",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/libaudio.dylib",
+    "name" : "libaudio.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4634292224,
+    "size" : 94208,
+    "uuid" : "36f38ca1-fa51-34e5-bfbc-3a5dc1a596e9",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/crashhandler.dylib",
+    "name" : "crashhandler.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4633149440,
+    "CFBundleIdentifier" : "com.googlecode.google-breakpad",
+    "size" : 32768,
+    "uuid" : "c98be7e7-b888-338c-a7e7-40dd223401d4",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Breakpad.framework\/Versions\/A\/Breakpad",
+    "name" : "Breakpad",
+    "CFBundleVersion" : "1.0"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4632027136,
+    "size" : 65536,
+    "uuid" : "c62cc81e-aa3c-32b7-ab0e-68d19109fd3f",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Breakpad.framework\/Versions\/A\/Resources\/breakpadUtilities.dylib",
+    "name" : "breakpadUtilities.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4773412864,
+    "CFBundleShortVersionString" : "353.14",
+    "CFBundleIdentifier" : "com.apple.AGXMetalG16X",
+    "size" : 10731520,
+    "uuid" : "a4e17d60-a5da-3abb-b5b6-866a3f00c65a",
+    "path" : "\/System\/Library\/Extensions\/AGXMetalG16X.bundle\/Contents\/MacOS\/AGXMetalG16X",
+    "name" : "AGXMetalG16X",
+    "CFBundleVersion" : "353.14"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4684107776,
+    "size" : 53248,
+    "uuid" : "7ac27037-538b-3f7c-9aa5-8d7772a8c780",
+    "path" : "\/usr\/lib\/libobjc-trampolines.dylib",
+    "name" : "libobjc-trampolines.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4772581376,
+    "CFBundleShortVersionString" : "2.0.0",
+    "CFBundleIdentifier" : "com.apple.iokit.IOHIDLib",
+    "size" : 94208,
+    "uuid" : "d38e2a8d-4eac-31ea-b904-8c469859f57a",
+    "path" : "\/System\/Library\/Extensions\/IOHIDFamily.kext\/Contents\/PlugIns\/IOHIDLib.plugin\/Contents\/MacOS\/IOHIDLib",
+    "name" : "IOHIDLib",
+    "CFBundleVersion" : "2.0.0"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4854054912,
+    "CFBundleShortVersionString" : "1.0",
+    "CFBundleIdentifier" : "com.apple.AppleMetalOpenGLRenderer",
+    "size" : 430080,
+    "uuid" : "a0abd5d5-1532-34b2-8797-cb150a838467",
+    "path" : "\/System\/Library\/Extensions\/AppleMetalOpenGLRenderer.bundle\/Contents\/MacOS\/AppleMetalOpenGLRenderer",
+    "name" : "AppleMetalOpenGLRenderer",
+    "CFBundleVersion" : "1"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4980412416,
+    "CFBundleShortVersionString" : "1.14",
+    "CFBundleIdentifier" : "com.apple.audio.units.Components",
+    "size" : 1355776,
+    "uuid" : "dcbc6d7c-15a5-3910-a82a-dc6f40479d7d",
+    "path" : "\/System\/Library\/Components\/CoreAudio.component\/Contents\/MacOS\/CoreAudio",
+    "name" : "CoreAudio",
+    "CFBundleVersion" : "1.14"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 5001543680,
+    "CFBundleShortVersionString" : "1.0",
+    "CFBundleIdentifier" : "com.apple.audio.AudioDSPComponents",
+    "size" : 8278016,
+    "uuid" : "745ebf91-65e1-3547-96d5-8193dfd03c1f",
+    "path" : "\/System\/Library\/Components\/AudioDSP.component\/Contents\/MacOS\/AudioDSP",
+    "name" : "AudioDSP",
+    "CFBundleVersion" : "1"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4978221056,
+    "CFBundleShortVersionString" : "3.0",
+    "CFBundleIdentifier" : "com.apple.security.csparser",
+    "size" : 94208,
+    "uuid" : "481ccce1-df9c-38a5-b88e-2700132ee90c",
+    "path" : "\/System\/Library\/Frameworks\/Security.framework\/Versions\/A\/PlugIns\/csparser.bundle\/Contents\/MacOS\/csparser",
+    "name" : "csparser",
+    "CFBundleVersion" : "61901.160.44"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4681891840,
+    "size" : 57344,
+    "uuid" : "4e650665-81db-322d-8dde-4115844be570",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Ogg.asi",
+    "name" : "libMilesX64Ogg.asi"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4682141696,
+    "size" : 69632,
+    "uuid" : "b3421bcd-0ed5-31d3-a37c-89a99420192c",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Mp3.asi",
+    "name" : "libMilesX64Mp3.asi"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4682309632,
+    "size" : 49152,
+    "uuid" : "6c896647-eede-31e1-9878-919c7578bea6",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64BinkA.asi",
+    "name" : "libMilesX64BinkA.asi"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 4682457088,
+    "size" : 53248,
+    "uuid" : "d95b059c-a787-3b5f-9b55-96d861155eba",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Dsp.flt",
+    "name" : "libMilesX64Dsp.flt"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 5090275328,
+    "size" : 5705728,
+    "uuid" : "a9b8664e-cc93-3db5-ae0e-1b369464baa2",
+    "path" : "\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libCvGameCoreDLL_Expansion2_DLL.dylib",
+    "name" : "libCvGameCoreDLL_Expansion2_DLL.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 8709603328,
+    "size" : 708608,
+    "uuid" : "cf55ca34-3ecb-38f3-9e3e-e20592c197be",
+    "path" : "\/usr\/lib\/dyld",
+    "name" : "dyld"
+  },
+  {
+    "size" : 0,
+    "source" : "A",
+    "base" : 0,
+    "uuid" : "00000000-0000-0000-0000-000000000000"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703196151808,
+    "size" : 48832,
+    "uuid" : "a55cf178-ea25-3cc0-8bcd-a4209f2acd1d",
+    "path" : "\/usr\/lib\/system\/libsystem_pthread.dylib",
+    "name" : "libsystem_pthread.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703195226112,
+    "size" : 568164,
+    "uuid" : "dc8be9a5-9501-3439-9189-9e16c26df6b3",
+    "path" : "\/usr\/lib\/libc++.1.dylib",
+    "name" : "libc++.1.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703195893760,
+    "size" : 255408,
+    "uuid" : "0e16c3e3-e224-378f-9fdc-28bc144f39af",
+    "path" : "\/usr\/lib\/system\/libsystem_kernel.dylib",
+    "name" : "libsystem_kernel.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703196434432,
+    "CFBundleShortVersionString" : "6.9",
+    "CFBundleIdentifier" : "com.apple.CoreFoundation",
+    "size" : 4966469,
+    "uuid" : "f4868d1f-71d7-3904-a288-3e20ce7f1fce",
+    "path" : "\/System\/Library\/Frameworks\/CoreFoundation.framework\/Versions\/A\/CoreFoundation",
+    "name" : "CoreFoundation",
+    "CFBundleVersion" : "5026.6.7"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703261601792,
+    "CFBundleShortVersionString" : "6.9",
+    "CFBundleIdentifier" : "com.apple.AppKit",
+    "size" : 25152279,
+    "uuid" : "583bdb03-aa3d-3e8e-8f9b-fb919cdb5efb",
+    "path" : "\/System\/Library\/Frameworks\/AppKit.framework\/Versions\/C\/AppKit",
+    "name" : "AppKit",
+    "CFBundleVersion" : "2685.70.101"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703411068928,
+    "CFBundleShortVersionString" : "1.0",
+    "CFBundleIdentifier" : "com.apple.audio.caulk",
+    "size" : 149552,
+    "uuid" : "7d527e3a-f6c8-386f-b19b-c8d521ba9860",
+    "path" : "\/System\/Library\/PrivateFrameworks\/caulk.framework\/Versions\/A\/caulk",
+    "name" : "caulk"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703241601024,
+    "CFBundleShortVersionString" : "5.0",
+    "CFBundleIdentifier" : "com.apple.audio.CoreAudio",
+    "size" : 8018580,
+    "uuid" : "ff424749-d74d-321d-b45c-eee40e1bec57",
+    "path" : "\/System\/Library\/Frameworks\/CoreAudio.framework\/Versions\/A\/CoreAudio",
+    "name" : "CoreAudio",
+    "CFBundleVersion" : "5.0"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703256707072,
+    "CFBundleShortVersionString" : "1333",
+    "CFBundleIdentifier" : "com.apple.CoreServices.CarbonCore",
+    "size" : 3072834,
+    "uuid" : "cd1cab46-6b8a-3dda-8cb0-c921e261526e",
+    "path" : "\/System\/Library\/Frameworks\/CoreServices.framework\/Versions\/A\/Frameworks\/CarbonCore.framework\/Versions\/A\/CarbonCore",
+    "name" : "CarbonCore",
+    "CFBundleVersion" : "1333"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703516418048,
+    "size" : 138176,
+    "uuid" : "fbd32ab9-5553-3c8b-934a-bda2017c0e50",
+    "path" : "\/usr\/lib\/libAudioToolboxUtility.dylib",
+    "name" : "libAudioToolboxUtility.dylib"
+  },
+  {
+    "source" : "P",
+    "arch" : "x86_64",
+    "base" : 140703541571584,
+    "CFBundleShortVersionString" : "1.14",
+    "CFBundleIdentifier" : "com.apple.audio.toolbox.AudioToolbox",
+    "size" : 1861944,
+    "uuid" : "f141647c-c446-3104-8af3-31b3a0189680",
+    "path" : "\/System\/Library\/Frameworks\/AudioToolbox.framework\/Versions\/A\/AudioToolbox",
+    "name" : "AudioToolbox",
+    "CFBundleVersion" : "1.14"
+  }
+],
+  "sharedCache" : {
+  "base" : 140703147278336,
+  "size" : 30064771072,
+  "uuid" : "7bd04242-d730-3164-8eb8-8650f163ca21"
+},
+  "vmSummary" : "ReadOnly portion of Libraries: Total=1.4G resident=0K(0%) swapped_out_or_unallocated=1.4G(100%)\nWritable regions: Total=4.7G written=8076K(0%) resident=8076K(0%) swapped_out=0K(0%) unallocated=4.7G(100%)\n\n                                VIRTUAL   REGION \nREGION TYPE                        SIZE    COUNT (non-coalesced) \n===========                     =======  ======= \nAccelerate framework               128K        1 \nActivity Tracing                   256K        1 \nCG image                           960K      120 \nColorSync                            8K        2 \nCoreAnimation                      192K       20 \nCoreGraphics                        12K        2 \nCoreUI image data                 1112K        9 \nFoundation                          16K        1 \nImage IO                             8K        2 \nKernel Alloc Once                    8K        1 \nMALLOC                             4.1G      313 \nMALLOC guard page                  576K       36 \nMALLOC_LARGE (reserved)           51.2M        3         reserved VM address space (unallocated)\nOpenGL GLSL                        256K        3 \nRosetta Arena                     4096K        2 \nRosetta Generic                   1296K      321 \nRosetta IndirectBranch            1024K        1 \nRosetta JIT                      128.0M        1 \nRosetta Return Stack               340K       34 \nRosetta Thread Context             340K       34 \nSTACK GUARD                         16K        4 \nStack                             33.8M       18 \nStack Guard                       56.1M       14 \nVM_ALLOCATE                      229.8M     3658 \nVM_ALLOCATE (media)               10.0M        1 \nVM_ALLOCATE (reserved)              52K        8         reserved VM address space (unallocated)\n__CTF                               824        1 \n__DATA                           144.7M     1023 \n__DATA_CONST                     122.1M     1044 \n__DATA_DIRTY                      7993K      870 \n__FONT_DATA                        2352        1 \n__GLSLBUILTINS                    5174K        1 \n__LINKEDIT                       155.8M       29 \n__OBJC_RO                         65.2M        1 \n__OBJC_RW                         2595K        1 \n__TEXT                             1.3G     1076 \n__TPRO_CONST                         8K        2 \ndyld private memory                128K        1 \nmapped file                      373.3M      122 \npage table in kernel              8076K        1 \nshared memory                     19.3M       21 \n===========                     =======  ======= \nTOTAL                              6.8G     8804 \nTOTAL, minus reserved VM space     6.7G     8804 \n",
+  "legacyInfo" : {
+  "threadTriggered" : {
+    "name" : "WinMain (WinID 2)"
+  }
+},
+  "logWritingSignature" : "b66d4ee085c358e2888db7e268493e033091cdd8",
+  "bug_type" : "309",
+  "roots_installed" : 0,
+  "trmStatus" : 1,
+  "trialInfo" : {
+  "rollouts" : [
+    {
+      "rolloutId" : "67fd77fe1f9da9148f70d6ed",
+      "factorPackIds" : [
+
+      ],
+      "deploymentId" : 240000020
+    },
+    {
+      "rolloutId" : "5ffde50ce2aacd000d47a95f",
+      "factorPackIds" : [
+
+      ],
+      "deploymentId" : 240000557
+    }
+  ],
+  "experiments" : [
+
+  ]
+},
+  "reportNotes" : [
+  "RIP register does not match crashing frame (0x12FA52896 vs 0x1304C24D0)"
+]
+}
+
+Model: Mac16,5, BootROM 18000.161.10, proc 16:12:4:0 processors, 64 GB, SMC 
+Graphics: Apple M4 Max, Apple M4 Max, Built-In
+Display: Color LCD, 3456 x 2234 Retina, Main, MirrorOff, Online
+Memory Module: LPDDR5, Micron
+AirPort: spairport_wireless_card_type_wifi (0x14E4, 0x4388), wl0: Jul 10 2026 02:04:56 version 23.50.20.2.41.51.209 FWID 01-fa2c3dc1
+IO80211_driverkit-1566.5 "IO80211_driverkit-1566.5" Jul 31 2026 19:08:25
+AirPort: 
+Bluetooth: Version (null), 0 services, 0 devices, 0 incoming serial ports
+Network Service: Wi-Fi, AirPort, en0
+Thunderbolt Bus: MacBook Pro, Apple Inc.
+Thunderbolt Bus: MacBook Pro, Apple Inc.
+Thunderbolt Bus: MacBook Pro, Apple Inc.

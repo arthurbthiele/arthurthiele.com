@@ -230,3 +230,58 @@ footer.site {
   background: var(--accent);
   font-weight: 600;
 }
+
+/* Line numbers on assembly listings, so prose can refer to "line 3".
+   Rendered with a counter rather than written into the text, so copying
+   the block gives you instructions without numbers glued on. */
+pre[data-language="asm"] code { counter-reset: asm-line; }
+
+pre[data-language="asm"] .line { counter-increment: asm-line; }
+
+pre[data-language="asm"] .line::before {
+  content: counter(asm-line);
+  display: inline-block;
+  width: 1.5ch;
+  margin-right: 1.75ch;
+  text-align: right;
+  color: var(--ink-faint);
+  user-select: none;
+}
+
+pre[data-language="asm"] .line:last-child:empty { counter-increment: none; }
+pre[data-language="asm"] .line:last-child:empty::before { content: none; }
+
+/* Side-by-side before/after listings. Stacks on narrow screens. */
+.ba { display: flex; gap: 1.25rem; margin: 1.5rem 0; max-width: 100%; }
+.ba > div { flex: 1 1 0; min-width: 0; }
+.ba h4 {
+  margin: 0 0 0.4rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.ba pre {
+  margin: 0;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  background: var(--code-bg);
+  padding: 0.85rem 0.9rem;
+  border-radius: 6px;
+}
+@media (max-width: 46rem) { .ba { flex-direction: column; } }
+
+/* Line numbers for the hand-written before/after listings.
+   Numbers come from a counter, so copying the block gives clean instructions. */
+.ba pre.numbered code { counter-reset: ba-line; }
+.ba pre.numbered code > span { counter-increment: ba-line; }
+.ba pre.numbered code > span::before {
+  content: counter(ba-line);
+  display: inline-block;
+  width: 1.2ch;
+  margin-right: 1.4ch;
+  text-align: right;
+  color: var(--ink-faint);
+  user-select: none;
+}

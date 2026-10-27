@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Civilization V crash report — arthurthiele.com</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { color-scheme: light dark; --ink:#16130f; --bg:#fbfbf9; --dim:#4a4136; --rule:#c9c5bd; --hi:#fff1c4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#e4e2de; --bg:#17171b; --dim:#8a8680; --rule:#3a3a44; --hi:#403820; }
+  }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  header { padding:1.5rem 1.25rem 1rem; border-bottom:1px solid var(--rule); }
+  h1 { font-size:1rem; margin:0 0 .4rem; }
+  header p { margin:.2rem 0; color:var(--dim); font-size:12px; }
+  nav { display:flex; flex-wrap:wrap; gap:.3rem .9rem; margin-top:.8rem; }
+  nav a, header a { color:#8a3324; }
+  @media (prefers-color-scheme: dark) { nav a, header a { color:#e4a08a; } }
+  main { padding:1rem 1.25rem 4rem; overflow-x:auto; }
+  pre { margin:0; counter-reset:line; }
+  a.sec { display:block; height:0; overflow:hidden; }
+  a.sec:target, .ln:target { scroll-margin-top: 2rem; }
+  .ln { display:block; white-space:pre; counter-increment:line; }
+  .ln::before { content:counter(line); display:inline-block; width:4ch; margin-right:1.5ch;
+                 text-align:right; color:var(--dim); user-select:none; opacity:.7; }
+  .ln:target, a.sec:target + .ln { background:var(--hi); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Civilization V — crash report</h1>
+  <p>Device and incident identifiers redacted. Everything else is verbatim.</p>
+  <p><a href="/civ-v-crash-report.txt">plain text version</a> · <a href="/writing/civ-v-capital-crash/">back to the post</a></p>
+  <nav><a href="#process">Process</a>
+<a href="#exception">Exception</a>
+<a href="#vm-region-info">VM Region Info</a>
+<a href="#thread-4-crashed">Thread 4 — crashed</a>
+<a href="#registers">Registers at the crash</a>
+<a href="#binary-images">Binary Images</a>
+<a href="#external-modification">External Modification Summary</a>
+<a href="#vm-region-summary">VM Region Summary</a>
+<a href="#error-formulating">Error Formulating Crash Report</a>
+<a href="#full-report">Full Report</a></nav>
+</header>
+<main><pre>
+<span class="ln" id="L1">-------------------------------------</span>
+<span class="ln" id="L2">Translated Report (Full Report Below)</span>
+<span class="ln" id="L3">-------------------------------------</span>
+<a class="sec" id="process"></a><span class="ln" id="L4">Process:             Civilization V [19739]</span>
+<span class="ln" id="L5">Path:                /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/Civilization V</span>
+<span class="ln" id="L6">Identifier:          Civilization V</span>
+<span class="ln" id="L7">Version:             ???</span>
+<span class="ln" id="L8">Code Type:           X86-64 (Translated)</span>
+<span class="ln" id="L9">Role:                Foreground</span>
+<span class="ln" id="L10">Parent Process:      launchd [1]</span>
+<span class="ln" id="L11">Coalition:           com.aspyr.civ5xp.steam [20678]</span>
+<span class="ln" id="L12">User ID:             501</span>
+<span class="ln" id="L13">&nbsp;</span>
+<span class="ln" id="L14">Date/Time:           2026-09-06 13:37:17.5718 +1000</span>
+<span class="ln" id="L15">Launch Time:         2026-09-06 13:21:37.0010 +1000</span>
+<span class="ln" id="L16">Hardware Model:      Mac16,5</span>
+<span class="ln" id="L17">OS Version:          macOS 26.6.2 (25G83)</span>
+<span class="ln" id="L18">Release Type:        User</span>
+<span class="ln" id="L19">&nbsp;</span>
+<span class="ln" id="L20">Crash Reporter Key:  &lt;redacted-device-id&gt;</span>
+<span class="ln" id="L21">Incident Identifier: &lt;redacted-incident-id&gt;</span>
+<span class="ln" id="L22">&nbsp;</span>
+<span class="ln" id="L23">Time Awake Since Boot: 780000 seconds</span>
+<span class="ln" id="L24">&nbsp;</span>
+<span class="ln" id="L25">System Integrity Protection: enabled</span>
+<span class="ln" id="L26">&nbsp;</span>
+<span class="ln" id="L27">Triggered by Thread: 4  WinMain (WinID 2)</span>
+<span class="ln" id="L28">&nbsp;</span>
+<a class="sec" id="exception"></a><span class="ln" id="L29">Exception Type:    EXC_BAD_ACCESS (SIGSEGV)</span>
+<span class="ln" id="L30">Exception Subtype: KERN_INVALID_ADDRESS at 0x00007f9359251f3f</span>
+<span class="ln" id="L31">Exception Codes:   0x0000000000000001, 0x00007f9359251f3f</span>
+<span class="ln" id="L32">&nbsp;</span>
+<span class="ln" id="L33">Termination Reason:  Namespace SIGNAL, Code 11, Segmentation fault: 11</span>
+<span class="ln" id="L34">Terminating Process: exc handler [19739]</span>
+<span class="ln" id="L35">&nbsp;</span>
+<span class="ln" id="L36">&nbsp;</span>
+<a class="sec" id="vm-region-info"></a><span class="ln" id="L37">VM Region Info: 0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593</span>
+<span class="ln" id="L38">      REGION TYPE                    START - END         [ VSIZE] PRT/MAX SHRMOD  REGION DETAIL</span>
+<span class="ln" id="L39">      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-/rwx SM=PRV  </span>
+<span class="ln" id="L40">---&gt;  GAP OF 0x652fdff000 BYTES</span>
+<span class="ln" id="L41">      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x/r-x SM=COW  Object_id=b7f7e4d0</span>
+<span class="ln" id="L42">&nbsp;</span>
+<span class="ln" id="L43">Thread 0:: main Dispatch queue: com.apple.main-thread</span>
+<span class="ln" id="L44">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L45">1   ???                           	    0x7ff89055056c ???</span>
+<span class="ln" id="L46">2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994</span>
+<span class="ln" id="L47">3   libc++.1.dylib                	    0x7ff803f8b9d1 std::__1::condition_variable::__do_timed_wait(std::__1::unique_lock&lt;std::__1::mutex&gt;&amp;, std::__1::chrono::time_point&lt;std::__1::chrono::system_clock, std::__1::chrono::duration&lt;long long, std::__1::ratio&lt;1l, 1000000000l&gt;&gt;&gt;) + 93</span>
+<span class="ln" id="L48">4   Civilization V                	       0x1000ea3cf 0x100000000 + 959439</span>
+<span class="ln" id="L49">5   Civilization V                	       0x1000ea1f8 0x100000000 + 958968</span>
+<span class="ln" id="L50">6   Civilization V                	       0x1000e74e8 0x100000000 + 947432</span>
+<span class="ln" id="L51">7   Civilization V                	       0x1000e6e3a 0x100000000 + 945722</span>
+<span class="ln" id="L52">8   Civilization V                	       0x1001bd98c 0x100000000 + 1825164</span>
+<span class="ln" id="L53">9   dyld                          	       0x2072331c8 start + 3240</span>
+<span class="ln" id="L54">&nbsp;</span>
+<span class="ln" id="L55">Thread 1:: com.apple.rosetta.exceptionserver</span>
+<span class="ln" id="L56">&nbsp;</span>
+<span class="ln" id="L57">Thread 2:: SDLTimer</span>
+<span class="ln" id="L58">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L59">1   ???                           	    0x7ff89055056c ???</span>
+<span class="ln" id="L60">2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994</span>
+<span class="ln" id="L61">3   Civilization V                	       0x1003e69de 0x100000000 + 4090334</span>
+<span class="ln" id="L62">4   Civilization V                	       0x1003e6cc0 0x100000000 + 4091072</span>
+<span class="ln" id="L63">5   Civilization V                	       0x1003e78b8 0x100000000 + 4094136</span>
+<span class="ln" id="L64">6   Civilization V                	       0x1003e748c 0x100000000 + 4093068</span>
+<span class="ln" id="L65">7   Civilization V                	       0x1003e6ee9 0x100000000 + 4091625</span>
+<span class="ln" id="L66">8   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L67">9   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L68">&nbsp;</span>
+<span class="ln" id="L69">Thread 3:: com.apple.NSEventThread</span>
+<span class="ln" id="L70">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L71">1   ???                           	    0x7ff89054b0f4 ???</span>
+<span class="ln" id="L72">2   libsystem_kernel.dylib        	    0x7ff804037f57 mach_msg2_internal + 83</span>
+<span class="ln" id="L73">3   libsystem_kernel.dylib        	    0x7ff804030b66 mach_msg_overwrite + 586</span>
+<span class="ln" id="L74">4   libsystem_kernel.dylib        	    0x7ff804029e56 mach_msg + 19</span>
+<span class="ln" id="L75">5   CoreFoundation                	    0x7ff80412923a __CFRunLoopServiceMachPort + 145</span>
+<span class="ln" id="L76">6   CoreFoundation                	    0x7ff804127ce1 __CFRunLoopRun + 1358</span>
+<span class="ln" id="L77">7   CoreFoundation                	    0x7ff8041ef525 _CFRunLoopRunSpecificWithOptions + 496</span>
+<span class="ln" id="L78">8   AppKit                        	    0x7ff8080626a0 _NSEventThread + 158</span>
+<span class="ln" id="L79">9   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L80">10  libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L81">&nbsp;</span>
+<a class="sec" id="thread-4-crashed"></a><span class="ln" id="L82">Thread 4 Crashed:: WinMain (WinID 2)</span>
+<span class="ln" id="L83">0   ???                           	       0x1304c24d0 ???</span>
+<span class="ln" id="L84">1   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f956bf4 0x12f677000 + 3013620</span>
+<span class="ln" id="L85">2   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f9524e5 0x12f677000 + 2995429</span>
+<span class="ln" id="L86">3   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fab548e 0x12f677000 + 4449422</span>
+<span class="ln" id="L87">4   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fac38b9 0x12f677000 + 4507833</span>
+<span class="ln" id="L88">5   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fae3ad0 0x12f677000 + 4639440</span>
+<span class="ln" id="L89">6   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf2526 0x12f677000 + 4699430</span>
+<span class="ln" id="L90">7   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf7612 0x12f677000 + 4720146</span>
+<span class="ln" id="L91">8   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf96de 0x12f677000 + 4728542</span>
+<span class="ln" id="L92">9   libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fae3806 0x12f677000 + 4638726</span>
+<span class="ln" id="L93">10  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafb1c8 0x12f677000 + 4735432</span>
+<span class="ln" id="L94">11  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafc297 0x12f677000 + 4739735</span>
+<span class="ln" id="L95">12  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faff1a4 0x12f677000 + 4751780</span>
+<span class="ln" id="L96">13  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafda2c 0x12f677000 + 4745772</span>
+<span class="ln" id="L97">14  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafd74b 0x12f677000 + 4745035</span>
+<span class="ln" id="L98">15  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fabce24 0x12f677000 + 4480548</span>
+<span class="ln" id="L99">16  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b68c 0x12f677000 + 3819148</span>
+<span class="ln" id="L100">17  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b9d5 0x12f677000 + 3819989</span>
+<span class="ln" id="L101">18  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf1307 0x12f677000 + 4694791</span>
+<span class="ln" id="L102">19  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf75aa 0x12f677000 + 4720042</span>
+<span class="ln" id="L103">20  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faf8820 0x12f677000 + 4724768</span>
+<span class="ln" id="L104">21  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafb6ef 0x12f677000 + 4736751</span>
+<span class="ln" id="L105">22  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafc297 0x12f677000 + 4739735</span>
+<span class="ln" id="L106">23  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12faff1a4 0x12f677000 + 4751780</span>
+<span class="ln" id="L107">24  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafda2c 0x12f677000 + 4745772</span>
+<span class="ln" id="L108">25  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fafd74b 0x12f677000 + 4745035</span>
+<span class="ln" id="L109">26  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fabce24 0x12f677000 + 4480548</span>
+<span class="ln" id="L110">27  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1b6c4 0x12f677000 + 3819204</span>
+<span class="ln" id="L111">28  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa28ea2 0x12f677000 + 3874466</span>
+<span class="ln" id="L112">29  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1f50c 0x12f677000 + 3835148</span>
+<span class="ln" id="L113">30  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1e901 0x12f677000 + 3832065</span>
+<span class="ln" id="L114">31  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12fa1a2ca 0x12f677000 + 3814090</span>
+<span class="ln" id="L115">32  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f998545 0x12f677000 + 3282245</span>
+<span class="ln" id="L116">33  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f80ecfa 0x12f677000 + 1670394</span>
+<span class="ln" id="L117">34  libCvGameCoreDLL_Expansion2_DLL.dylib	       0x12f80d662 0x12f677000 + 1664610</span>
+<span class="ln" id="L118">35  Civilization V                	       0x10059dc8e 0x100000000 + 5889166</span>
+<span class="ln" id="L119">36  Civilization V                	       0x1008bff07 0x100000000 + 9174791</span>
+<span class="ln" id="L120">37  Civilization V                	       0x1004915b0 0x100000000 + 4789680</span>
+<span class="ln" id="L121">38  Civilization V                	       0x100b2d11a 0x100000000 + 11718938</span>
+<span class="ln" id="L122">39  Civilization V                	       0x10049b3e5 0x100000000 + 4830181</span>
+<span class="ln" id="L123">40  Civilization V                	       0x100132694 0x100000000 + 1255060</span>
+<span class="ln" id="L124">41  Civilization V                	       0x100138118 0x100000000 + 1278232</span>
+<span class="ln" id="L125">42  libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L126">43  libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L127">&nbsp;</span>
+<span class="ln" id="L128">Thread 5:: TBB (WinID 3)</span>
+<span class="ln" id="L129">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L130">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L131">2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104</span>
+<span class="ln" id="L132">3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9</span>
+<span class="ln" id="L133">4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L134">5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L135">&nbsp;</span>
+<span class="ln" id="L136">Thread 6:: TBB (WinID 4)</span>
+<span class="ln" id="L137">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L138">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L139">2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104</span>
+<span class="ln" id="L140">3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9</span>
+<span class="ln" id="L141">4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L142">5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L143">&nbsp;</span>
+<span class="ln" id="L144">Thread 7:: TBB (WinID 5)</span>
+<span class="ln" id="L145">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L146">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L147">2   libtbb.dylib                  	       0x110d2c078 tbb::internal::rml::private_worker::run() + 104</span>
+<span class="ln" id="L148">3   libtbb.dylib                  	       0x110d2c009 tbb::internal::rml::private_worker::thread_routine(void*) + 9</span>
+<span class="ln" id="L149">4   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L150">5   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L151">&nbsp;</span>
+<span class="ln" id="L152">Thread 8:: caulk.messenger.shared:17</span>
+<span class="ln" id="L153">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L154">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L155">2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158</span>
+<span class="ln" id="L156">3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30</span>
+<span class="ln" id="L157">4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*) + 41</span>
+<span class="ln" id="L158">5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L159">6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L160">&nbsp;</span>
+<span class="ln" id="L161">Thread 9:: caulk.messenger.shared:high</span>
+<span class="ln" id="L162">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L163">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L164">2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158</span>
+<span class="ln" id="L165">3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30</span>
+<span class="ln" id="L166">4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*) + 41</span>
+<span class="ln" id="L167">5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L168">6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L169">&nbsp;</span>
+<span class="ln" id="L170">Thread 10:: caulk::deferred_logger</span>
+<span class="ln" id="L171">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L172">1   ???                           	    0x7ff89054aee4 ???</span>
+<span class="ln" id="L173">2   caulk                         	    0x7ff810d5fb50 caulk::semaphore::timed_wait(double) + 158</span>
+<span class="ln" id="L174">3   caulk                         	    0x7ff810d5fa72 caulk::concurrent::details::worker_thread::run() + 30</span>
+<span class="ln" id="L175">4   caulk                         	    0x7ff810d5f7a6 void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*) + 41</span>
+<span class="ln" id="L176">5   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L177">6   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L178">&nbsp;</span>
+<span class="ln" id="L179">Thread 11:: com.apple.audio.IOThread.client</span>
+<span class="ln" id="L180">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L181">1   ???                           	    0x7ff89054af14 ???</span>
+<span class="ln" id="L182">2   caulk                         	    0x7ff810d79887 caulk::mach::semaphore::wait_signal_or_error(caulk::mach::semaphore&amp;) + 23</span>
+<span class="ln" id="L183">3   CoreAudio                     	    0x7ff806db84d2 HALC_ProxyIOContext::IOWorkLoop() + 5870</span>
+<span class="ln" id="L184">4   CoreAudio                     	    0x7ff806db66ae invocation function for block in HALC_ProxyIOContext::HALC_ProxyIOContext(unsigned int, unsigned int) + 141</span>
+<span class="ln" id="L185">5   CoreAudio                     	    0x7ff806f777c7 HALC_IOThread::Entry(void*) + 73</span>
+<span class="ln" id="L186">6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L187">7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L188">&nbsp;</span>
+<span class="ln" id="L189">Thread 12:</span>
+<span class="ln" id="L190">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L191">1   ???                           	    0x7ff89054af44 ???</span>
+<span class="ln" id="L192">2   CarbonCore                    	    0x7ff807a9aafc MPWaitOnSemaphore + 74</span>
+<span class="ln" id="L193">3   libMilesX64.dylib             	       0x110e25783 0x110de5000 + 264067</span>
+<span class="ln" id="L194">4   libMilesX64.dylib             	       0x110e137c9 0x110de5000 + 190409</span>
+<span class="ln" id="L195">5   libMilesX64.dylib             	       0x110e24ffc 0x110de5000 + 262140</span>
+<span class="ln" id="L196">6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L197">7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L198">&nbsp;</span>
+<span class="ln" id="L199">Thread 13:: AQConverterThread</span>
+<span class="ln" id="L200">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L201">1   ???                           	    0x7ff89055056c ???</span>
+<span class="ln" id="L202">2   libsystem_pthread.dylib       	    0x7ff80406e1f7 _pthread_cond_wait + 994</span>
+<span class="ln" id="L203">3   libAudioToolboxUtility.dylib  	    0x7ff8171f1ec8 CADeprecated::CAGuard::Wait() + 68</span>
+<span class="ln" id="L204">4   AudioToolbox                  	    0x7ff8189f93ff AQConverterManager::AQConverterThread::ConverterThreadEntry(void*) + 397</span>
+<span class="ln" id="L205">5   libAudioToolboxUtility.dylib  	    0x7ff8171dfb11 CADeprecated::CAPThread::Entry(void*) + 77</span>
+<span class="ln" id="L206">6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L207">7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L208">&nbsp;</span>
+<span class="ln" id="L209">Thread 14:</span>
+<span class="ln" id="L210">0   ???                           	    0x7ff88ff7ab80 ???</span>
+<span class="ln" id="L211">1   ???                           	    0x7ff89054af44 ???</span>
+<span class="ln" id="L212">2   CarbonCore                    	    0x7ff807a9aafc MPWaitOnSemaphore + 74</span>
+<span class="ln" id="L213">3   libMilesX64.dylib             	       0x110e25783 0x110de5000 + 264067</span>
+<span class="ln" id="L214">4   libMilesX64.dylib             	       0x110e0d9fe 0x110de5000 + 166398</span>
+<span class="ln" id="L215">5   libMilesX64.dylib             	       0x110e24ffc 0x110de5000 + 262140</span>
+<span class="ln" id="L216">6   libsystem_pthread.dylib       	    0x7ff80406dd49 _pthread_start + 115</span>
+<span class="ln" id="L217">7   libsystem_pthread.dylib       	    0x7ff80406982f thread_start + 15</span>
+<span class="ln" id="L218">&nbsp;</span>
+<span class="ln" id="L219">Thread 15:</span>
+<span class="ln" id="L220">&nbsp;</span>
+<span class="ln" id="L221">Thread 16:</span>
+<span class="ln" id="L222">&nbsp;</span>
+<span class="ln" id="L223">Thread 17:</span>
+<span class="ln" id="L224">&nbsp;</span>
+<span class="ln" id="L225">Thread 18:</span>
+<span class="ln" id="L226">&nbsp;</span>
+<span class="ln" id="L227">&nbsp;</span>
+<a class="sec" id="registers"></a><span class="ln" id="L228">Thread 4 crashed with X86 Thread State (64-bit):</span>
+<span class="ln" id="L229">  rax: 0x00000000ffffffff  rbx: 0x000000030be7e4d0  rcx: 0x0000000000000002  rdx: 0x0000000000000000</span>
+<span class="ln" id="L230">  rdi: 0x00007f9259251808  rsi: 0x00000000ffffffff  rbp: 0x000000030be7e2f0  rsp: 0x000000030be7e2f0</span>
+<span class="ln" id="L231">   r8: 0x0000000094a0000a   r9: 0x0000000000000065  r10: 0x0000000094a00000  r11: 0x00000000000007fb</span>
+<span class="ln" id="L232">  r12: 0x00006000051a6e50  r13: 0x000000030be7e430  r14: 0x0000000000000002  r15: 0x00000000000223c0</span>
+<span class="ln" id="L233">  rip: 0x000000012fa52896  rfl: 0x0000000000000202</span>
+<span class="ln" id="L234"> tmp0: 0x00007f9359251807 tmp1: 0x000000012f956990 tmp2: 0x000000012f956bf4</span>
+<span class="ln" id="L235">&nbsp;</span>
+<span class="ln" id="L236">&nbsp;</span>
+<a class="sec" id="binary-images"></a><span class="ln" id="L237">Binary Images:</span>
+<span class="ln" id="L238">       0x110c32000 -        0x110c32fff steamloader.dylib (*) &lt;c85b1892-a204-3ace-a1aa-10e5f2b49bdf&gt; /Users/USER/Library/Application Support/Steam/*/steamloader.dylib</span>
+<span class="ln" id="L239">       0x110caf000 -        0x110cd3fff gameoverlayrenderer.dylib (*) &lt;1c9e864f-f4b4-3296-a624-6141d4f902d6&gt; /Users/USER/Library/Application Support/Steam/*/gameoverlayrenderer.dylib</span>
+<span class="ln" id="L240">       0x100000000 -        0x100e13fff Civilization V (*) &lt;0c91a3de-65cb-3122-89f3-d0ae896c8395&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/Civilization V</span>
+<span class="ln" id="L241">       0x110d23000 -        0x110d3cfff libtbb.dylib (*) &lt;6369f243-b54d-3d1f-a5fb-d910941990e9&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libtbb.dylib</span>
+<span class="ln" id="L242">       0x110d8a000 -        0x110dacfff libBinkMacx64.dylib (*) &lt;73688dc8-97eb-3254-aab2-1a0c4e34ee9b&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libBinkMacx64.dylib</span>
+<span class="ln" id="L243">       0x110de5000 -        0x110e36fff libMilesX64.dylib (*) &lt;1a540230-59d6-32ba-89b3-5b5bc43195b6&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libMilesX64.dylib</span>
+<span class="ln" id="L244">       0x110c58000 -        0x110c60fff libsteam_api.dylib (*) &lt;e4caa406-a4e3-3165-b90e-34b202295fef&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libsteam_api.dylib</span>
+<span class="ln" id="L245">       0x117342000 -        0x118ac2fff steamclient.dylib (*) &lt;47ea1b85-1fee-3d7e-a794-3f72c3384e89&gt; /Users/USER/Library/Application Support/Steam/*/steamclient.dylib</span>
+<span class="ln" id="L246">       0x1141da000 -        0x1141f5fff libtier0_s.dylib (*) &lt;7c6b9e33-2136-34ef-af72-d9afbd2831d3&gt; /Users/USER/Library/Application Support/Steam/*/libtier0_s.dylib</span>
+<span class="ln" id="L247">       0x1142cd000 -        0x1142f8fff libvstdlib_s.dylib (*) &lt;2b3af73e-94f9-3043-8ebe-da19bde62acb&gt; /Users/USER/Library/Application Support/Steam/*/libvstdlib_s.dylib</span>
+<span class="ln" id="L248">       0x114249000 -        0x114257fff libaudio.dylib (*) &lt;bbfa0f96-77a4-3c66-a3b1-a10b8dcf934f&gt; /Users/USER/Library/Application Support/Steam/*/libaudio.dylib</span>
+<span class="ln" id="L249">       0x11439b000 -        0x1143b1fff crashhandler.dylib (*) &lt;36f38ca1-fa51-34e5-bfbc-3a5dc1a596e9&gt; /Users/USER/Library/Application Support/Steam/*/crashhandler.dylib</span>
+<span class="ln" id="L250">       0x114284000 -        0x11428bfff com.googlecode.google-breakpad (*) &lt;c98be7e7-b888-338c-a7e7-40dd223401d4&gt; /Users/USER/Library/Application Support/Steam/*/Breakpad.framework/Versions/A/Breakpad</span>
+<span class="ln" id="L251">       0x114172000 -        0x114181fff breakpadUtilities.dylib (*) &lt;c62cc81e-aa3c-32b7-ab0e-68d19109fd3f&gt; /Users/USER/Library/Application Support/Steam/*/Breakpad.framework/Versions/A/Resources/breakpadUtilities.dylib</span>
+<span class="ln" id="L252">       0x11c848000 -        0x11d283fff com.apple.AGXMetalG16X (353.14) &lt;a4e17d60-a5da-3abb-b5b6-866a3f00c65a&gt; /System/Library/Extensions/AGXMetalG16X.bundle/Contents/MacOS/AGXMetalG16X</span>
+<span class="ln" id="L253">       0x11731d000 -        0x117329fff libobjc-trampolines.dylib (*) &lt;7ac27037-538b-3f7c-9aa5-8d7772a8c780&gt; /usr/lib/libobjc-trampolines.dylib</span>
+<span class="ln" id="L254">       0x11c77d000 -        0x11c793fff com.apple.iokit.IOHIDLib (2.0.0) &lt;d38e2a8d-4eac-31ea-b904-8c469859f57a&gt; /System/Library/Extensions/IOHIDFamily.kext/Contents/PlugIns/IOHIDLib.plugin/Contents/MacOS/IOHIDLib</span>
+<span class="ln" id="L255">       0x121530000 -        0x121598fff com.apple.AppleMetalOpenGLRenderer (1.0) &lt;a0abd5d5-1532-34b2-8797-cb150a838467&gt; /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/MacOS/AppleMetalOpenGLRenderer</span>
+<span class="ln" id="L256">       0x128db1000 -        0x128efbfff com.apple.audio.units.Components (1.14) &lt;dcbc6d7c-15a5-3910-a82a-dc6f40479d7d&gt; /System/Library/Components/CoreAudio.component/Contents/MacOS/CoreAudio</span>
+<span class="ln" id="L257">       0x12a1d8000 -        0x12a9bcfff com.apple.audio.AudioDSPComponents (1.0) &lt;745ebf91-65e1-3547-96d5-8193dfd03c1f&gt; /System/Library/Components/AudioDSP.component/Contents/MacOS/AudioDSP</span>
+<span class="ln" id="L258">       0x128b9a000 -        0x128bb0fff com.apple.security.csparser (3.0) &lt;481ccce1-df9c-38a5-b88e-2700132ee90c&gt; /System/Library/Frameworks/Security.framework/Versions/A/PlugIns/csparser.bundle/Contents/MacOS/csparser</span>
+<span class="ln" id="L259">       0x117100000 -        0x11710dfff libMilesX64Ogg.asi (*) &lt;4e650665-81db-322d-8dde-4115844be570&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Ogg.asi</span>
+<span class="ln" id="L260">       0x11713d000 -        0x11714dfff libMilesX64Mp3.asi (*) &lt;b3421bcd-0ed5-31d3-a37c-89a99420192c&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Mp3.asi</span>
+<span class="ln" id="L261">       0x117166000 -        0x117171fff libMilesX64BinkA.asi (*) &lt;6c896647-eede-31e1-9878-919c7578bea6&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64BinkA.asi</span>
+<span class="ln" id="L262">       0x11718a000 -        0x117196fff libMilesX64Dsp.flt (*) &lt;d95b059c-a787-3b5f-9b55-96d861155eba&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/Resources/libMilesX64Dsp.flt</span>
+<span class="ln" id="L263">       0x12f677000 -        0x12fbe7fff libCvGameCoreDLL_Expansion2_DLL.dylib (*) &lt;a9b8664e-cc93-3db5-ae0e-1b369464baa2&gt; /Users/USER/Library/Application Support/Steam/*/Civilization V.app/Contents/MacOS/libCvGameCoreDLL_Expansion2_DLL.dylib</span>
+<span class="ln" id="L264">       0x207220000 -        0x2072ccfff dyld (*) &lt;cf55ca34-3ecb-38f3-9e3e-e20592c197be&gt; /usr/lib/dyld</span>
+<span class="ln" id="L265">               0x0 - 0xffffffffffffffff ??? (*) &lt;00000000-0000-0000-0000-000000000000&gt; ???</span>
+<span class="ln" id="L266">    0x7ff804068000 -     0x7ff804073ebf libsystem_pthread.dylib (*) &lt;a55cf178-ea25-3cc0-8bcd-a4209f2acd1d&gt; /usr/lib/system/libsystem_pthread.dylib</span>
+<span class="ln" id="L267">    0x7ff803f86000 -     0x7ff804010b63 libc++.1.dylib (*) &lt;dc8be9a5-9501-3439-9189-9e16c26df6b3&gt; /usr/lib/libc++.1.dylib</span>
+<span class="ln" id="L268">    0x7ff804029000 -     0x7ff8040675af libsystem_kernel.dylib (*) &lt;0e16c3e3-e224-378f-9fdc-28bc144f39af&gt; /usr/lib/system/libsystem_kernel.dylib</span>
+<span class="ln" id="L269">    0x7ff8040ad000 -     0x7ff804569844 com.apple.CoreFoundation (6.9) &lt;f4868d1f-71d7-3904-a288-3e20ce7f1fce&gt; /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation</span>
+<span class="ln" id="L270">    0x7ff807ed3000 -     0x7ff8096cfb16 com.apple.AppKit (6.9) &lt;583bdb03-aa3d-3e8e-8f9b-fb919cdb5efb&gt; /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit</span>
+<span class="ln" id="L271">    0x7ff810d5e000 -     0x7ff810d8282f com.apple.audio.caulk (1.0) &lt;7d527e3a-f6c8-386f-b19b-c8d521ba9860&gt; /System/Library/PrivateFrameworks/caulk.framework/Versions/A/caulk</span>
+<span class="ln" id="L272">    0x7ff806bc0000 -     0x7ff807365a93 com.apple.audio.CoreAudio (5.0) &lt;ff424749-d74d-321d-b45c-eee40e1bec57&gt; /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio</span>
+<span class="ln" id="L273">    0x7ff807a28000 -     0x7ff807d16341 com.apple.CoreServices.CarbonCore (1333) &lt;cd1cab46-6b8a-3dda-8cb0-c921e261526e&gt; /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore</span>
+<span class="ln" id="L274">    0x7ff8171d6000 -     0x7ff8171f7bbf libAudioToolboxUtility.dylib (*) &lt;fbd32ab9-5553-3c8b-934a-bda2017c0e50&gt; /usr/lib/libAudioToolboxUtility.dylib</span>
+<span class="ln" id="L275">    0x7ff8189d3000 -     0x7ff818b99937 com.apple.audio.toolbox.AudioToolbox (1.14) &lt;f141647c-c446-3104-8af3-31b3a0189680&gt; /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox</span>
+<span class="ln" id="L276">&nbsp;</span>
+<a class="sec" id="external-modification"></a><span class="ln" id="L277">External Modification Summary:</span>
+<span class="ln" id="L278">  Calls made by other processes targeting this process:</span>
+<span class="ln" id="L279">    task_for_pid: 0</span>
+<span class="ln" id="L280">    thread_create: 0</span>
+<span class="ln" id="L281">    thread_set_state: 0</span>
+<span class="ln" id="L282">  Calls made by this process:</span>
+<span class="ln" id="L283">    task_for_pid: 0</span>
+<span class="ln" id="L284">    thread_create: 0</span>
+<span class="ln" id="L285">    thread_set_state: 0</span>
+<span class="ln" id="L286">  Calls made by all processes on this machine:</span>
+<span class="ln" id="L287">    task_for_pid: 0</span>
+<span class="ln" id="L288">    thread_create: 0</span>
+<span class="ln" id="L289">    thread_set_state: 0</span>
+<span class="ln" id="L290">&nbsp;</span>
+<a class="sec" id="vm-region-summary"></a><span class="ln" id="L291">VM Region Summary:</span>
+<span class="ln" id="L292">ReadOnly portion of Libraries: Total=1.4G resident=0K(0%) swapped_out_or_unallocated=1.4G(100%)</span>
+<span class="ln" id="L293">Writable regions: Total=4.7G written=8076K(0%) resident=8076K(0%) swapped_out=0K(0%) unallocated=4.7G(100%)</span>
+<span class="ln" id="L294">&nbsp;</span>
+<span class="ln" id="L295">                                VIRTUAL   REGION </span>
+<span class="ln" id="L296">REGION TYPE                        SIZE    COUNT (non-coalesced) </span>
+<span class="ln" id="L297">===========                     =======  ======= </span>
+<span class="ln" id="L298">Accelerate framework               128K        1 </span>
+<span class="ln" id="L299">Activity Tracing                   256K        1 </span>
+<span class="ln" id="L300">CG image                           960K      120 </span>
+<span class="ln" id="L301">ColorSync                            8K        2 </span>
+<span class="ln" id="L302">CoreAnimation                      192K       20 </span>
+<span class="ln" id="L303">CoreGraphics                        12K        2 </span>
+<span class="ln" id="L304">CoreUI image data                 1112K        9 </span>
+<span class="ln" id="L305">Foundation                          16K        1 </span>
+<span class="ln" id="L306">Image IO                             8K        2 </span>
+<span class="ln" id="L307">Kernel Alloc Once                    8K        1 </span>
+<span class="ln" id="L308">MALLOC                             4.1G      313 </span>
+<span class="ln" id="L309">MALLOC guard page                  576K       36 </span>
+<span class="ln" id="L310">MALLOC_LARGE (reserved)           51.2M        3         reserved VM address space (unallocated)</span>
+<span class="ln" id="L311">OpenGL GLSL                        256K        3 </span>
+<span class="ln" id="L312">Rosetta Arena                     4096K        2 </span>
+<span class="ln" id="L313">Rosetta Generic                   1296K      321 </span>
+<span class="ln" id="L314">Rosetta IndirectBranch            1024K        1 </span>
+<span class="ln" id="L315">Rosetta JIT                      128.0M        1 </span>
+<span class="ln" id="L316">Rosetta Return Stack               340K       34 </span>
+<span class="ln" id="L317">Rosetta Thread Context             340K       34 </span>
+<span class="ln" id="L318">STACK GUARD                         16K        4 </span>
+<span class="ln" id="L319">Stack                             33.8M       18 </span>
+<span class="ln" id="L320">Stack Guard                       56.1M       14 </span>
+<span class="ln" id="L321">VM_ALLOCATE                      229.8M     3658 </span>
+<span class="ln" id="L322">VM_ALLOCATE (media)               10.0M        1 </span>
+<span class="ln" id="L323">VM_ALLOCATE (reserved)              52K        8         reserved VM address space (unallocated)</span>
+<span class="ln" id="L324">__CTF                               824        1 </span>
+<span class="ln" id="L325">__DATA                           144.7M     1023 </span>
+<span class="ln" id="L326">__DATA_CONST                     122.1M     1044 </span>
+<span class="ln" id="L327">__DATA_DIRTY                      7993K      870 </span>
+<span class="ln" id="L328">__FONT_DATA                        2352        1 </span>
+<span class="ln" id="L329">__GLSLBUILTINS                    5174K        1 </span>
+<span class="ln" id="L330">__LINKEDIT                       155.8M       29 </span>
+<span class="ln" id="L331">__OBJC_RO                         65.2M        1 </span>
+<span class="ln" id="L332">__OBJC_RW                         2595K        1 </span>
+<span class="ln" id="L333">__TEXT                             1.3G     1076 </span>
+<span class="ln" id="L334">__TPRO_CONST                         8K        2 </span>
+<span class="ln" id="L335">dyld private memory                128K        1 </span>
+<span class="ln" id="L336">mapped file                      373.3M      122 </span>
+<span class="ln" id="L337">page table in kernel              8076K        1 </span>
+<span class="ln" id="L338">shared memory                     19.3M       21 </span>
+<span class="ln" id="L339">===========                     =======  ======= </span>
+<span class="ln" id="L340">TOTAL                              6.8G     8804 </span>
+<span class="ln" id="L341">TOTAL, minus reserved VM space     6.7G     8804 </span>
+<span class="ln" id="L342">&nbsp;</span>
+<span class="ln" id="L343">&nbsp;</span>
+<a class="sec" id="error-formulating"></a><span class="ln" id="L344">Error Formulating Crash Report:</span>
+<span class="ln" id="L345">RIP register does not match crashing frame (0x12FA52896 vs 0x1304C24D0)</span>
+<span class="ln" id="L346">&nbsp;</span>
+<span class="ln" id="L347">-----------</span>
+<a class="sec" id="full-report"></a><span class="ln" id="L348">Full Report</span>
+<span class="ln" id="L349">-----------</span>
+<span class="ln" id="L350">&nbsp;</span>
+<span class="ln" id="L351">{&quot;app_name&quot;:&quot;Civilization V&quot;,&quot;timestamp&quot;:&quot;2026-09-06 13:37:19.00 +1000&quot;,&quot;app_version&quot;:&quot;&quot;,&quot;slice_uuid&quot;:&quot;0c91a3de-65cb-3122-89f3-d0ae896c8395&quot;,&quot;build_version&quot;:&quot;&quot;,&quot;platform&quot;:1,&quot;share_with_app_devs&quot;:1,&quot;is_first_party&quot;:1,&quot;bug_type&quot;:&quot;309&quot;,&quot;os_version&quot;:&quot;macOS 26.6.2 (25G83)&quot;,&quot;roots_installed&quot;:0,&quot;incident_id&quot;:&quot;&lt;redacted-incident-id&gt;&quot;,&quot;name&quot;:&quot;Civilization V&quot;}</span>
+<span class="ln" id="L352">{</span>
+<span class="ln" id="L353">  &quot;uptime&quot; : 780000,</span>
+<span class="ln" id="L354">  &quot;procRole&quot; : &quot;Foreground&quot;,</span>
+<span class="ln" id="L355">  &quot;version&quot; : 2,</span>
+<span class="ln" id="L356">  &quot;userID&quot; : 501,</span>
+<span class="ln" id="L357">  &quot;deployVersion&quot; : 210,</span>
+<span class="ln" id="L358">  &quot;modelCode&quot; : &quot;Mac16,5&quot;,</span>
+<span class="ln" id="L359">  &quot;coalitionID&quot; : 20678,</span>
+<span class="ln" id="L360">  &quot;osVersion&quot; : {</span>
+<span class="ln" id="L361">    &quot;train&quot; : &quot;macOS 26.6.2&quot;,</span>
+<span class="ln" id="L362">    &quot;build&quot; : &quot;25G83&quot;,</span>
+<span class="ln" id="L363">    &quot;releaseType&quot; : &quot;User&quot;</span>
+<span class="ln" id="L364">  },</span>
+<span class="ln" id="L365">  &quot;captureTime&quot; : &quot;2026-09-06 13:37:17.5718 +1000&quot;,</span>
+<span class="ln" id="L366">  &quot;codeSigningMonitor&quot; : 2,</span>
+<span class="ln" id="L367">  &quot;incident&quot; : &quot;&lt;redacted-incident-id&gt;&quot;,</span>
+<span class="ln" id="L368">  &quot;pid&quot; : 19739,</span>
+<span class="ln" id="L369">  &quot;translated&quot; : true,</span>
+<span class="ln" id="L370">  &quot;cpuType&quot; : &quot;X86-64&quot;,</span>
+<span class="ln" id="L371">  &quot;procLaunch&quot; : &quot;2026-09-06 13:21:37.0010 +1000&quot;,</span>
+<span class="ln" id="L372">  &quot;procStartAbsTime&quot; : 18733117357495,</span>
+<span class="ln" id="L373">  &quot;procExitAbsTime&quot; : 18755690721099,</span>
+<span class="ln" id="L374">  &quot;procName&quot; : &quot;Civilization V&quot;,</span>
+<span class="ln" id="L375">  &quot;procPath&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/Civilization V&quot;,</span>
+<span class="ln" id="L376">  &quot;parentProc&quot; : &quot;launchd&quot;,</span>
+<span class="ln" id="L377">  &quot;parentPid&quot; : 1,</span>
+<span class="ln" id="L378">  &quot;coalitionName&quot; : &quot;com.aspyr.civ5xp.steam&quot;,</span>
+<span class="ln" id="L379">  &quot;crashReporterKey&quot; : &quot;&lt;redacted-device-id&gt;&quot;,</span>
+<span class="ln" id="L380">  &quot;appleIntelligenceStatus&quot; : {&quot;reasons&quot;:[&quot;assetIsNotReady&quot;,&quot;notOptedIn&quot;],&quot;state&quot;:&quot;unavailable&quot;},</span>
+<span class="ln" id="L381">  &quot;developerMode&quot; : 1,</span>
+<span class="ln" id="L382">  &quot;codeSigningID&quot; : &quot;Civilization V&quot;,</span>
+<span class="ln" id="L383">  &quot;codeSigningTeamID&quot; : &quot;VF8SGH77F7&quot;,</span>
+<span class="ln" id="L384">  &quot;codeSigningFlags&quot; : 570425345,</span>
+<span class="ln" id="L385">  &quot;codeSigningValidationCategory&quot; : 6,</span>
+<span class="ln" id="L386">  &quot;codeSigningTrustLevel&quot; : 4294967295,</span>
+<span class="ln" id="L387">  &quot;codeSigningAuxiliaryInfo&quot; : 0,</span>
+<span class="ln" id="L388">  &quot;bootSessionUUID&quot; : &quot;C555C680-A3DB-410C-9AC4-7E3F1B376ED0&quot;,</span>
+<span class="ln" id="L389">  &quot;sip&quot; : &quot;enabled&quot;,</span>
+<span class="ln" id="L390">  &quot;vmRegionInfo&quot; : &quot;0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593\n      REGION TYPE                    START - END         [ VSIZE] PRT\/MAX SHRMOD  REGION DETAIL\n      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-\/rwx SM=PRV  \n---&gt;  GAP OF 0x652fdff000 BYTES\n      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x\/r-x SM=COW  Object_id=b7f7e4d0&quot;,</span>
+<span class="ln" id="L391">  &quot;exception&quot; : {&quot;codes&quot;:&quot;0x0000000000000001, 0x00007f9359251f3f&quot;,&quot;rawCodes&quot;:[1,140270832525119],&quot;type&quot;:&quot;EXC_BAD_ACCESS&quot;,&quot;signal&quot;:&quot;SIGSEGV&quot;,&quot;subtype&quot;:&quot;KERN_INVALID_ADDRESS at 0x00007f9359251f3f&quot;},</span>
+<span class="ln" id="L392">  &quot;termination&quot; : {&quot;flags&quot;:0,&quot;code&quot;:11,&quot;namespace&quot;:&quot;SIGNAL&quot;,&quot;indicator&quot;:&quot;Segmentation fault: 11&quot;,&quot;byProc&quot;:&quot;exc handler&quot;,&quot;byPid&quot;:19739},</span>
+<span class="ln" id="L393">  &quot;vmregioninfo&quot; : &quot;0x7f9359251f3f is not in any region.  Bytes after previous region: 2300911424  Bytes before following region: 432293990593\n      REGION TYPE                    START - END         [ VSIZE] PRT\/MAX SHRMOD  REGION DETAIL\n      MALLOC_MEDIUM            7f92c8000000-7f92d0000000 [128.0M] rw-\/rwx SM=PRV  \n---&gt;  GAP OF 0x652fdff000 BYTES\n      mapped file              7ff7ffdff000-7ff7ffe2f000 [  192K] r-x\/r-x SM=COW  Object_id=b7f7e4d0&quot;,</span>
+<span class="ln" id="L394">  &quot;extMods&quot; : {&quot;caller&quot;:{&quot;thread_create&quot;:0,&quot;thread_set_state&quot;:0,&quot;task_for_pid&quot;:0},&quot;system&quot;:{&quot;thread_create&quot;:0,&quot;thread_set_state&quot;:0,&quot;task_for_pid&quot;:0},&quot;targeted&quot;:{&quot;thread_create&quot;:0,&quot;thread_set_state&quot;:0,&quot;task_for_pid&quot;:0},&quot;warnings&quot;:0},</span>
+<span class="ln" id="L395">  &quot;faultingThread&quot; : 4,</span>
+<span class="ln" id="L396">  &quot;threads&quot; : [{&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:160},&quot;r12&quot;:{&quot;value&quot;:22},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195907848},&quot;tmp1&quot;:{&quot;value&quot;:140705543990100},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:140703196183829,&quot;symbolLocation&quot;:0,&quot;symbol&quot;:&quot;_pthread_psynch_cond_cleanup&quot;},&quot;r15&quot;:{&quot;value&quot;:8333334},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:54533376},&quot;rdi&quot;:{&quot;value&quot;:8333334},&quot;r9&quot;:{&quot;value&quot;:160},&quot;r13&quot;:{&quot;value&quot;:234225667879740416},&quot;rflags&quot;:{&quot;value&quot;:658},&quot;rax&quot;:{&quot;value&quot;:260},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:2908208256144640},&quot;rcx&quot;:{&quot;value&quot;:0},&quot;r14&quot;:{&quot;value&quot;:54533376},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;id&quot;:9380752,&quot;name&quot;:&quot;main&quot;,&quot;queue&quot;:&quot;com.apple.main-thread&quot;,&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550108012,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:25079,&quot;symbol&quot;:&quot;_pthread_cond_wait&quot;,&quot;symbolLocation&quot;:994,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:22993,&quot;symbol&quot;:&quot;std::__1::condition_variable::__do_timed_wait(std::__1::unique_lock&lt;std::__1::mutex&gt;&amp;, std::__1::chrono::time_point&lt;std::__1::chrono::system_clock, std::__1::chrono::duration&lt;long long, std::__1::ratio&lt;1l, 1000000000l&gt;&gt;&gt;)&quot;,&quot;symbolLocation&quot;:93,&quot;imageIndex&quot;:29},{&quot;imageOffset&quot;:959439,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:958968,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:947432,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:945722,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:1825164,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:78280,&quot;symbol&quot;:&quot;start&quot;,&quot;symbolLocation&quot;:3240,&quot;imageIndex&quot;:26}]},{&quot;id&quot;:9380770,&quot;name&quot;:&quot;com.apple.rosetta.exceptionserver&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:9908489551872},&quot;r12&quot;:{&quot;value&quot;:8589934592},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:0},&quot;tmp1&quot;:{&quot;value&quot;:4582730230559},&quot;tmp0&quot;:{&quot;value&quot;:10337986281472}},&quot;rbx&quot;:{&quot;value&quot;:4582730230559},&quot;r8&quot;:{&quot;value&quot;:2307},&quot;r15&quot;:{&quot;value&quot;:4831838208},&quot;r10&quot;:{&quot;value&quot;:3},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:1},&quot;r13&quot;:{&quot;value&quot;:4772358768},&quot;rflags&quot;:{&quot;value&quot;:582},&quot;rax&quot;:{&quot;value&quot;:268451845},&quot;rsp&quot;:{&quot;value&quot;:10337986281472},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:17314086914},&quot;r14&quot;:{&quot;value&quot;:5105263824},&quot;rsi&quot;:{&quot;value&quot;:2616}},&quot;frames&quot;:[]},{&quot;id&quot;:9380773,&quot;name&quot;:&quot;SDLTimer&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:65704},&quot;r12&quot;:{&quot;value&quot;:22},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195907848},&quot;tmp1&quot;:{&quot;value&quot;:140705543990100},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:140703196183829,&quot;symbolLocation&quot;:0,&quot;symbol&quot;:&quot;_pthread_psynch_cond_cleanup&quot;},&quot;r15&quot;:{&quot;value&quot;:99999000},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:2092544},&quot;rdi&quot;:{&quot;value&quot;:99999000},&quot;r9&quot;:{&quot;value&quot;:65704},&quot;r13&quot;:{&quot;value&quot;:9108358621584640},&quot;rflags&quot;:{&quot;value&quot;:658},&quot;rax&quot;:{&quot;value&quot;:260},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:0},&quot;r14&quot;:{&quot;value&quot;:2092544},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550108012,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:25079,&quot;symbol&quot;:&quot;_pthread_cond_wait&quot;,&quot;symbolLocation&quot;:994,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:4090334,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4091072,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4094136,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4093068,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4091625,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380776,&quot;name&quot;:&quot;com.apple.NSEventThread&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:140750373257216},&quot;r12&quot;:{&quot;value&quot;:140750373257216},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195955031},&quot;tmp1&quot;:{&quot;value&quot;:140705543990384},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:140750373257216},&quot;r8&quot;:{&quot;value&quot;:12500510047098699817},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:140750373257216},&quot;rdx&quot;:{&quot;value&quot;:8589934592},&quot;rdi&quot;:{&quot;value&quot;:4294967295},&quot;r9&quot;:{&quot;value&quot;:140750373257216},&quot;r13&quot;:{&quot;value&quot;:21592279046},&quot;rflags&quot;:{&quot;value&quot;:643},&quot;rax&quot;:{&quot;value&quot;:268451845},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:21592279046},&quot;r14&quot;:{&quot;value&quot;:2},&quot;rsi&quot;:{&quot;value&quot;:2}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550086388,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:61271,&quot;symbol&quot;:&quot;mach_msg2_internal&quot;,&quot;symbolLocation&quot;:83,&quot;imageIndex&quot;:30},{&quot;imageOffset&quot;:31590,&quot;symbol&quot;:&quot;mach_msg_overwrite&quot;,&quot;symbolLocation&quot;:586,&quot;imageIndex&quot;:30},{&quot;imageOffset&quot;:3670,&quot;symbol&quot;:&quot;mach_msg&quot;,&quot;symbolLocation&quot;:19,&quot;imageIndex&quot;:30},{&quot;imageOffset&quot;:508474,&quot;symbol&quot;:&quot;__CFRunLoopServiceMachPort&quot;,&quot;symbolLocation&quot;:145,&quot;imageIndex&quot;:31},{&quot;imageOffset&quot;:503009,&quot;symbol&quot;:&quot;__CFRunLoopRun&quot;,&quot;symbolLocation&quot;:1358,&quot;imageIndex&quot;:31},{&quot;imageOffset&quot;:1320229,&quot;symbol&quot;:&quot;_CFRunLoopRunSpecificWithOptions&quot;,&quot;symbolLocation&quot;:496,&quot;imageIndex&quot;:31},{&quot;imageOffset&quot;:1636000,&quot;symbol&quot;:&quot;_NSEventThread&quot;,&quot;symbolLocation&quot;:158,&quot;imageIndex&quot;:32},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;triggered&quot;:true,&quot;id&quot;:9380779,&quot;name&quot;:&quot;WinMain (WinID 2)&quot;,&quot;threadState&quot;:{&quot;r13&quot;:{&quot;value&quot;:13084648496},&quot;rflags&quot;:{&quot;value&quot;:514},&quot;rax&quot;:{&quot;value&quot;:4294967295},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:5093288948},&quot;tmp1&quot;:{&quot;value&quot;:5093288336},&quot;tmp0&quot;:{&quot;value&quot;:140270832523271}},&quot;r14&quot;:{&quot;value&quot;:2},&quot;rsi&quot;:{&quot;value&quot;:4294967295},&quot;r8&quot;:{&quot;value&quot;:2493513738},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:2493513728},&quot;r9&quot;:{&quot;value&quot;:101},&quot;r15&quot;:{&quot;value&quot;:140224},&quot;rbx&quot;:{&quot;value&quot;:13084648656},&quot;r11&quot;:{&quot;value&quot;:2043},&quot;rip&quot;:{&quot;value&quot;:5094320278,&quot;matchesCrashFrame&quot;:0},&quot;rbp&quot;:{&quot;value&quot;:13084648176},&quot;rsp&quot;:{&quot;value&quot;:13084648176},&quot;r12&quot;:{&quot;value&quot;:105553201884752},&quot;rcx&quot;:{&quot;value&quot;:2},&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rdi&quot;:{&quot;value&quot;:140266537555976}},&quot;frames&quot;:[{&quot;imageOffset&quot;:5105263824,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:3013620,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:2995429,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4449422,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4507833,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4639440,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4699430,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4720146,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4728542,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4638726,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4735432,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4739735,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4751780,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4745772,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4745035,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4480548,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3819148,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3819989,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4694791,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4720042,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4724768,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4736751,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4739735,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4751780,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4745772,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4745035,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:4480548,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3819204,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3874466,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3835148,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3832065,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3814090,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:3282245,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:1670394,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:1664610,&quot;imageIndex&quot;:25},{&quot;imageOffset&quot;:5889166,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:9174791,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4789680,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:11718938,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:4830181,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:1255060,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:1278232,&quot;imageIndex&quot;:2},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380849,&quot;name&quot;:&quot;TBB (WinID 3)&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:3},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:391233},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:1},&quot;r10&quot;:{&quot;value&quot;:391233},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:13089419264},&quot;r9&quot;:{&quot;value&quot;:3},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:1},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:140266191304320},&quot;r14&quot;:{&quot;value&quot;:140268087121928},&quot;rsi&quot;:{&quot;value&quot;:391233}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:36984,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::run()&quot;,&quot;symbolLocation&quot;:104,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:36873,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::thread_routine(void*)&quot;,&quot;symbolLocation&quot;:9,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380850,&quot;name&quot;:&quot;TBB (WinID 4)&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:4702119682646093774},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:391058},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:1},&quot;r10&quot;:{&quot;value&quot;:391058},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:13093625856},&quot;r9&quot;:{&quot;value&quot;:4702119682646093774},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:7845},&quot;r11&quot;:{&quot;value&quot;:14118070674242686842},&quot;rcx&quot;:{&quot;value&quot;:140266191304320},&quot;r14&quot;:{&quot;value&quot;:140268348411528},&quot;rsi&quot;:{&quot;value&quot;:391058}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:36984,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::run()&quot;,&quot;symbolLocation&quot;:104,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:36873,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::thread_routine(void*)&quot;,&quot;symbolLocation&quot;:9,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380851,&quot;name&quot;:&quot;TBB (WinID 5)&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:14118063035642367077},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:391163},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:1},&quot;r10&quot;:{&quot;value&quot;:391163},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:13097832448},&quot;r9&quot;:{&quot;value&quot;:14118063035642367077},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:7845},&quot;r11&quot;:{&quot;value&quot;:14158260500018026050},&quot;rcx&quot;:{&quot;value&quot;:140266191304320},&quot;r14&quot;:{&quot;value&quot;:140268348412040},&quot;rsi&quot;:{&quot;value&quot;:391163}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:36984,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::run()&quot;,&quot;symbolLocation&quot;:104,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:36873,&quot;symbol&quot;:&quot;tbb::internal::rml::private_worker::thread_routine(void*)&quot;,&quot;symbolLocation&quot;:9,&quot;imageIndex&quot;:3},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380852,&quot;name&quot;:&quot;caulk.messenger.shared:17&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:25},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:13098369130},&quot;r8&quot;:{&quot;value&quot;:105553155299456},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:13098369130},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:105553155299424},&quot;r9&quot;:{&quot;value&quot;:25},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:105553148457850},&quot;r14&quot;:{&quot;value&quot;:105553155299456},&quot;rsi&quot;:{&quot;value&quot;:140703411075668,&quot;symbolLocation&quot;:0,&quot;symbol&quot;:&quot;caulk::concurrent::details::worker_thread::run()&quot;}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:6992,&quot;symbol&quot;:&quot;caulk::semaphore::timed_wait(double)&quot;,&quot;symbolLocation&quot;:158,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6770,&quot;symbol&quot;:&quot;caulk::concurrent::details::worker_thread::run()&quot;,&quot;symbolLocation&quot;:30,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6054,&quot;symbol&quot;:&quot;void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*)&quot;,&quot;symbolLocation&quot;:41,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380853,&quot;name&quot;:&quot;caulk.messenger.shared:high&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:0},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:18},&quot;r8&quot;:{&quot;value&quot;:105553155301744},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:18},&quot;rdx&quot;:{&quot;value&quot;:118275},&quot;rdi&quot;:{&quot;value&quot;:105553155301712},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:4294967295},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:118275},&quot;r14&quot;:{&quot;value&quot;:105553155301744},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:6992,&quot;symbol&quot;:&quot;caulk::semaphore::timed_wait(double)&quot;,&quot;symbolLocation&quot;:158,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6770,&quot;symbol&quot;:&quot;caulk::concurrent::details::worker_thread::run()&quot;,&quot;symbolLocation&quot;:30,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6054,&quot;symbol&quot;:&quot;void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*)&quot;,&quot;symbolLocation&quot;:41,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380907,&quot;name&quot;:&quot;caulk::deferred_logger&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:13},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195906415},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:105553158032056},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:1},&quot;rdi&quot;:{&quot;value&quot;:105553158032024},&quot;r9&quot;:{&quot;value&quot;:13},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:35184372121599},&quot;rcx&quot;:{&quot;value&quot;:0},&quot;r14&quot;:{&quot;value&quot;:105553158032056},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085860,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:6992,&quot;symbol&quot;:&quot;caulk::semaphore::timed_wait(double)&quot;,&quot;symbolLocation&quot;:158,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6770,&quot;symbol&quot;:&quot;caulk::concurrent::details::worker_thread::run()&quot;,&quot;symbolLocation&quot;:30,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:6054,&quot;symbol&quot;:&quot;void* caulk::thread_proxy&lt;std::__1::tuple&lt;caulk::thread::attributes, void (caulk::concurrent::details::worker_thread::*)(), std::__1::tuple&lt;caulk::concurrent::details::worker_thread*&gt;&gt;&gt;(void*)&quot;,&quot;symbolLocation&quot;:41,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9380913,&quot;name&quot;:&quot;com.apple.audio.IOThread.client&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:0},&quot;r12&quot;:{&quot;value&quot;:1},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195956160},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:140267802203720},&quot;r8&quot;:{&quot;value&quot;:13100515088},&quot;r15&quot;:{&quot;value&quot;:1},&quot;r10&quot;:{&quot;value&quot;:140267802203720},&quot;rdx&quot;:{&quot;value&quot;:1099511628032},&quot;rdi&quot;:{&quot;value&quot;:105553148473184},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:663},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:139267},&quot;r14&quot;:{&quot;value&quot;:140267802203952},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085908,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:112775,&quot;symbol&quot;:&quot;caulk::mach::semaphore::wait_signal_or_error(caulk::mach::semaphore&amp;)&quot;,&quot;symbolLocation&quot;:23,&quot;imageIndex&quot;:33},{&quot;imageOffset&quot;:2065618,&quot;symbol&quot;:&quot;HALC_ProxyIOContext::IOWorkLoop()&quot;,&quot;symbolLocation&quot;:5870,&quot;imageIndex&quot;:34},{&quot;imageOffset&quot;:2057902,&quot;symbol&quot;:&quot;invocation function for block in HALC_ProxyIOContext::HALC_ProxyIOContext(unsigned int, unsigned int)&quot;,&quot;symbolLocation&quot;:141,&quot;imageIndex&quot;:34},{&quot;imageOffset&quot;:3897287,&quot;symbol&quot;:&quot;HALC_IOThread::Entry(void*)&quot;,&quot;symbolLocation&quot;:73,&quot;imageIndex&quot;:34},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9381418,&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085956,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:469756,&quot;symbol&quot;:&quot;MPWaitOnSemaphore&quot;,&quot;symbolLocation&quot;:74,&quot;imageIndex&quot;:35},{&quot;imageOffset&quot;:264067,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:190409,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:262140,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:0},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195912104},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:140704281551880,&quot;symbolLocation&quot;:32,&quot;symbol&quot;:&quot;gOpaqueIDMutex&quot;},&quot;r8&quot;:{&quot;value&quot;:105553148138656},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:140704281551880,&quot;symbolLocation&quot;:32,&quot;symbol&quot;:&quot;gOpaqueIDMutex&quot;},&quot;rdx&quot;:{&quot;value&quot;:0},&quot;rdi&quot;:{&quot;value&quot;:2147483647},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:4578385848,&quot;symbolLocation&quot;:832,&quot;symbol&quot;:&quot;AIL_indent&quot;},&quot;rflags&quot;:{&quot;value&quot;:659},&quot;rax&quot;:{&quot;value&quot;:14},&quot;rsp&quot;:{&quot;value&quot;:18446744069414584320},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:2147483647},&quot;r14&quot;:{&quot;value&quot;:13072993992},&quot;rsi&quot;:{&quot;value&quot;:13072994304}}},{&quot;id&quot;:9381419,&quot;name&quot;:&quot;AQConverterThread&quot;,&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:160},&quot;r12&quot;:{&quot;value&quot;:22},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195907848},&quot;tmp1&quot;:{&quot;value&quot;:140705543990100},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:140703196183829,&quot;symbolLocation&quot;:0,&quot;symbol&quot;:&quot;_pthread_psynch_cond_cleanup&quot;},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:23509504},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:160},&quot;r13&quot;:{&quot;value&quot;:100972555143658240},&quot;rflags&quot;:{&quot;value&quot;:658},&quot;rax&quot;:{&quot;value&quot;:260},&quot;rsp&quot;:{&quot;value&quot;:0},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:0},&quot;r14&quot;:{&quot;value&quot;:23509504},&quot;rsi&quot;:{&quot;value&quot;:0}},&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550108012,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:25079,&quot;symbol&quot;:&quot;_pthread_cond_wait&quot;,&quot;symbolLocation&quot;:994,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:114376,&quot;symbol&quot;:&quot;CADeprecated::CAGuard::Wait()&quot;,&quot;symbolLocation&quot;:68,&quot;imageIndex&quot;:36},{&quot;imageOffset&quot;:156671,&quot;symbol&quot;:&quot;AQConverterManager::AQConverterThread::ConverterThreadEntry(void*)&quot;,&quot;symbolLocation&quot;:397,&quot;imageIndex&quot;:37},{&quot;imageOffset&quot;:39697,&quot;symbol&quot;:&quot;CADeprecated::CAPThread::Entry(void*)&quot;,&quot;symbolLocation&quot;:77,&quot;imageIndex&quot;:36},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}]},{&quot;id&quot;:9381420,&quot;frames&quot;:[{&quot;imageOffset&quot;:140705543990144,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:140705550085956,&quot;imageIndex&quot;:27},{&quot;imageOffset&quot;:469756,&quot;symbol&quot;:&quot;MPWaitOnSemaphore&quot;,&quot;symbolLocation&quot;:74,&quot;imageIndex&quot;:35},{&quot;imageOffset&quot;:264067,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:166398,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:262140,&quot;imageIndex&quot;:5},{&quot;imageOffset&quot;:23881,&quot;symbol&quot;:&quot;_pthread_start&quot;,&quot;symbolLocation&quot;:115,&quot;imageIndex&quot;:28},{&quot;imageOffset&quot;:6191,&quot;symbol&quot;:&quot;thread_start&quot;,&quot;symbolLocation&quot;:15,&quot;imageIndex&quot;:28}],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:0},&quot;r12&quot;:{&quot;value&quot;:4578374888},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:140703195912104},&quot;tmp1&quot;:{&quot;value&quot;:140705543990096},&quot;tmp0&quot;:{&quot;value&quot;:18446744073709551615}},&quot;rbx&quot;:{&quot;value&quot;:140704281551880,&quot;symbolLocation&quot;:32,&quot;symbol&quot;:&quot;gOpaqueIDMutex&quot;},&quot;r8&quot;:{&quot;value&quot;:105553148318560},&quot;r15&quot;:{&quot;value&quot;:4578374168},&quot;r10&quot;:{&quot;value&quot;:140704281551880,&quot;symbolLocation&quot;:32,&quot;symbol&quot;:&quot;gOpaqueIDMutex&quot;},&quot;rdx&quot;:{&quot;value&quot;:1000000},&quot;rdi&quot;:{&quot;value&quot;:4294967296000000},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:4578265606},&quot;rflags&quot;:{&quot;value&quot;:659},&quot;rax&quot;:{&quot;value&quot;:49},&quot;rsp&quot;:{&quot;value&quot;:18446744069414584320},&quot;r11&quot;:{&quot;value&quot;:137438953474},&quot;rcx&quot;:{&quot;value&quot;:4294967296000000},&quot;r14&quot;:{&quot;value&quot;:13073088232},&quot;rsi&quot;:{&quot;value&quot;:13073088512}}},{&quot;id&quot;:9381532,&quot;frames&quot;:[],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:18446744073709551615},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:0},&quot;tmp1&quot;:{&quot;value&quot;:0},&quot;tmp0&quot;:{&quot;value&quot;:0}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:13074632704},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:531},&quot;rax&quot;:{&quot;value&quot;:13075169280},&quot;rsp&quot;:{&quot;value&quot;:409604},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:92819},&quot;r14&quot;:{&quot;value&quot;:0},&quot;rsi&quot;:{&quot;value&quot;:0}}},{&quot;id&quot;:9382448,&quot;frames&quot;:[],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:18446744073709551615},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:0},&quot;tmp1&quot;:{&quot;value&quot;:0},&quot;tmp0&quot;:{&quot;value&quot;:0}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:13102764032},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:531},&quot;rax&quot;:{&quot;value&quot;:13103300608},&quot;rsp&quot;:{&quot;value&quot;:409604},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:148495},&quot;r14&quot;:{&quot;value&quot;:0},&quot;rsi&quot;:{&quot;value&quot;:0}}},{&quot;id&quot;:9382450,&quot;frames&quot;:[],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:18446744073709551615},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:0},&quot;tmp1&quot;:{&quot;value&quot;:0},&quot;tmp0&quot;:{&quot;value&quot;:0}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:13103878144},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:531},&quot;rax&quot;:{&quot;value&quot;:13104414720},&quot;rsp&quot;:{&quot;value&quot;:409604},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:160035},&quot;r14&quot;:{&quot;value&quot;:0},&quot;rsi&quot;:{&quot;value&quot;:0}}},{&quot;id&quot;:9382452,&quot;frames&quot;:[],&quot;threadState&quot;:{&quot;flavor&quot;:&quot;x86_THREAD_STATE&quot;,&quot;rbp&quot;:{&quot;value&quot;:18446744073709551615},&quot;r12&quot;:{&quot;value&quot;:0},&quot;rosetta&quot;:{&quot;tmp2&quot;:{&quot;value&quot;:0},&quot;tmp1&quot;:{&quot;value&quot;:0},&quot;tmp0&quot;:{&quot;value&quot;:0}},&quot;rbx&quot;:{&quot;value&quot;:0},&quot;r8&quot;:{&quot;value&quot;:0},&quot;r15&quot;:{&quot;value&quot;:0},&quot;r10&quot;:{&quot;value&quot;:0},&quot;rdx&quot;:{&quot;value&quot;:13104992256,&quot;symbolLocation&quot;:0,&quot;region&quot;:&quot;Rosetta Runtime Routines&quot;},&quot;rdi&quot;:{&quot;value&quot;:0},&quot;r9&quot;:{&quot;value&quot;:0},&quot;r13&quot;:{&quot;value&quot;:0},&quot;rflags&quot;:{&quot;value&quot;:515},&quot;rax&quot;:{&quot;value&quot;:13105528832,&quot;symbolLocation&quot;:536576,&quot;region&quot;:&quot;Rosetta Runtime Routines&quot;},&quot;rsp&quot;:{&quot;value&quot;:278532},&quot;r11&quot;:{&quot;value&quot;:0},&quot;rcx&quot;:{&quot;value&quot;:0},&quot;r14&quot;:{&quot;value&quot;:0},&quot;rsi&quot;:{&quot;value&quot;:0}}}],</span>
+<span class="ln" id="L397">  &quot;usedImages&quot; : [</span>
+<span class="ln" id="L398">  {</span>
+<span class="ln" id="L399">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L400">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L401">    &quot;base&quot; : 4576190464,</span>
+<span class="ln" id="L402">    &quot;size&quot; : 4096,</span>
+<span class="ln" id="L403">    &quot;uuid&quot; : &quot;c85b1892-a204-3ace-a1aa-10e5f2b49bdf&quot;,</span>
+<span class="ln" id="L404">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/steamloader.dylib&quot;,</span>
+<span class="ln" id="L405">    &quot;name&quot; : &quot;steamloader.dylib&quot;</span>
+<span class="ln" id="L406">  },</span>
+<span class="ln" id="L407">  {</span>
+<span class="ln" id="L408">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L409">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L410">    &quot;base&quot; : 4576702464,</span>
+<span class="ln" id="L411">    &quot;size&quot; : 151552,</span>
+<span class="ln" id="L412">    &quot;uuid&quot; : &quot;1c9e864f-f4b4-3296-a624-6141d4f902d6&quot;,</span>
+<span class="ln" id="L413">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/gameoverlayrenderer.dylib&quot;,</span>
+<span class="ln" id="L414">    &quot;name&quot; : &quot;gameoverlayrenderer.dylib&quot;</span>
+<span class="ln" id="L415">  },</span>
+<span class="ln" id="L416">  {</span>
+<span class="ln" id="L417">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L418">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L419">    &quot;base&quot; : 4294967296,</span>
+<span class="ln" id="L420">    &quot;size&quot; : 14761984,</span>
+<span class="ln" id="L421">    &quot;uuid&quot; : &quot;0c91a3de-65cb-3122-89f3-d0ae896c8395&quot;,</span>
+<span class="ln" id="L422">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/Civilization V&quot;,</span>
+<span class="ln" id="L423">    &quot;name&quot; : &quot;Civilization V&quot;</span>
+<span class="ln" id="L424">  },</span>
+<span class="ln" id="L425">  {</span>
+<span class="ln" id="L426">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L427">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L428">    &quot;base&quot; : 4577177600,</span>
+<span class="ln" id="L429">    &quot;size&quot; : 106496,</span>
+<span class="ln" id="L430">    &quot;uuid&quot; : &quot;6369f243-b54d-3d1f-a5fb-d910941990e9&quot;,</span>
+<span class="ln" id="L431">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libtbb.dylib&quot;,</span>
+<span class="ln" id="L432">    &quot;name&quot; : &quot;libtbb.dylib&quot;</span>
+<span class="ln" id="L433">  },</span>
+<span class="ln" id="L434">  {</span>
+<span class="ln" id="L435">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L436">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L437">    &quot;base&quot; : 4577599488,</span>
+<span class="ln" id="L438">    &quot;size&quot; : 143360,</span>
+<span class="ln" id="L439">    &quot;uuid&quot; : &quot;73688dc8-97eb-3254-aab2-1a0c4e34ee9b&quot;,</span>
+<span class="ln" id="L440">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libBinkMacx64.dylib&quot;,</span>
+<span class="ln" id="L441">    &quot;name&quot; : &quot;libBinkMacx64.dylib&quot;</span>
+<span class="ln" id="L442">  },</span>
+<span class="ln" id="L443">  {</span>
+<span class="ln" id="L444">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L445">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L446">    &quot;base&quot; : 4577972224,</span>
+<span class="ln" id="L447">    &quot;size&quot; : 335872,</span>
+<span class="ln" id="L448">    &quot;uuid&quot; : &quot;1a540230-59d6-32ba-89b3-5b5bc43195b6&quot;,</span>
+<span class="ln" id="L449">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libMilesX64.dylib&quot;,</span>
+<span class="ln" id="L450">    &quot;name&quot; : &quot;libMilesX64.dylib&quot;</span>
+<span class="ln" id="L451">  },</span>
+<span class="ln" id="L452">  {</span>
+<span class="ln" id="L453">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L454">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L455">    &quot;base&quot; : 4576346112,</span>
+<span class="ln" id="L456">    &quot;size&quot; : 36864,</span>
+<span class="ln" id="L457">    &quot;uuid&quot; : &quot;e4caa406-a4e3-3165-b90e-34b202295fef&quot;,</span>
+<span class="ln" id="L458">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libsteam_api.dylib&quot;,</span>
+<span class="ln" id="L459">    &quot;name&quot; : &quot;libsteam_api.dylib&quot;</span>
+<span class="ln" id="L460">  },</span>
+<span class="ln" id="L461">  {</span>
+<span class="ln" id="L462">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L463">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L464">    &quot;base&quot; : 4684259328,</span>
+<span class="ln" id="L465">    &quot;size&quot; : 24645632,</span>
+<span class="ln" id="L466">    &quot;uuid&quot; : &quot;47ea1b85-1fee-3d7e-a794-3f72c3384e89&quot;,</span>
+<span class="ln" id="L467">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/steamclient.dylib&quot;,</span>
+<span class="ln" id="L468">    &quot;name&quot; : &quot;steamclient.dylib&quot;</span>
+<span class="ln" id="L469">  },</span>
+<span class="ln" id="L470">  {</span>
+<span class="ln" id="L471">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L472">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L473">    &quot;base&quot; : 4632453120,</span>
+<span class="ln" id="L474">    &quot;size&quot; : 114688,</span>
+<span class="ln" id="L475">    &quot;uuid&quot; : &quot;7c6b9e33-2136-34ef-af72-d9afbd2831d3&quot;,</span>
+<span class="ln" id="L476">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/libtier0_s.dylib&quot;,</span>
+<span class="ln" id="L477">    &quot;name&quot; : &quot;libtier0_s.dylib&quot;</span>
+<span class="ln" id="L478">  },</span>
+<span class="ln" id="L479">  {</span>
+<span class="ln" id="L480">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L481">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L482">    &quot;base&quot; : 4633448448,</span>
+<span class="ln" id="L483">    &quot;size&quot; : 180224,</span>
+<span class="ln" id="L484">    &quot;uuid&quot; : &quot;2b3af73e-94f9-3043-8ebe-da19bde62acb&quot;,</span>
+<span class="ln" id="L485">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/libvstdlib_s.dylib&quot;,</span>
+<span class="ln" id="L486">    &quot;name&quot; : &quot;libvstdlib_s.dylib&quot;</span>
+<span class="ln" id="L487">  },</span>
+<span class="ln" id="L488">  {</span>
+<span class="ln" id="L489">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L490">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L491">    &quot;base&quot; : 4632907776,</span>
+<span class="ln" id="L492">    &quot;size&quot; : 61440,</span>
+<span class="ln" id="L493">    &quot;uuid&quot; : &quot;bbfa0f96-77a4-3c66-a3b1-a10b8dcf934f&quot;,</span>
+<span class="ln" id="L494">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/libaudio.dylib&quot;,</span>
+<span class="ln" id="L495">    &quot;name&quot; : &quot;libaudio.dylib&quot;</span>
+<span class="ln" id="L496">  },</span>
+<span class="ln" id="L497">  {</span>
+<span class="ln" id="L498">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L499">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L500">    &quot;base&quot; : 4634292224,</span>
+<span class="ln" id="L501">    &quot;size&quot; : 94208,</span>
+<span class="ln" id="L502">    &quot;uuid&quot; : &quot;36f38ca1-fa51-34e5-bfbc-3a5dc1a596e9&quot;,</span>
+<span class="ln" id="L503">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/crashhandler.dylib&quot;,</span>
+<span class="ln" id="L504">    &quot;name&quot; : &quot;crashhandler.dylib&quot;</span>
+<span class="ln" id="L505">  },</span>
+<span class="ln" id="L506">  {</span>
+<span class="ln" id="L507">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L508">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L509">    &quot;base&quot; : 4633149440,</span>
+<span class="ln" id="L510">    &quot;CFBundleIdentifier&quot; : &quot;com.googlecode.google-breakpad&quot;,</span>
+<span class="ln" id="L511">    &quot;size&quot; : 32768,</span>
+<span class="ln" id="L512">    &quot;uuid&quot; : &quot;c98be7e7-b888-338c-a7e7-40dd223401d4&quot;,</span>
+<span class="ln" id="L513">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Breakpad.framework\/Versions\/A\/Breakpad&quot;,</span>
+<span class="ln" id="L514">    &quot;name&quot; : &quot;Breakpad&quot;,</span>
+<span class="ln" id="L515">    &quot;CFBundleVersion&quot; : &quot;1.0&quot;</span>
+<span class="ln" id="L516">  },</span>
+<span class="ln" id="L517">  {</span>
+<span class="ln" id="L518">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L519">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L520">    &quot;base&quot; : 4632027136,</span>
+<span class="ln" id="L521">    &quot;size&quot; : 65536,</span>
+<span class="ln" id="L522">    &quot;uuid&quot; : &quot;c62cc81e-aa3c-32b7-ab0e-68d19109fd3f&quot;,</span>
+<span class="ln" id="L523">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Breakpad.framework\/Versions\/A\/Resources\/breakpadUtilities.dylib&quot;,</span>
+<span class="ln" id="L524">    &quot;name&quot; : &quot;breakpadUtilities.dylib&quot;</span>
+<span class="ln" id="L525">  },</span>
+<span class="ln" id="L526">  {</span>
+<span class="ln" id="L527">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L528">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L529">    &quot;base&quot; : 4773412864,</span>
+<span class="ln" id="L530">    &quot;CFBundleShortVersionString&quot; : &quot;353.14&quot;,</span>
+<span class="ln" id="L531">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.AGXMetalG16X&quot;,</span>
+<span class="ln" id="L532">    &quot;size&quot; : 10731520,</span>
+<span class="ln" id="L533">    &quot;uuid&quot; : &quot;a4e17d60-a5da-3abb-b5b6-866a3f00c65a&quot;,</span>
+<span class="ln" id="L534">    &quot;path&quot; : &quot;\/System\/Library\/Extensions\/AGXMetalG16X.bundle\/Contents\/MacOS\/AGXMetalG16X&quot;,</span>
+<span class="ln" id="L535">    &quot;name&quot; : &quot;AGXMetalG16X&quot;,</span>
+<span class="ln" id="L536">    &quot;CFBundleVersion&quot; : &quot;353.14&quot;</span>
+<span class="ln" id="L537">  },</span>
+<span class="ln" id="L538">  {</span>
+<span class="ln" id="L539">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L540">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L541">    &quot;base&quot; : 4684107776,</span>
+<span class="ln" id="L542">    &quot;size&quot; : 53248,</span>
+<span class="ln" id="L543">    &quot;uuid&quot; : &quot;7ac27037-538b-3f7c-9aa5-8d7772a8c780&quot;,</span>
+<span class="ln" id="L544">    &quot;path&quot; : &quot;\/usr\/lib\/libobjc-trampolines.dylib&quot;,</span>
+<span class="ln" id="L545">    &quot;name&quot; : &quot;libobjc-trampolines.dylib&quot;</span>
+<span class="ln" id="L546">  },</span>
+<span class="ln" id="L547">  {</span>
+<span class="ln" id="L548">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L549">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L550">    &quot;base&quot; : 4772581376,</span>
+<span class="ln" id="L551">    &quot;CFBundleShortVersionString&quot; : &quot;2.0.0&quot;,</span>
+<span class="ln" id="L552">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.iokit.IOHIDLib&quot;,</span>
+<span class="ln" id="L553">    &quot;size&quot; : 94208,</span>
+<span class="ln" id="L554">    &quot;uuid&quot; : &quot;d38e2a8d-4eac-31ea-b904-8c469859f57a&quot;,</span>
+<span class="ln" id="L555">    &quot;path&quot; : &quot;\/System\/Library\/Extensions\/IOHIDFamily.kext\/Contents\/PlugIns\/IOHIDLib.plugin\/Contents\/MacOS\/IOHIDLib&quot;,</span>
+<span class="ln" id="L556">    &quot;name&quot; : &quot;IOHIDLib&quot;,</span>
+<span class="ln" id="L557">    &quot;CFBundleVersion&quot; : &quot;2.0.0&quot;</span>
+<span class="ln" id="L558">  },</span>
+<span class="ln" id="L559">  {</span>
+<span class="ln" id="L560">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L561">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L562">    &quot;base&quot; : 4854054912,</span>
+<span class="ln" id="L563">    &quot;CFBundleShortVersionString&quot; : &quot;1.0&quot;,</span>
+<span class="ln" id="L564">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.AppleMetalOpenGLRenderer&quot;,</span>
+<span class="ln" id="L565">    &quot;size&quot; : 430080,</span>
+<span class="ln" id="L566">    &quot;uuid&quot; : &quot;a0abd5d5-1532-34b2-8797-cb150a838467&quot;,</span>
+<span class="ln" id="L567">    &quot;path&quot; : &quot;\/System\/Library\/Extensions\/AppleMetalOpenGLRenderer.bundle\/Contents\/MacOS\/AppleMetalOpenGLRenderer&quot;,</span>
+<span class="ln" id="L568">    &quot;name&quot; : &quot;AppleMetalOpenGLRenderer&quot;,</span>
+<span class="ln" id="L569">    &quot;CFBundleVersion&quot; : &quot;1&quot;</span>
+<span class="ln" id="L570">  },</span>
+<span class="ln" id="L571">  {</span>
+<span class="ln" id="L572">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L573">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L574">    &quot;base&quot; : 4980412416,</span>
+<span class="ln" id="L575">    &quot;CFBundleShortVersionString&quot; : &quot;1.14&quot;,</span>
+<span class="ln" id="L576">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.audio.units.Components&quot;,</span>
+<span class="ln" id="L577">    &quot;size&quot; : 1355776,</span>
+<span class="ln" id="L578">    &quot;uuid&quot; : &quot;dcbc6d7c-15a5-3910-a82a-dc6f40479d7d&quot;,</span>
+<span class="ln" id="L579">    &quot;path&quot; : &quot;\/System\/Library\/Components\/CoreAudio.component\/Contents\/MacOS\/CoreAudio&quot;,</span>
+<span class="ln" id="L580">    &quot;name&quot; : &quot;CoreAudio&quot;,</span>
+<span class="ln" id="L581">    &quot;CFBundleVersion&quot; : &quot;1.14&quot;</span>
+<span class="ln" id="L582">  },</span>
+<span class="ln" id="L583">  {</span>
+<span class="ln" id="L584">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L585">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L586">    &quot;base&quot; : 5001543680,</span>
+<span class="ln" id="L587">    &quot;CFBundleShortVersionString&quot; : &quot;1.0&quot;,</span>
+<span class="ln" id="L588">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.audio.AudioDSPComponents&quot;,</span>
+<span class="ln" id="L589">    &quot;size&quot; : 8278016,</span>
+<span class="ln" id="L590">    &quot;uuid&quot; : &quot;745ebf91-65e1-3547-96d5-8193dfd03c1f&quot;,</span>
+<span class="ln" id="L591">    &quot;path&quot; : &quot;\/System\/Library\/Components\/AudioDSP.component\/Contents\/MacOS\/AudioDSP&quot;,</span>
+<span class="ln" id="L592">    &quot;name&quot; : &quot;AudioDSP&quot;,</span>
+<span class="ln" id="L593">    &quot;CFBundleVersion&quot; : &quot;1&quot;</span>
+<span class="ln" id="L594">  },</span>
+<span class="ln" id="L595">  {</span>
+<span class="ln" id="L596">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L597">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L598">    &quot;base&quot; : 4978221056,</span>
+<span class="ln" id="L599">    &quot;CFBundleShortVersionString&quot; : &quot;3.0&quot;,</span>
+<span class="ln" id="L600">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.security.csparser&quot;,</span>
+<span class="ln" id="L601">    &quot;size&quot; : 94208,</span>
+<span class="ln" id="L602">    &quot;uuid&quot; : &quot;481ccce1-df9c-38a5-b88e-2700132ee90c&quot;,</span>
+<span class="ln" id="L603">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/Security.framework\/Versions\/A\/PlugIns\/csparser.bundle\/Contents\/MacOS\/csparser&quot;,</span>
+<span class="ln" id="L604">    &quot;name&quot; : &quot;csparser&quot;,</span>
+<span class="ln" id="L605">    &quot;CFBundleVersion&quot; : &quot;61901.160.44&quot;</span>
+<span class="ln" id="L606">  },</span>
+<span class="ln" id="L607">  {</span>
+<span class="ln" id="L608">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L609">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L610">    &quot;base&quot; : 4681891840,</span>
+<span class="ln" id="L611">    &quot;size&quot; : 57344,</span>
+<span class="ln" id="L612">    &quot;uuid&quot; : &quot;4e650665-81db-322d-8dde-4115844be570&quot;,</span>
+<span class="ln" id="L613">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Ogg.asi&quot;,</span>
+<span class="ln" id="L614">    &quot;name&quot; : &quot;libMilesX64Ogg.asi&quot;</span>
+<span class="ln" id="L615">  },</span>
+<span class="ln" id="L616">  {</span>
+<span class="ln" id="L617">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L618">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L619">    &quot;base&quot; : 4682141696,</span>
+<span class="ln" id="L620">    &quot;size&quot; : 69632,</span>
+<span class="ln" id="L621">    &quot;uuid&quot; : &quot;b3421bcd-0ed5-31d3-a37c-89a99420192c&quot;,</span>
+<span class="ln" id="L622">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Mp3.asi&quot;,</span>
+<span class="ln" id="L623">    &quot;name&quot; : &quot;libMilesX64Mp3.asi&quot;</span>
+<span class="ln" id="L624">  },</span>
+<span class="ln" id="L625">  {</span>
+<span class="ln" id="L626">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L627">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L628">    &quot;base&quot; : 4682309632,</span>
+<span class="ln" id="L629">    &quot;size&quot; : 49152,</span>
+<span class="ln" id="L630">    &quot;uuid&quot; : &quot;6c896647-eede-31e1-9878-919c7578bea6&quot;,</span>
+<span class="ln" id="L631">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64BinkA.asi&quot;,</span>
+<span class="ln" id="L632">    &quot;name&quot; : &quot;libMilesX64BinkA.asi&quot;</span>
+<span class="ln" id="L633">  },</span>
+<span class="ln" id="L634">  {</span>
+<span class="ln" id="L635">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L636">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L637">    &quot;base&quot; : 4682457088,</span>
+<span class="ln" id="L638">    &quot;size&quot; : 53248,</span>
+<span class="ln" id="L639">    &quot;uuid&quot; : &quot;d95b059c-a787-3b5f-9b55-96d861155eba&quot;,</span>
+<span class="ln" id="L640">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/Resources\/libMilesX64Dsp.flt&quot;,</span>
+<span class="ln" id="L641">    &quot;name&quot; : &quot;libMilesX64Dsp.flt&quot;</span>
+<span class="ln" id="L642">  },</span>
+<span class="ln" id="L643">  {</span>
+<span class="ln" id="L644">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L645">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L646">    &quot;base&quot; : 5090275328,</span>
+<span class="ln" id="L647">    &quot;size&quot; : 5705728,</span>
+<span class="ln" id="L648">    &quot;uuid&quot; : &quot;a9b8664e-cc93-3db5-ae0e-1b369464baa2&quot;,</span>
+<span class="ln" id="L649">    &quot;path&quot; : &quot;\/Users\/USER\/Library\/Application Support\/Steam\/*\/Civilization V.app\/Contents\/MacOS\/libCvGameCoreDLL_Expansion2_DLL.dylib&quot;,</span>
+<span class="ln" id="L650">    &quot;name&quot; : &quot;libCvGameCoreDLL_Expansion2_DLL.dylib&quot;</span>
+<span class="ln" id="L651">  },</span>
+<span class="ln" id="L652">  {</span>
+<span class="ln" id="L653">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L654">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L655">    &quot;base&quot; : 8709603328,</span>
+<span class="ln" id="L656">    &quot;size&quot; : 708608,</span>
+<span class="ln" id="L657">    &quot;uuid&quot; : &quot;cf55ca34-3ecb-38f3-9e3e-e20592c197be&quot;,</span>
+<span class="ln" id="L658">    &quot;path&quot; : &quot;\/usr\/lib\/dyld&quot;,</span>
+<span class="ln" id="L659">    &quot;name&quot; : &quot;dyld&quot;</span>
+<span class="ln" id="L660">  },</span>
+<span class="ln" id="L661">  {</span>
+<span class="ln" id="L662">    &quot;size&quot; : 0,</span>
+<span class="ln" id="L663">    &quot;source&quot; : &quot;A&quot;,</span>
+<span class="ln" id="L664">    &quot;base&quot; : 0,</span>
+<span class="ln" id="L665">    &quot;uuid&quot; : &quot;00000000-0000-0000-0000-000000000000&quot;</span>
+<span class="ln" id="L666">  },</span>
+<span class="ln" id="L667">  {</span>
+<span class="ln" id="L668">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L669">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L670">    &quot;base&quot; : 140703196151808,</span>
+<span class="ln" id="L671">    &quot;size&quot; : 48832,</span>
+<span class="ln" id="L672">    &quot;uuid&quot; : &quot;a55cf178-ea25-3cc0-8bcd-a4209f2acd1d&quot;,</span>
+<span class="ln" id="L673">    &quot;path&quot; : &quot;\/usr\/lib\/system\/libsystem_pthread.dylib&quot;,</span>
+<span class="ln" id="L674">    &quot;name&quot; : &quot;libsystem_pthread.dylib&quot;</span>
+<span class="ln" id="L675">  },</span>
+<span class="ln" id="L676">  {</span>
+<span class="ln" id="L677">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L678">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L679">    &quot;base&quot; : 140703195226112,</span>
+<span class="ln" id="L680">    &quot;size&quot; : 568164,</span>
+<span class="ln" id="L681">    &quot;uuid&quot; : &quot;dc8be9a5-9501-3439-9189-9e16c26df6b3&quot;,</span>
+<span class="ln" id="L682">    &quot;path&quot; : &quot;\/usr\/lib\/libc++.1.dylib&quot;,</span>
+<span class="ln" id="L683">    &quot;name&quot; : &quot;libc++.1.dylib&quot;</span>
+<span class="ln" id="L684">  },</span>
+<span class="ln" id="L685">  {</span>
+<span class="ln" id="L686">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L687">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L688">    &quot;base&quot; : 140703195893760,</span>
+<span class="ln" id="L689">    &quot;size&quot; : 255408,</span>
+<span class="ln" id="L690">    &quot;uuid&quot; : &quot;0e16c3e3-e224-378f-9fdc-28bc144f39af&quot;,</span>
+<span class="ln" id="L691">    &quot;path&quot; : &quot;\/usr\/lib\/system\/libsystem_kernel.dylib&quot;,</span>
+<span class="ln" id="L692">    &quot;name&quot; : &quot;libsystem_kernel.dylib&quot;</span>
+<span class="ln" id="L693">  },</span>
+<span class="ln" id="L694">  {</span>
+<span class="ln" id="L695">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L696">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L697">    &quot;base&quot; : 140703196434432,</span>
+<span class="ln" id="L698">    &quot;CFBundleShortVersionString&quot; : &quot;6.9&quot;,</span>
+<span class="ln" id="L699">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.CoreFoundation&quot;,</span>
+<span class="ln" id="L700">    &quot;size&quot; : 4966469,</span>
+<span class="ln" id="L701">    &quot;uuid&quot; : &quot;f4868d1f-71d7-3904-a288-3e20ce7f1fce&quot;,</span>
+<span class="ln" id="L702">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/CoreFoundation.framework\/Versions\/A\/CoreFoundation&quot;,</span>
+<span class="ln" id="L703">    &quot;name&quot; : &quot;CoreFoundation&quot;,</span>
+<span class="ln" id="L704">    &quot;CFBundleVersion&quot; : &quot;5026.6.7&quot;</span>
+<span class="ln" id="L705">  },</span>
+<span class="ln" id="L706">  {</span>
+<span class="ln" id="L707">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L708">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L709">    &quot;base&quot; : 140703261601792,</span>
+<span class="ln" id="L710">    &quot;CFBundleShortVersionString&quot; : &quot;6.9&quot;,</span>
+<span class="ln" id="L711">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.AppKit&quot;,</span>
+<span class="ln" id="L712">    &quot;size&quot; : 25152279,</span>
+<span class="ln" id="L713">    &quot;uuid&quot; : &quot;583bdb03-aa3d-3e8e-8f9b-fb919cdb5efb&quot;,</span>
+<span class="ln" id="L714">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/AppKit.framework\/Versions\/C\/AppKit&quot;,</span>
+<span class="ln" id="L715">    &quot;name&quot; : &quot;AppKit&quot;,</span>
+<span class="ln" id="L716">    &quot;CFBundleVersion&quot; : &quot;2685.70.101&quot;</span>
+<span class="ln" id="L717">  },</span>
+<span class="ln" id="L718">  {</span>
+<span class="ln" id="L719">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L720">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L721">    &quot;base&quot; : 140703411068928,</span>
+<span class="ln" id="L722">    &quot;CFBundleShortVersionString&quot; : &quot;1.0&quot;,</span>
+<span class="ln" id="L723">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.audio.caulk&quot;,</span>
+<span class="ln" id="L724">    &quot;size&quot; : 149552,</span>
+<span class="ln" id="L725">    &quot;uuid&quot; : &quot;7d527e3a-f6c8-386f-b19b-c8d521ba9860&quot;,</span>
+<span class="ln" id="L726">    &quot;path&quot; : &quot;\/System\/Library\/PrivateFrameworks\/caulk.framework\/Versions\/A\/caulk&quot;,</span>
+<span class="ln" id="L727">    &quot;name&quot; : &quot;caulk&quot;</span>
+<span class="ln" id="L728">  },</span>
+<span class="ln" id="L729">  {</span>
+<span class="ln" id="L730">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L731">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L732">    &quot;base&quot; : 140703241601024,</span>
+<span class="ln" id="L733">    &quot;CFBundleShortVersionString&quot; : &quot;5.0&quot;,</span>
+<span class="ln" id="L734">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.audio.CoreAudio&quot;,</span>
+<span class="ln" id="L735">    &quot;size&quot; : 8018580,</span>
+<span class="ln" id="L736">    &quot;uuid&quot; : &quot;ff424749-d74d-321d-b45c-eee40e1bec57&quot;,</span>
+<span class="ln" id="L737">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/CoreAudio.framework\/Versions\/A\/CoreAudio&quot;,</span>
+<span class="ln" id="L738">    &quot;name&quot; : &quot;CoreAudio&quot;,</span>
+<span class="ln" id="L739">    &quot;CFBundleVersion&quot; : &quot;5.0&quot;</span>
+<span class="ln" id="L740">  },</span>
+<span class="ln" id="L741">  {</span>
+<span class="ln" id="L742">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L743">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L744">    &quot;base&quot; : 140703256707072,</span>
+<span class="ln" id="L745">    &quot;CFBundleShortVersionString&quot; : &quot;1333&quot;,</span>
+<span class="ln" id="L746">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.CoreServices.CarbonCore&quot;,</span>
+<span class="ln" id="L747">    &quot;size&quot; : 3072834,</span>
+<span class="ln" id="L748">    &quot;uuid&quot; : &quot;cd1cab46-6b8a-3dda-8cb0-c921e261526e&quot;,</span>
+<span class="ln" id="L749">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/CoreServices.framework\/Versions\/A\/Frameworks\/CarbonCore.framework\/Versions\/A\/CarbonCore&quot;,</span>
+<span class="ln" id="L750">    &quot;name&quot; : &quot;CarbonCore&quot;,</span>
+<span class="ln" id="L751">    &quot;CFBundleVersion&quot; : &quot;1333&quot;</span>
+<span class="ln" id="L752">  },</span>
+<span class="ln" id="L753">  {</span>
+<span class="ln" id="L754">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L755">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L756">    &quot;base&quot; : 140703516418048,</span>
+<span class="ln" id="L757">    &quot;size&quot; : 138176,</span>
+<span class="ln" id="L758">    &quot;uuid&quot; : &quot;fbd32ab9-5553-3c8b-934a-bda2017c0e50&quot;,</span>
+<span class="ln" id="L759">    &quot;path&quot; : &quot;\/usr\/lib\/libAudioToolboxUtility.dylib&quot;,</span>
+<span class="ln" id="L760">    &quot;name&quot; : &quot;libAudioToolboxUtility.dylib&quot;</span>
+<span class="ln" id="L761">  },</span>
+<span class="ln" id="L762">  {</span>
+<span class="ln" id="L763">    &quot;source&quot; : &quot;P&quot;,</span>
+<span class="ln" id="L764">    &quot;arch&quot; : &quot;x86_64&quot;,</span>
+<span class="ln" id="L765">    &quot;base&quot; : 140703541571584,</span>
+<span class="ln" id="L766">    &quot;CFBundleShortVersionString&quot; : &quot;1.14&quot;,</span>
+<span class="ln" id="L767">    &quot;CFBundleIdentifier&quot; : &quot;com.apple.audio.toolbox.AudioToolbox&quot;,</span>
+<span class="ln" id="L768">    &quot;size&quot; : 1861944,</span>
+<span class="ln" id="L769">    &quot;uuid&quot; : &quot;f141647c-c446-3104-8af3-31b3a0189680&quot;,</span>
+<span class="ln" id="L770">    &quot;path&quot; : &quot;\/System\/Library\/Frameworks\/AudioToolbox.framework\/Versions\/A\/AudioToolbox&quot;,</span>
+<span class="ln" id="L771">    &quot;name&quot; : &quot;AudioToolbox&quot;,</span>
+<span class="ln" id="L772">    &quot;CFBundleVersion&quot; : &quot;1.14&quot;</span>
+<span class="ln" id="L773">  }</span>
+<span class="ln" id="L774">],</span>
+<span class="ln" id="L775">  &quot;sharedCache&quot; : {</span>
+<span class="ln" id="L776">  &quot;base&quot; : 140703147278336,</span>
+<span class="ln" id="L777">  &quot;size&quot; : 30064771072,</span>
+<span class="ln" id="L778">  &quot;uuid&quot; : &quot;7bd04242-d730-3164-8eb8-8650f163ca21&quot;</span>
+<span class="ln" id="L779">},</span>
+<span class="ln" id="L780">  &quot;vmSummary&quot; : &quot;ReadOnly portion of Libraries: Total=1.4G resident=0K(0%) swapped_out_or_unallocated=1.4G(100%)\nWritable regions: Total=4.7G written=8076K(0%) resident=8076K(0%) swapped_out=0K(0%) unallocated=4.7G(100%)\n\n                                VIRTUAL   REGION \nREGION TYPE                        SIZE    COUNT (non-coalesced) \n===========                     =======  ======= \nAccelerate framework               128K        1 \nActivity Tracing                   256K        1 \nCG image                           960K      120 \nColorSync                            8K        2 \nCoreAnimation                      192K       20 \nCoreGraphics                        12K        2 \nCoreUI image data                 1112K        9 \nFoundation                          16K        1 \nImage IO                             8K        2 \nKernel Alloc Once                    8K        1 \nMALLOC                             4.1G      313 \nMALLOC guard page                  576K       36 \nMALLOC_LARGE (reserved)           51.2M        3         reserved VM address space (unallocated)\nOpenGL GLSL                        256K        3 \nRosetta Arena                     4096K        2 \nRosetta Generic                   1296K      321 \nRosetta IndirectBranch            1024K        1 \nRosetta JIT                      128.0M        1 \nRosetta Return Stack               340K       34 \nRosetta Thread Context             340K       34 \nSTACK GUARD                         16K        4 \nStack                             33.8M       18 \nStack Guard                       56.1M       14 \nVM_ALLOCATE                      229.8M     3658 \nVM_ALLOCATE (media)               10.0M        1 \nVM_ALLOCATE (reserved)              52K        8         reserved VM address space (unallocated)\n__CTF                               824        1 \n__DATA                           144.7M     1023 \n__DATA_CONST                     122.1M     1044 \n__DATA_DIRTY                      7993K      870 \n__FONT_DATA                        2352        1 \n__GLSLBUILTINS                    5174K        1 \n__LINKEDIT                       155.8M       29 \n__OBJC_RO                         65.2M        1 \n__OBJC_RW                         2595K        1 \n__TEXT                             1.3G     1076 \n__TPRO_CONST                         8K        2 \ndyld private memory                128K        1 \nmapped file                      373.3M      122 \npage table in kernel              8076K        1 \nshared memory                     19.3M       21 \n===========                     =======  ======= \nTOTAL                              6.8G     8804 \nTOTAL, minus reserved VM space     6.7G     8804 \n&quot;,</span>
+<span class="ln" id="L781">  &quot;legacyInfo&quot; : {</span>
+<span class="ln" id="L782">  &quot;threadTriggered&quot; : {</span>
+<span class="ln" id="L783">    &quot;name&quot; : &quot;WinMain (WinID 2)&quot;</span>
+<span class="ln" id="L784">  }</span>
+<span class="ln" id="L785">},</span>
+<span class="ln" id="L786">  &quot;logWritingSignature&quot; : &quot;b66d4ee085c358e2888db7e268493e033091cdd8&quot;,</span>
+<span class="ln" id="L787">  &quot;bug_type&quot; : &quot;309&quot;,</span>
+<span class="ln" id="L788">  &quot;roots_installed&quot; : 0,</span>
+<span class="ln" id="L789">  &quot;trmStatus&quot; : 1,</span>
+<span class="ln" id="L790">  &quot;trialInfo&quot; : {</span>
+<span class="ln" id="L791">  &quot;rollouts&quot; : [</span>
+<span class="ln" id="L792">    {</span>
+<span class="ln" id="L793">      &quot;rolloutId&quot; : &quot;67fd77fe1f9da9148f70d6ed&quot;,</span>
+<span class="ln" id="L794">      &quot;factorPackIds&quot; : [</span>
+<span class="ln" id="L795">&nbsp;</span>
+<span class="ln" id="L796">      ],</span>
+<span class="ln" id="L797">      &quot;deploymentId&quot; : 240000020</span>
+<span class="ln" id="L798">    },</span>
+<span class="ln" id="L799">    {</span>
+<span class="ln" id="L800">      &quot;rolloutId&quot; : &quot;5ffde50ce2aacd000d47a95f&quot;,</span>
+<span class="ln" id="L801">      &quot;factorPackIds&quot; : [</span>
+<span class="ln" id="L802">&nbsp;</span>
+<span class="ln" id="L803">      ],</span>
+<span class="ln" id="L804">      &quot;deploymentId&quot; : 240000557</span>
+<span class="ln" id="L805">    }</span>
+<span class="ln" id="L806">  ],</span>
+<span class="ln" id="L807">  &quot;experiments&quot; : [</span>
+<span class="ln" id="L808">&nbsp;</span>
+<span class="ln" id="L809">  ]</span>
+<span class="ln" id="L810">},</span>
+<span class="ln" id="L811">  &quot;reportNotes&quot; : [</span>
+<span class="ln" id="L812">  &quot;RIP register does not match crashing frame (0x12FA52896 vs 0x1304C24D0)&quot;</span>
+<span class="ln" id="L813">]</span>
+<span class="ln" id="L814">}</span>
+<span class="ln" id="L815">&nbsp;</span>
+<span class="ln" id="L816">Model: Mac16,5, BootROM 18000.161.10, proc 16:12:4:0 processors, 64 GB, SMC </span>
+<span class="ln" id="L817">Graphics: Apple M4 Max, Apple M4 Max, Built-In</span>
+<span class="ln" id="L818">Display: Color LCD, 3456 x 2234 Retina, Main, MirrorOff, Online</span>
+<span class="ln" id="L819">Memory Module: LPDDR5, Micron</span>
+<span class="ln" id="L820">AirPort: spairport_wireless_card_type_wifi (0x14E4, 0x4388), wl0: Jul 10 2026 02:04:56 version 23.50.20.2.41.51.209 FWID 01-fa2c3dc1</span>
+<span class="ln" id="L821">IO80211_driverkit-1566.5 &quot;IO80211_driverkit-1566.5&quot; Jul 31 2026 19:08:25</span>
+<span class="ln" id="L822">AirPort: </span>
+<span class="ln" id="L823">Bluetooth: Version (null), 0 services, 0 devices, 0 incoming serial ports</span>
+<span class="ln" id="L824">Network Service: Wi-Fi, AirPort, en0</span>
+<span class="ln" id="L825">Thunderbolt Bus: MacBook Pro, Apple Inc.</span>
+<span class="ln" id="L826">Thunderbolt Bus: MacBook Pro, Apple Inc.</span>
+<span class="ln" id="L827">Thunderbolt Bus: MacBook Pro, Apple Inc.</span>
+<span class="ln" id="L828">&nbsp;</span>
+</pre></main>
+</body>
+</html>

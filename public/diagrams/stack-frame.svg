@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 380" role="img"
+     aria-label="The stack immediately after mov rbp, rsp. High addresses at the top, the stack growing downward. Above sit the caller's frame: the previous frame pointer at 0x7100, the local variable eWinningTeam holding 0xFFFFFFFF at 0x70F8, and further locals. Below sit our two slots: the return address 0x401234 at 0x7018, and the saved caller frame pointer 0x7100 at 0x7010. Both rbp and rsp point at 0x7010, because no local variables were allocated.">
+  <style>
+    .ink   { fill: #16130f; }
+    .faint { fill: #4a4136; }
+    .acc   { fill: #7a2a1c; }
+    .box   { fill: #fffdf8; stroke: #a89e8c; }
+    .ours  { fill: #f6e7d2; stroke: #a87a52; }
+    .rule  { stroke: #8a8071; fill: none; }
+    .arrow { stroke: #7a2a1c; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .ink   { fill: #e4e2de; }
+      .faint { fill: #8a8680; }
+      .acc   { fill: #e4a08a; }
+      .box   { fill: #1d1d22; stroke: #35353d; }
+      .ours  { fill: #2b2521; stroke: #6b4f3f; }
+      .rule  { stroke: #44444e; }
+      .arrow { stroke: #e4a08a; }
+    }
+    text { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+    .lbl { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; }
+  </style>
+
+  <text class="faint lbl" x="16" y="24">higher addresses</text>
+  <path class="rule" d="M22 36 V320" stroke-dasharray="3 4"/>
+  <path class="arrow" d="M22 320 l-5 -9 M22 320 l5 -9" stroke-width="1.3"/>
+  <text class="faint lbl" x="16" y="344">stack grows down</text>
+
+  <rect class="box"  x="140" y="44"  width="320" height="40" rx="3"/>
+  <rect class="box"  x="140" y="88"  width="320" height="40" rx="3"/>
+  <rect class="box"  x="140" y="132" width="320" height="40" rx="3"/>
+  <rect class="ours" x="140" y="196" width="320" height="40" rx="3"/>
+  <rect class="ours" x="140" y="240" width="320" height="40" rx="3"/>
+
+  <text class="faint" x="132" y="69"  text-anchor="end">0x7100</text>
+  <text class="faint" x="132" y="113" text-anchor="end">0x70F8</text>
+  <text class="faint" x="132" y="157" text-anchor="end">…</text>
+  <text class="faint" x="132" y="221" text-anchor="end">0x7018</text>
+  <text class="faint" x="132" y="265" text-anchor="end">0x7010</text>
+
+  <text class="ink"   x="156" y="69">previous frame's rbp</text>
+  <text class="ink"   x="156" y="113">eWinningTeam = 0xFFFFFFFF</text>
+  <text class="faint" x="156" y="157">…the caller's other locals…</text>
+  <text class="ink"   x="156" y="221">0x401234</text>
+  <text class="faint" x="252" y="221">← return address</text>
+  <text class="ink"   x="156" y="265">0x7100</text>
+  <text class="faint" x="252" y="265">← saved caller rbp</text>
+
+  <path class="rule" d="M470 46 h10 v126 h-10"/>
+  <text class="faint lbl" x="492" y="113">the caller's frame</text>
+
+  <path class="rule" d="M470 198 h10 v82 h-10"/>
+  <text class="faint lbl" x="492" y="221">pushed when we</text>
+  <text class="faint lbl" x="492" y="237">were called</text>
+
+  <path class="arrow" d="M700 264 H472" stroke-width="1.4"/>
+  <path class="arrow" d="M472 264 l10 -4.5 M472 264 l10 4.5" stroke-width="1.4"/>
+  <text class="acc lbl" x="492" y="300" font-weight="700">rbp and rsp both point here</text>
+  <text class="faint lbl" x="492" y="318">no locals, so rsp never moved further</text>
+</svg>
